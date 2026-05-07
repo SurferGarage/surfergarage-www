@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SurferGarage Website (V2)
 
-## Getting Started
+Official website for SurferGarage, built with a performance-first and readability-first frontend architecture.
 
-First, run the development server:
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19 + TypeScript
+- Tailwind CSS v4
+- GSAP + ScrollTrigger
+- Lenis smooth scrolling
+- Three.js / React Three Fiber (degradable WebGL background)
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quality Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+npm run lint:staged
+```
 
-## Learn More
+## Contribution Standards
 
-To learn more about Next.js, take a look at the following resources:
+- Conventional Commits are enforced via `commitlint`.
+- Git hooks are managed by `husky`.
+- PRs and Issues use repository templates.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `CONTRIBUTING.md`
+- `wiki/README.md`
+- `SECURITY.md`
+- `SUPPORT.md`
 
-## Deploy on Vercel
+## Project Documentation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Operational and architecture docs are in `wiki/`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Recommended start:
+
+1. `wiki/00-项目总览.md`
+2. `wiki/03-性能与自动降级策略.md`
+3. `wiki/04-维护与排障手册.md`

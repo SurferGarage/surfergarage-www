@@ -1,26 +1,149 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #121313;
+  --foreground: #f3f3f5;
+  --muted: #8992a8;
+  --muted-strong: #b5bdd0;
+  --hairline: rgba(137, 146, 168, 0.34);
+  --brand-primary: #0c02c2;
+  --brand-navy: #000644;
+  --brand-teal: #27d7c7;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-zh), var(--font-en), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scrollbar-gutter: stable;
+  background: var(--background);
 }
 
 body {
-  background: var(--background);
+  background: transparent;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-zh), var(--font-en), system-ui, sans-serif;
+  text-rendering: geometricPrecision;
+}
+
+.wordmark-display {
+  font-family: var(--font-en), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.006em;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+@media (min-width: 1024px) {
+  .wordmark-display {
+    letter-spacing: -0.01em;
+  }
+}
+
+@keyframes sg-river-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-0.9%, -1.1%, 0) scale(1.018);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes sg-river-breath {
+  0% {
+    filter: blur(90px) saturate(1);
+  }
+  50% {
+    filter: blur(94px) saturate(1.04);
+  }
+  100% {
+    filter: blur(90px) saturate(1);
+  }
+}
+
+@keyframes sg-river-shimmer {
+  0% {
+    stroke-dasharray: 8 72;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dasharray: 8 72;
+    stroke-dashoffset: -320;
+  }
+}
+
+@keyframes sg-orb-float {
+  0% {
+    transform: translate3d(0, -50%, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(-2.5%, -53%, 0) scale(1.02);
+  }
+  66% {
+    transform: translate3d(1.8%, -47%, 0) scale(0.985);
+  }
+  100% {
+    transform: translate3d(0, -50%, 0) scale(1);
+  }
+}
+
+.sg-river-layer {
+  animation: sg-river-drift 19s ease-in-out infinite;
+  transform-origin: 62% 14%;
+}
+
+.sg-river-svg {
+  animation: sg-river-breath 14s ease-in-out infinite;
+}
+
+.sg-river-path {
+  opacity: 0.68;
+}
+
+.sg-river-path-shimmer {
+  opacity: 0.2;
+  stroke-dasharray: 8 72;
+  animation: sg-river-shimmer 22s linear infinite;
+}
+
+.sg-call-orb {
+  animation: sg-orb-float 15s ease-in-out infinite;
+  transform: translate3d(0, -50%, 0);
+}
+
+.sg-call-orb-core {
+  animation: sg-river-breath 14s ease-in-out infinite;
+  opacity: 0.78;
+}
+
+::selection {
+  background: rgba(39, 215, 199, 0.22);
+  color: var(--foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-river-layer,
+  .sg-river-svg,
+  .sg-river-path-shimmer,
+  .sg-call-orb,
+  .sg-call-orb-core {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

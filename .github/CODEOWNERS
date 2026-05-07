@@ -1,0 +1,17 @@
+# Global default owner
+* @kfr34
+
+# Core app and architecture
+/app/ @kfr34
+/components/ @kfr34
+/lib/ @kfr34
+
+# Standards and docs
+/wiki/ @kfr34
+/CONTRIBUTING.md @kfr34
+/README.md @kfr34
+
+# Repo governance
+/.github/ @kfr34
+/package.json @kfr34
+/package-lock.json @kfr34
