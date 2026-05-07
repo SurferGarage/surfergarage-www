@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
-import { ShaderFieldRoot } from "@/components/shader-field/shader-field-root";
 import { SmoothScroll } from "@/components/smooth-scroll";
 
 const ibm = IBM_Plex_Sans({
@@ -35,7 +34,6 @@ export default function RootLayout({
       className={`${ibm.variable} ${notoSansSC.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full">
-        <ShaderFieldRoot />
         <SmoothScroll>
           <div className="relative z-[1] min-h-full">{children}</div>
         </SmoothScroll>

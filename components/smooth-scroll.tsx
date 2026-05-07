@@ -7,8 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import "lenis/dist/lenis.css";
 
-import { LENIS_SCROLL_EVENT } from "@/lib/lenis-scroll-event";
-
 gsap.registerPlugin(ScrollTrigger);
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
@@ -37,11 +35,6 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
     lenis.on("scroll", () => {
       ScrollTrigger.update();
-      window.dispatchEvent(
-        new CustomEvent(LENIS_SCROLL_EVENT, {
-          detail: { scroll: lenis.scroll, velocity: lenis.velocity },
-        }),
-      );
     });
 
     ScrollTrigger.scrollerProxy(document.documentElement, {
