@@ -15,8 +15,8 @@ export function GlowRiver() {
         <defs>
           <linearGradient id="glow-river-gradient" x1="20%" y1="0%" x2="75%" y2="100%">
             <stop offset="0%" stopColor="#0000E2" />
-            <stop offset="55%" stopColor="#0C02C2" />
-            <stop offset="100%" stopColor="#27D7C7" />
+            <stop offset="48%" stopColor="#0A06BE" />
+            <stop offset="100%" stopColor="#22D3C5" />
           </linearGradient>
         </defs>
 

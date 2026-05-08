@@ -16,7 +16,7 @@
 - [ ] `npm run build`
 - [ ] Manual smoke test on homepage
 - [ ] Validate reduced-motion fallback (if animation touched)
-- [ ] Validate performance fallback (if WebGL/perf logic touched)
+- [ ] Validate performance fallback (if background/motion logic touched)
 
 ## Screenshots / Recordings
 

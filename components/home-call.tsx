@@ -34,7 +34,7 @@ export function HomeCall() {
         <div className="col-span-12 md:col-span-4 md:self-end md:pb-3">
           <p
             id="call-heading"
-            className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--brand-primary)]"
+            className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]"
           >
             The Call
           </p>

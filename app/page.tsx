@@ -61,17 +61,18 @@ export default function Home() {
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 md:px-10 lg:px-12">
           <a
             href="#manifesto"
-            className="flex items-center gap-2.5 font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--foreground)] transition-opacity hover:opacity-70"
+            className="flex items-center gap-3.5 font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--foreground)] transition-opacity hover:opacity-85"
           >
             <Image
               src="/brand-sg-logo.png"
               alt="SurferGarage logo"
-              width={32}
-              height={32}
-              className="h-8 w-8 object-contain"
+              width={40}
+              height={40}
+              className="h-10 w-10 shrink-0 object-contain"
               priority
             />
-            <span className="text-[var(--brand-primary)]">Surfer</span>Garage
+            <span className="text-[var(--foreground)]">Surfer</span>
+            <span className="text-[var(--foreground)]">Garage</span>
           </a>
           <nav
             className="hidden gap-9 font-[family-name:var(--font-en)] text-[11px] uppercase tracking-[0.18em] md:flex"
@@ -114,7 +115,7 @@ export default function Home() {
             >
               <p
                 id="proof-heading"
-                className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--brand-primary)]"
+                className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]"
               >
                 The Proof
               </p>

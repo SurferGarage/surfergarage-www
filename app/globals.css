@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #121313;
-  --foreground: #f3f3f5;
-  --muted: #8992a8;
-  --muted-strong: #b5bdd0;
-  --hairline: rgba(137, 146, 168, 0.34);
-  --brand-primary: #0c02c2;
+  --background: #131313;
+  --foreground: #f3f4f6;
+  --muted: #9ca3af;
+  --muted-strong: #d1d5db;
+  --hairline: rgba(156, 163, 175, 0.32);
+  --brand-primary: #0000e2;
   --brand-navy: #000644;
-  --brand-teal: #27d7c7;
+  --brand-teal: #22d3c5;
 }
 
 @theme inline {
@@ -105,11 +105,11 @@ body {
 }
 
 .sg-river-path {
-  opacity: 0.68;
+  opacity: 0.74;
 }
 
 .sg-river-path-shimmer {
-  opacity: 0.2;
+  opacity: 0.24;
   stroke-dasharray: 8 72;
   animation: sg-river-shimmer 22s linear infinite;
 }

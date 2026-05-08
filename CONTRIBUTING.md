@@ -66,4 +66,4 @@ Git hooks:
 - Do not introduce text flicker or brightness jumping.
 - Respect `prefers-reduced-motion`.
 - Prefer graceful degradation over heavy visual effects.
-- If WebGL behavior changes, validate fallback and escape hatch paths.
+- If background or motion behavior changes, validate low-motion and low-end-device experience.

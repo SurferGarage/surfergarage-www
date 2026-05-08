@@ -33,7 +33,7 @@ export function HomeHero() {
           <div data-manifesto-fade>
             <h1
               id="hero-title"
-              className="wordmark-display text-[clamp(3rem,9.5vw,7.25rem)] text-[var(--brand-primary)]"
+              className="wordmark-display text-[clamp(3rem,9.5vw,7.25rem)] text-[var(--foreground)]"
               data-hero-reveal
             >
               SurferGarage
