@@ -35,6 +35,8 @@ export function HomeScrollChoreography() {
       "[data-manifesto-pin]",
     );
     const heroScrub = document.querySelector<HTMLElement>("[data-hero-scrub]");
+    const heroWave = document.querySelector<HTMLElement>("[data-hero-wave]");
+    const heroMarquee = document.querySelector<HTMLElement>("[data-hero-marquee]");
     const proof = document.querySelector<HTMLElement>("#proof");
     const proofPin = document.querySelector<HTMLElement>("[data-proof-pin]");
     const proofStreams = document.querySelector<HTMLElement>(
@@ -69,6 +71,38 @@ export function HomeScrollChoreography() {
             },
           },
         );
+      }
+
+      if (heroWave && proof) {
+        gsap.to(heroWave, {
+          "--wave-distortion": 0.08,
+          "--wave-opacity": 0.12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: proof,
+            start: "top 95%",
+            end: "top 40%",
+            scrub: true,
+            markers: ST_MARKERS,
+            id: "hero-wave-calm",
+          },
+        });
+      }
+
+      if (heroMarquee && proof) {
+        gsap.to(heroMarquee, {
+          yPercent: 115,
+          clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
+          ease: "none",
+          scrollTrigger: {
+            trigger: proof,
+            start: "top 98%",
+            end: "top 45%",
+            scrub: true,
+            markers: ST_MARKERS,
+            id: "hero-marquee-out",
+          },
+        });
       }
 
       document.querySelectorAll<HTMLElement>("[data-proof-stream]").forEach(
