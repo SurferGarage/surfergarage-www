@@ -6,45 +6,71 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 /**
- * Lightweight "Cyber-Ocean" (wireframe + vertex displacement).
- * Not Seascape / raymarching — Harmless Engineering: stable 60fps class budget.
+ * Topo grid: only horizontal + vertical lines (no triangle wireframe soup).
+ * Tuned for calm contrast — brand teal as accent, not full-screen neon.
  */
-const HERO_BLOOM_INTENSITY = 1.55;
-const HERO_BLOOM_THRESHOLD = 0.42;
-const HERO_BLOOM_SMOOTHING = 0.14;
+const GRID_SEG = 30;
+const GRID_HALF = 21;
+const HERO_BLOOM_INTENSITY = 0.92;
+const HERO_BLOOM_THRESHOLD = 0.52;
+const HERO_BLOOM_SMOOTHING = 0.11;
 
-const seaVertexShader = `
-uniform float uTime;
-uniform float uDispAmp;
-uniform float uScrollBoost;
-varying float vWave;
-
-void main() {
-  vec3 p = position;
-  float w = sin(p.x * 0.36 + uTime * 0.52) * 0.48;
-  w += sin(p.y * 0.3 - uTime * 0.44) * 0.36;
-  w += sin((p.x + p.y) * 0.26 + uTime * 0.33) * 0.22;
-  w *= (0.88 + uScrollBoost * 0.35);
-  p += normal * w * uDispAmp;
-  vWave = w;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+function waveY(
+  x: number,
+  z: number,
+  t: number,
+  amp: number,
+  scrollBoost: number,
+): number {
+  let w =
+    Math.sin(x * 0.34 + t * 0.48) * 0.42 +
+    Math.sin(z * 0.28 - t * 0.4) * 0.32 +
+    Math.sin((x + z) * 0.22 + t * 0.3) * 0.18;
+  w *= 0.88 + scrollBoost * 0.28;
+  return w * amp;
 }
-`;
 
-const seaFragmentShader = `
-precision highp float;
-uniform float uOpacity;
-varying float vWave;
+function buildGridLineGeometry(nx: number, nz: number, half: number) {
+  const vx = nx + 1;
+  const vz = nz + 1;
+  const vertCount = vx * vz;
+  const positions = new Float32Array(vertCount * 3);
+  const colors = new Float32Array(vertCount * 3);
 
-void main() {
-  vec3 crest = vec3(39.0 / 255.0, 215.0 / 255.0, 199.0 / 255.0);
-  vec3 deep = vec3(0.0, 0.0, 0.22);
-  float m = clamp(0.28 + vWave * 1.65, 0.0, 1.0);
-  vec3 c = mix(deep, crest, m * m);
-  c *= 1.32;
-  gl_FragColor = vec4(c, uOpacity);
+  const indices: number[] = [];
+  for (let j = 0; j < vz; j++) {
+    for (let i = 0; i < vx - 1; i++) {
+      const a = j * vx + i;
+      const b = j * vx + i + 1;
+      indices.push(a, b);
+    }
+  }
+  for (let i = 0; i < vx; i++) {
+    for (let j = 0; j < vz - 1; j++) {
+      const a = j * vx + i;
+      const b = (j + 1) * vx + i;
+      indices.push(a, b);
+    }
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geo.setIndex(indices);
+  geo.computeBoundingSphere();
+
+  const ix = new Float32Array(vertCount);
+  const iz = new Float32Array(vertCount);
+  for (let j = 0; j < vz; j++) {
+    for (let i = 0; i < vx; i++) {
+      const k = j * vx + i;
+      ix[k] = (i / nx) * 2 * half - half;
+      iz[k] = (j / nz) * 2 * half - half;
+    }
+  }
+
+  return { colors, geo, ix, iz, vertCount };
 }
-`;
 
 function CameraRig({ hostSelector }: { hostSelector: string }) {
   const hostRef = useRef<HTMLElement | null>(null);
@@ -73,27 +99,30 @@ function CameraRig({ hostSelector }: { hostSelector: string }) {
   return null;
 }
 
-function CyberSea({ hostSelector }: { hostSelector: string }) {
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+function CyberSeaGrid({ hostSelector }: { hostSelector: string }) {
+  const lineRef = useRef<THREE.LineSegments>(null);
   const hostRef = useRef<HTMLElement | null>(null);
+  const { geo, ix, iz, vertCount } = useMemo(
+    () => buildGridLineGeometry(GRID_SEG, GRID_SEG, GRID_HALF),
+    [],
+  );
 
   useEffect(() => {
     hostRef.current = document.querySelector(hostSelector);
   }, [hostSelector]);
 
-  const uniforms = useMemo(
+  const base = useMemo(
     () => ({
-      uTime: { value: 0 },
-      uDispAmp: { value: 1 },
-      uOpacity: { value: 0.86 },
-      uScrollBoost: { value: 0 },
+      b: new THREE.Color("#050814"),
+      t: new THREE.Color("#0d4a42"),
     }),
     [],
   );
+  const tmp = useMemo(() => new THREE.Color(), []);
 
   useFrame((state) => {
-    const mat = materialRef.current;
-    if (!mat) return;
+    const mesh = lineRef.current;
+    if (!mesh) return;
 
     let distortion = 1;
     let opacity = 0.86;
@@ -108,26 +137,47 @@ function CyberSea({ hostSelector }: { hostSelector: string }) {
 
     const rootCs = getComputedStyle(document.documentElement);
     const sv = Number.parseFloat(rootCs.getPropertyValue("--wave-scroll-vel"));
-    mat.uniforms.uScrollBoost.value = Number.isFinite(sv) ? sv : 0;
-    mat.uniforms.uTime.value = state.clock.elapsedTime;
-    mat.uniforms.uDispAmp.value = Math.max(0.05, distortion) * 0.82;
-    mat.uniforms.uOpacity.value = opacity;
+    const boost = Number.isFinite(sv) ? sv : 0;
+    const t = state.clock.elapsedTime;
+    const amp = Math.max(0.06, distortion) * 0.78;
+
+    const posAttr = mesh.geometry.getAttribute("position") as THREE.BufferAttribute;
+    const colAttr = mesh.geometry.getAttribute("color") as THREE.BufferAttribute;
+    const arr = posAttr.array as Float32Array;
+    const carr = colAttr.array as Float32Array;
+
+    for (let k = 0; k < vertCount; k++) {
+      const x = ix[k];
+      const z = iz[k];
+      const y = waveY(x, z, t, amp, boost);
+      arr[k * 3] = x;
+      arr[k * 3 + 1] = y;
+      arr[k * 3 + 2] = z;
+
+      const crest = (y / (amp + 1e-4) + 1) * 0.5;
+      tmp.copy(base.b).lerp(base.t, Math.min(1, crest * 0.85 + boost * 0.12));
+      tmp.multiplyScalar(0.35 + opacity * 0.55);
+      carr[k * 3] = tmp.r;
+      carr[k * 3 + 1] = tmp.g;
+      carr[k * 3 + 2] = tmp.b;
+    }
+    posAttr.needsUpdate = true;
+    colAttr.needsUpdate = true;
+
+    const mat = mesh.material as THREE.LineBasicMaterial;
+    mat.opacity = Math.min(1, 0.22 + opacity * 0.52);
+    mat.transparent = true;
   });
 
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-      <planeGeometry args={[52, 52, 96, 96]} />
-      <shaderMaterial
-        ref={materialRef}
-        fragmentShader={seaFragmentShader}
-        transparent
-        uniforms={uniforms}
-        vertexShader={seaVertexShader}
-        wireframe
+    <lineSegments geometry={geo} ref={lineRef}>
+      <lineBasicMaterial
         depthTest
-        depthWrite
+        depthWrite={false}
+        transparent
+        vertexColors
       />
-    </mesh>
+    </lineSegments>
   );
 }
 
@@ -193,7 +243,7 @@ function HeroWaveCanvasActive({
         style={{ width: "100%", height: "100%" }}
       >
         <CameraRig hostSelector={hostSelector} />
-        <CyberSea hostSelector={hostSelector} />
+        <CyberSeaGrid hostSelector={hostSelector} />
         <EffectComposer>
           <Bloom
             intensity={HERO_BLOOM_INTENSITY}
