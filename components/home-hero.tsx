@@ -55,6 +55,7 @@ export function HomeHero() {
               id="hero-title"
               className="wordmark-display text-[clamp(3rem,9.5vw,7.25rem)] text-[var(--foreground)]"
               data-hero-reveal
+              data-hero-wordmark
             >
               SurferGarage
             </h1>

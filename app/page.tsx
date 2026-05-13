@@ -1,67 +1,29 @@
 import { HomeCall } from "@/components/home-call";
+import { HomeFounders } from "@/components/home-founders";
+import { HomeSocial } from "@/components/home-social";
 import { GlowRiver } from "@/components/glow-river";
 import { HomeHero } from "@/components/home-hero";
 import { HomeScrollChoreography } from "@/components/home-scroll-choreography";
+import { PROOF_STREAMS } from "@/lib/proof-streams";
 import Image from "next/image";
-
-const proofStreams: {
-  key: string;
-  titleEn: string;
-  titleZh: string;
-  introZh?: string;
-  rows: { title: string; meta: string; href?: string }[];
-}[] = [
-  {
-    key: "founder-talk",
-    titleEn: "Founder Talk",
-    titleZh: "深度访谈",
-    introZh: "拒绝造神，保留失败与代价账本；讲动作，不讲神话。",
-    rows: [
-      {
-        title: "Vol.001 真正值得听的建议，来自海里的人",
-        meta: "发刊词 · 待上架",
-      },
-    ],
-  },
-  {
-    key: "coffee-chat",
-    titleEn: "Coffee Chat",
-    titleZh: "线下碰撞",
-    introZh: "带着真实问题下场，不聊空趋势，只拆可执行路径。",
-    rows: [
-      {
-        title:
-          "拒绝平庸社交：寻找长三角的 19 岁硬件极客与 AI 独立开发者",
-        meta: "咖啡局 · 滚动开放",
-        href: "#",
-      },
-    ],
-  },
-  {
-    key: "builder-lab",
-    titleEn: "Builder Lab",
-    titleZh: "闭门会",
-    introZh: "手搓、试错、复盘。所有讨论以可验证闭环为终点。",
-    rows: [
-      {
-        title: "48小时黑客松复盘：从 Demo 到验证",
-        meta: "Lab · 纪要向会员发放",
-        href: "#",
-      },
-    ],
-  },
-];
 
 export default function Home() {
   return (
     <div className="relative flex min-h-full flex-col">
+      <a
+        href="#manifesto"
+        className="fixed left-4 top-4 z-[100] -translate-y-[160%] rounded-sm border border-[var(--hairline)] bg-[var(--background)] px-4 py-2 font-[family-name:var(--font-zh)] text-sm text-[var(--foreground)] shadow-lg transition-transform duration-200 focus:translate-y-0"
+      >
+        跳到主要内容
+      </a>
+
       <GlowRiver />
 
       <header className="sticky top-0 z-10 border-b border-[var(--hairline)] bg-[var(--background)]/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 md:px-10 lg:px-12">
           <a
             href="#manifesto"
-            className="flex items-center gap-3.5 font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--foreground)] transition-opacity hover:opacity-85"
+            className="flex items-center gap-3.5 rounded-sm font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--foreground)] transition-opacity hover:opacity-85"
           >
             <Image
               src="/brand-sg-logo.png"
@@ -80,19 +42,31 @@ export default function Home() {
           >
             <a
               href="#manifesto"
-              className="text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
+              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
             >
               Manifesto
             </a>
             <a
               href="#proof"
-              className="text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
+              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
             >
               The Proof
             </a>
             <a
+              href="#social"
+              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
+            >
+              Connect
+            </a>
+            <a
+              href="#founders"
+              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
+            >
+              Founders
+            </a>
+            <a
               href="#call"
-              className="text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
+              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
             >
               The Call
             </a>
@@ -100,7 +74,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1">
+      <main className="sg-main-depth flex-1">
         <HomeHero />
 
         <section
@@ -113,22 +87,24 @@ export default function Home() {
               className="col-span-12 md:col-span-4 md:pr-8"
               data-proof-pin
             >
-              <p
-                id="proof-heading"
-                className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]"
-              >
-                The Proof
-              </p>
-              <p className="mt-4 font-[family-name:var(--font-zh)] text-[15px] leading-relaxed text-[var(--muted-strong)]">
-                我们不讲趋势预测，只记录真实动作。每条内容都要有决策、代价、验证结果；没有证据链，就不发布。
-              </p>
+              <div data-proof-intro>
+                <p
+                  id="proof-heading"
+                  className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]"
+                >
+                  The Proof
+                </p>
+                <p className="mt-4 font-[family-name:var(--font-zh)] text-[15px] leading-relaxed text-[var(--muted-strong)]">
+                  我们不讲趋势预测，只记录真实动作。每条内容都要有决策、代价、验证结果；没有证据链，就不发布。
+                </p>
+              </div>
             </div>
 
             <div
               className="col-span-12 mt-14 md:col-span-7 md:col-start-6 md:mt-0"
               data-proof-streams
             >
-              {proofStreams.map((stream, streamIndex) => (
+              {PROOF_STREAMS.map((stream, streamIndex) => (
                 <div
                   key={stream.key}
                   data-proof-stream
@@ -159,7 +135,7 @@ export default function Home() {
                         key={`${stream.key}-${row.title}`}
                         className="border-b border-[var(--hairline)]"
                       >
-                        {row.href ? (
+                        {row.href && row.href !== "#" ? (
                           <a
                             href={row.href}
                             className="group grid grid-cols-12 gap-x-4 py-5 md:py-[1.125rem] md:items-baseline"
@@ -198,6 +174,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <HomeSocial />
+
+        <HomeFounders />
 
         <HomeCall />
       </main>

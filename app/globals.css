@@ -3,14 +3,29 @@
 :root {
   --background: #131313;
   --foreground: #f3f4f6;
-  --muted: #9ca3af;
+  --muted: #8b93a8;
   --muted-strong: #d1d5db;
-  --hairline: rgba(156, 163, 175, 0.32);
-  --brand-primary: #0000e2;
-  --brand-navy: #000644;
-  --brand-teal: #22d3c5;
+  --hairline: rgba(139, 147, 168, 0.28);
+  /* 浪前色板：闪电蓝 / 海军蓝 / 脉冲青（见 wiki/06 §10） */
+  --brand-primary: #0009e2;
+  --brand-navy: #060644;
+  --brand-teal: #27d7c7;
+  /* 主内容纵向深度：上偏海军蓝 → 下 Canvas Black */
+  --depth-surface: #0c0c2e;
+  --depth-mid: #0f0f22;
+  --depth-abyss: #131313;
   /* Lenis → GSAP quickTo → hero fragment uniform (0–1). */
   --wave-scroll-vel: 0;
+}
+
+/* 主列纵向渐变；WebGL 底床在 layout，此处背景为半透明叠层感由渐变自身提供 */
+.sg-main-depth {
+  background: linear-gradient(
+    180deg,
+    var(--depth-surface) 0%,
+    var(--depth-mid) 42%,
+    var(--depth-abyss) 100%
+  );
 }
 
 @theme inline {
@@ -32,6 +47,16 @@ body {
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* 键盘导航：脉冲青焦点环（与品牌色板一致） */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-teal);
+  outline-offset: 3px;
 }
 
 .wordmark-display {
