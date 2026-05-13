@@ -9,7 +9,9 @@ import * as THREE from "three";
 const HERO_WAVE_VERTICAL_AMPLITUDE = 3.1;
 const HERO_WAVE_RIBBON_THICKNESS = 8;
 const HERO_WAVE_RIBBON_REF = 5;
-const HERO_WAVE_BLOOM_INTENSITY = 2.2;
+const HERO_WAVE_BLOOM_INTENSITY = 1.95;
+const HERO_WAVE_BLOOM_LUMINANCE_THRESHOLD = 0.58;
+const HERO_WAVE_BLOOM_LUMINANCE_SMOOTHING = 0.12;
 
 const vertexShader = `
 varying vec2 vUv;
@@ -33,6 +35,8 @@ uniform float uScrollVel;
 
 const float VERTICAL_AMPLITUDE = ${HERO_WAVE_VERTICAL_AMPLITUDE.toFixed(2)};
 const float RIBBON_EDGE_SCALE = ${(HERO_WAVE_RIBBON_THICKNESS / HERO_WAVE_RIBBON_REF).toFixed(4)};
+// Tighter core = smaller lineW (screen-space thickness at sin zero-crossings).
+const float LINE_CORE = 0.048 / max(0.85, RIBBON_EDGE_SCALE);
 
 float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -82,18 +86,32 @@ void main() {
   flow += pointerBlast * 2.35 * distortion;
   flow += sin(p.x * 1.35 - t * 1.15) * 0.11 * VERTICAL_AMPLITUDE * distortion * scrollBoost;
 
-  // Few, broad luminous bands (low spatial freq on flow ≈ water swell, not zebra stripes).
-  float ribbonA = smoothstep(0.24 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 2.85 + p.x * 0.62) - 0.045));
-  float ribbonB = smoothstep(0.28 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 2.25 - p.x * 0.48 + t * 0.38) + 0.07));
-  float ribbons = max(ribbonA * 0.95, ribbonB * 0.78);
-  ribbons = pow(ribbons, 0.78);
+  // Sharp parallel ridges: thin bright band at sin zero-crossings (not wide smoothstep on |sin| peaks).
+  float k = 2.52;
+  float ph = p.x * 0.56 + t * 0.19;
+  float lw = LINE_CORE * mix(1.15, 0.82, distortion);
+  float r0 = 1.0 - smoothstep(0.0, lw, abs(sin(flow * k + ph)));
+  float r1 = 1.0 - smoothstep(0.0, lw, abs(sin(flow * k + ph + 2.094395102)));
+  float r2 = 1.0 - smoothstep(0.0, lw, abs(sin(flow * k + ph + 4.188790205)));
+  float k2 = 1.88;
+  float ph2 = -p.x * 0.4 + t * 0.11;
+  float r3 = 1.0 - smoothstep(0.0, lw * 1.08, abs(sin(flow * k2 + ph2 + 1.047197551)));
 
-  vec3 blue = vec3(0.0, 0.0, 0.886);
-  vec3 cyan = vec3(0.153, 0.843, 0.78);
-  // Favor cyan for stronger emission-like readability.
-  float mixV = clamp(0.58 + n * 0.22 + sin(p.x * 0.85 + t * 0.65) * 0.1, 0.28, 0.95);
-  vec3 waveColor = mix(blue, cyan, mixV);
-  vec3 color = waveColor * ribbons * (3.55 + uScrollVel * 0.55);
+  float ribbons = max(max(r0, r1), max(r2, r3 * 0.9));
+
+  // Folded parallel harmonics (fract): subtle extra ripple, low weight so it does not re-fog.
+  float fold = abs(fract(flow * 0.36 + p.x * 0.2 + n * 0.07 + t * 0.03) - 0.5) * 2.0;
+  float rip = (1.0 - smoothstep(0.4, 0.5, fold)) * 0.2;
+  ribbons = max(ribbons, rip);
+
+  ribbons = pow(clamp(ribbons, 0.0, 1.0), 0.92);
+
+  // Brand: trough = lightning blue #0000E2, crest = teal #27D7C7 (only where ribbons peak).
+  vec3 baseBlue = vec3(0.0, 0.0, 226.0 / 255.0);
+  vec3 peakTeal = vec3(39.0 / 255.0, 215.0 / 255.0, 199.0 / 255.0);
+  float peak = smoothstep(0.22, 0.98, ribbons);
+  vec3 waveColor = mix(baseBlue, peakTeal, peak * 0.94);
+  vec3 color = waveColor * (0.42 + ribbons * (2.35 + uScrollVel * 0.42));
 
   gl_FragColor = vec4(color, ribbons * uOpacity);
 }
@@ -255,8 +273,8 @@ function HeroWaveCanvasActive({
         <EffectComposer>
           <Bloom
             intensity={HERO_WAVE_BLOOM_INTENSITY}
-            luminanceThreshold={0.2}
-            luminanceSmoothing={0.16}
+            luminanceThreshold={HERO_WAVE_BLOOM_LUMINANCE_THRESHOLD}
+            luminanceSmoothing={HERO_WAVE_BLOOM_LUMINANCE_SMOOTHING}
             mipmapBlur
           />
         </EffectComposer>
