@@ -5,6 +5,12 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
+/** 「深海闪电 / 巨浪」视觉基线（与 wiki/00-Vision 一致；调参请同步文档）。 */
+const HERO_WAVE_VERTICAL_AMPLITUDE = 3.1;
+const HERO_WAVE_RIBBON_THICKNESS = 8;
+const HERO_WAVE_RIBBON_REF = 5;
+const HERO_WAVE_BLOOM_INTENSITY = 2.2;
+
 const vertexShader = `
 varying vec2 vUv;
 void main() {
@@ -23,6 +29,9 @@ uniform vec2 uPointer;
 uniform float uPointerForce;
 uniform float uDistortion;
 uniform float uOpacity;
+
+const float VERTICAL_AMPLITUDE = ${HERO_WAVE_VERTICAL_AMPLITUDE.toFixed(2)};
+const float RIBBON_EDGE_SCALE = ${(HERO_WAVE_RIBBON_THICKNESS / HERO_WAVE_RIBBON_REF).toFixed(4)};
 
 float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -67,13 +76,13 @@ void main() {
 
   float distortion = max(0.02, uDistortion);
   float flow = p.y;
-  flow += n * 0.72 * distortion;
+  flow += n * 0.72 * VERTICAL_AMPLITUDE * distortion;
   flow += pointerBlast * 2.35 * distortion;
-  flow += sin(p.x * 2.7 - t * 1.9) * 0.11 * distortion;
+  flow += sin(p.x * 2.7 - t * 1.9) * 0.11 * VERTICAL_AMPLITUDE * distortion;
 
-  // Thick luminous ribbons (not thin lines).
-  float ribbonA = smoothstep(0.22, 0.0, abs(sin(flow * 9.0 + p.x * 1.45) - 0.04));
-  float ribbonB = smoothstep(0.26, 0.0, abs(sin(flow * 7.1 - p.x * 1.1 + t * 0.72) + 0.08));
+  // Thick luminous ribbons; RIBBON_EDGE_SCALE from Ribbon Thickness (8 vs ref 5).
+  float ribbonA = smoothstep(0.22 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 9.0 + p.x * 1.45) - 0.04));
+  float ribbonB = smoothstep(0.26 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 7.1 - p.x * 1.1 + t * 0.72) + 0.08));
   float ribbons = max(ribbonA * 0.95, ribbonB * 0.78);
   ribbons = pow(ribbons, 0.72);
 
@@ -224,7 +233,7 @@ function HeroWaveCanvasActive({ hostSelector }: { hostSelector: string }) {
         <WavePlane coarsePointer={coarsePointer} hostSelector={hostSelector} />
         <EffectComposer>
           <Bloom
-            intensity={1.5}
+            intensity={HERO_WAVE_BLOOM_INTENSITY}
             luminanceThreshold={0.2}
             luminanceSmoothing={0.16}
             mipmapBlur
