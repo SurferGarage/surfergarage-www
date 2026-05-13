@@ -175,7 +175,25 @@ export function HomeScrollChoreography() {
 
     ScrollTrigger.refresh();
 
+    let resizeT: ReturnType<typeof setTimeout> | undefined;
+    const onResize = () => {
+      if (resizeT) clearTimeout(resizeT);
+      resizeT = setTimeout(() => {
+        resizeT = undefined;
+        ScrollTrigger.refresh();
+      }, 120);
+    };
+    window.addEventListener("resize", onResize);
+
+    let fontsCancelled = false;
+    void document.fonts?.ready?.then(() => {
+      if (!fontsCancelled) ScrollTrigger.refresh();
+    });
+
     return () => {
+      fontsCancelled = true;
+      window.removeEventListener("resize", onResize);
+      if (resizeT) clearTimeout(resizeT);
       mm.revert();
       ctx.revert();
     };

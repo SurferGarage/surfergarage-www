@@ -9,7 +9,8 @@ Official website for SurferGarage, built with a performance-first and readabilit
 - Tailwind CSS v4
 - GSAP + ScrollTrigger
 - Lenis smooth scrolling
-- CSS/SVG ambient background effects
+- CSS/SVG ambient background (Glow River, Call orb)
+- Three.js + React Three Fiber + postprocessing (Hero wave + Bloom, gated by motion preference)
 
 ## Local Development
 

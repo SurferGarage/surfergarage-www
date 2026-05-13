@@ -88,7 +88,13 @@ void main() {
 }
 `;
 
-function WavePlane({ hostSelector }: { hostSelector: string }) {
+function WavePlane({
+  hostSelector,
+  coarsePointer,
+}: {
+  hostSelector: string;
+  coarsePointer: boolean;
+}) {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const pointerCurrent = useRef(new THREE.Vector2(0.5, 0.5));
   const pointerTarget = useRef(new THREE.Vector2(0.5, 0.5));
@@ -142,7 +148,8 @@ function WavePlane({ hostSelector }: { hostSelector: string }) {
       onPointerMove={(event) => {
         if (!event.uv) return;
         pointerTarget.current.set(event.uv.x, event.uv.y);
-        pointerForce.current = Math.min(1.6, pointerForce.current + 0.54);
+        const bump = coarsePointer ? 0.22 : 0.54;
+        pointerForce.current = Math.min(1.6, pointerForce.current + bump);
       }}
       onPointerLeave={() => {
         pointerTarget.current.set(0.5, 0.5);
@@ -161,6 +168,73 @@ function WavePlane({ hostSelector }: { hostSelector: string }) {
   );
 }
 
+function HeroWaveCanvasActive({ hostSelector }: { hostSelector: string }) {
+  const [runLoop, setRunLoop] = useState(true);
+  const [coarsePointer, setCoarsePointer] = useState(false);
+
+  useEffect(() => {
+    const host = document.querySelector<HTMLElement>(hostSelector);
+    if (!host) return;
+
+    const intersecting = { current: true };
+    const apply = () => {
+      setRunLoop(intersecting.current && !document.hidden);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e) return;
+        intersecting.current = e.isIntersecting;
+        apply();
+      },
+      { root: null, rootMargin: "0px 0px 12% 0px", threshold: 0 },
+    );
+    io.observe(host);
+    apply();
+
+    const onVisibility = () => {
+      apply();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      io.disconnect();
+    };
+  }, [hostSelector]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse)");
+    const sync = () => setCoarsePointer(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 z-0" aria-hidden>
+      <Canvas
+        frameloop={runLoop ? "always" : "never"}
+        gl={{ alpha: true, antialias: false, depth: false, stencil: false }}
+        dpr={[1, 1.5]}
+        camera={{ position: [0, 0, 1], fov: 50 }}
+        style={{ width: "100%", height: "100%" }}
+      >
+        <WavePlane coarsePointer={coarsePointer} hostSelector={hostSelector} />
+        <EffectComposer>
+          <Bloom
+            intensity={1.5}
+            luminanceThreshold={0.2}
+            luminanceSmoothing={0.16}
+            mipmapBlur
+          />
+        </EffectComposer>
+      </Canvas>
+    </div>
+  );
+}
+
 export function HeroWaveCanvas({ hostSelector }: { hostSelector: string }) {
   const [reduced, setReduced] = useState<boolean | null>(null);
 
@@ -174,24 +248,5 @@ export function HeroWaveCanvas({ hostSelector }: { hostSelector: string }) {
 
   if (reduced !== false) return null;
 
-  return (
-    <div className="absolute inset-0 z-0" aria-hidden>
-      <Canvas
-        gl={{ alpha: true, antialias: false, depth: false, stencil: false }}
-        dpr={[1, 1.5]}
-        camera={{ position: [0, 0, 1], fov: 50 }}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <WavePlane hostSelector={hostSelector} />
-        <EffectComposer>
-          <Bloom
-            intensity={1.5}
-            luminanceThreshold={0.2}
-            luminanceSmoothing={0.16}
-            mipmapBlur
-          />
-        </EffectComposer>
-      </Canvas>
-    </div>
-  );
+  return <HeroWaveCanvasActive hostSelector={hostSelector} />;
 }
