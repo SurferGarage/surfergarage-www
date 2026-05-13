@@ -75,8 +75,12 @@ export function HomeScrollChoreography() {
 
       if (heroWave && proof) {
         gsap.to(heroWave, {
-          "--wave-distortion": 0.08,
-          "--wave-opacity": 0.12,
+          "--wave-distortion": 0.06,
+          "--wave-opacity": 0.1,
+          "--hero-cam-y": 1.05,
+          "--hero-cam-z": 3.65,
+          "--hero-look-y": -4.35,
+          "--hero-look-z": 0.4,
           ease: "none",
           scrollTrigger: {
             trigger: proof,

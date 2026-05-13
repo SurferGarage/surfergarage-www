@@ -11,6 +11,12 @@ export function HomeHero() {
         {
           "--wave-distortion": 1,
           "--wave-opacity": 0.86,
+          "--hero-cam-x": 0,
+          "--hero-cam-y": 3.12,
+          "--hero-cam-z": 7.6,
+          "--hero-look-x": 0,
+          "--hero-look-y": 0.12,
+          "--hero-look-z": 0,
         } as CSSProperties
       }
     >
