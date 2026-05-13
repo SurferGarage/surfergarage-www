@@ -29,6 +29,7 @@ uniform vec2 uPointer;
 uniform float uPointerForce;
 uniform float uDistortion;
 uniform float uOpacity;
+uniform float uScrollVel;
 
 const float VERTICAL_AMPLITUDE = ${HERO_WAVE_VERTICAL_AMPLITUDE.toFixed(2)};
 const float RIBBON_EDGE_SCALE = ${(HERO_WAVE_RIBBON_THICKNESS / HERO_WAVE_RIBBON_REF).toFixed(4)};
@@ -75,10 +76,11 @@ void main() {
   float pointerBlast = exp(-dist * 34.0) * uPointerForce;
 
   float distortion = max(0.02, uDistortion);
+  float scrollBoost = 1.0 + uScrollVel * 0.48;
   float flow = p.y;
-  flow += n * 0.72 * VERTICAL_AMPLITUDE * distortion;
+  flow += n * 0.72 * VERTICAL_AMPLITUDE * distortion * scrollBoost;
   flow += pointerBlast * 2.35 * distortion;
-  flow += sin(p.x * 2.7 - t * 1.9) * 0.11 * VERTICAL_AMPLITUDE * distortion;
+  flow += sin(p.x * 2.7 - t * 1.9) * 0.11 * VERTICAL_AMPLITUDE * distortion * scrollBoost;
 
   // Thick luminous ribbons; RIBBON_EDGE_SCALE from Ribbon Thickness (8 vs ref 5).
   float ribbonA = smoothstep(0.22 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 9.0 + p.x * 1.45) - 0.04));
@@ -91,7 +93,7 @@ void main() {
   // Favor cyan for stronger emission-like readability.
   float mixV = clamp(0.58 + n * 0.22 + sin(p.x * 1.4 + t) * 0.1, 0.28, 0.95);
   vec3 waveColor = mix(blue, cyan, mixV);
-  vec3 color = waveColor * ribbons * 3.4;
+  vec3 color = waveColor * ribbons * (3.4 + uScrollVel * 0.55);
 
   gl_FragColor = vec4(color, ribbons * uOpacity);
 }
@@ -118,6 +120,7 @@ function WavePlane({
       uPointerForce: { value: 0 },
       uDistortion: { value: 1.0 },
       uOpacity: { value: 0.8 },
+      uScrollVel: { value: 0 },
     }),
     [],
   );
@@ -143,6 +146,10 @@ function WavePlane({
       if (Number.isFinite(d)) distortion = d;
       if (Number.isFinite(o)) opacity = o;
     }
+
+    const rootComputed = getComputedStyle(document.documentElement);
+    const sv = Number.parseFloat(rootComputed.getPropertyValue("--wave-scroll-vel"));
+    material.uniforms.uScrollVel.value = Number.isFinite(sv) ? sv : 0;
 
     material.uniforms.uTime.value = state.clock.elapsedTime;
     material.uniforms.uResolution.value.set(state.size.width, state.size.height);
@@ -177,7 +184,13 @@ function WavePlane({
   );
 }
 
-function HeroWaveCanvasActive({ hostSelector }: { hostSelector: string }) {
+function HeroWaveCanvasActive({
+  hostSelector,
+  variant,
+}: {
+  hostSelector: string;
+  variant: "embedded" | "global";
+}) {
   const [runLoop, setRunLoop] = useState(true);
   const [coarsePointer, setCoarsePointer] = useState(false);
 
@@ -221,8 +234,13 @@ function HeroWaveCanvasActive({ hostSelector }: { hostSelector: string }) {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
+  const shellClass =
+    variant === "global"
+      ? "pointer-events-none fixed inset-0 z-0"
+      : "absolute inset-0 z-0";
+
   return (
-    <div className="absolute inset-0 z-0" aria-hidden>
+    <div className={shellClass} aria-hidden>
       <Canvas
         frameloop={runLoop ? "always" : "never"}
         gl={{ alpha: true, antialias: false, depth: false, stencil: false }}
@@ -230,7 +248,10 @@ function HeroWaveCanvasActive({ hostSelector }: { hostSelector: string }) {
         camera={{ position: [0, 0, 1], fov: 50 }}
         style={{ width: "100%", height: "100%" }}
       >
-        <WavePlane coarsePointer={coarsePointer} hostSelector={hostSelector} />
+        <WavePlane
+          coarsePointer={coarsePointer && variant !== "global"}
+          hostSelector={hostSelector}
+        />
         <EffectComposer>
           <Bloom
             intensity={HERO_WAVE_BLOOM_INTENSITY}
@@ -244,7 +265,14 @@ function HeroWaveCanvasActive({ hostSelector }: { hostSelector: string }) {
   );
 }
 
-export function HeroWaveCanvas({ hostSelector }: { hostSelector: string }) {
+export function HeroWaveCanvas({
+  hostSelector,
+  variant = "embedded",
+}: {
+  hostSelector: string;
+  /** `global`: root layout singleton, fixed under content, no pointer sculpting. */
+  variant?: "embedded" | "global";
+}) {
   const [reduced, setReduced] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -257,5 +285,5 @@ export function HeroWaveCanvas({ hostSelector }: { hostSelector: string }) {
 
   if (reduced !== false) return null;
 
-  return <HeroWaveCanvasActive hostSelector={hostSelector} />;
+  return <HeroWaveCanvasActive hostSelector={hostSelector} variant={variant} />;
 }

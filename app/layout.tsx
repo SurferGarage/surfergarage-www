@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
+import { HeroWaveCanvas } from "@/components/hero-wave-canvas";
 import { SmoothScroll } from "@/components/smooth-scroll";
 
 const ibm = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-en",
   display: "swap",
 });
 
 const notoSansSC = Noto_Sans_SC({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-zh",
   display: "swap",
 });
@@ -35,6 +36,7 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <SmoothScroll>
+          <HeroWaveCanvas hostSelector="[data-hero-wave]" variant="global" />
           <div className="relative z-[1] min-h-full">{children}</div>
         </SmoothScroll>
       </body>

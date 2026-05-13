@@ -7,10 +7,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import "lenis/dist/lenis.css";
 
+import { LenisContext } from "@/components/lenis-context";
+import { WaveScrollVelocityBridge } from "@/components/wave-scroll-velocity-bridge";
+
 gsap.registerPlugin(ScrollTrigger);
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const [reduced, setReduced] = useState<boolean | null>(null);
+  const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -24,25 +28,32 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     if (reduced === null) return;
 
     if (reduced) {
+      queueMicrotask(() => {
+        setLenis(null);
+      });
       return;
     }
 
-    const lenis = new Lenis({
+    const lenisInstance = new Lenis({
       autoRaf: false,
       lerp: 0.085,
       wheelMultiplier: 0.85,
     });
 
-    lenis.on("scroll", () => {
+    queueMicrotask(() => {
+      setLenis(lenisInstance);
+    });
+
+    lenisInstance.on("scroll", () => {
       ScrollTrigger.update();
     });
 
     ScrollTrigger.scrollerProxy(document.documentElement, {
       scrollTop(value) {
         if (typeof value === "number") {
-          lenis.scrollTo(value, { immediate: true });
+          lenisInstance.scrollTo(value, { immediate: true });
         }
-        return lenis.animatedScroll;
+        return lenisInstance.animatedScroll;
       },
       getBoundingClientRect() {
         return {
@@ -55,13 +66,13 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     });
 
     const onResize = () => {
-      lenis.resize();
+      lenisInstance.resize();
       ScrollTrigger.refresh();
     };
     window.addEventListener("resize", onResize);
 
     const ticker = (time: number) => {
-      lenis.raf(time * 1000);
+      lenisInstance.raf(time * 1000);
     };
     gsap.ticker.add(ticker);
     gsap.ticker.lagSmoothing(0);
@@ -72,9 +83,17 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       window.removeEventListener("resize", onResize);
       gsap.ticker.remove(ticker);
       ScrollTrigger.getAll().forEach((t) => t.kill());
-      lenis.destroy();
+      lenisInstance.destroy();
+      queueMicrotask(() => {
+        setLenis(null);
+      });
     };
   }, [reduced]);
 
-  return children;
+  return (
+    <LenisContext.Provider value={lenis}>
+      <WaveScrollVelocityBridge />
+      {children}
+    </LenisContext.Provider>
+  );
 }

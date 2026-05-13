@@ -1,7 +1,5 @@
 import type { CSSProperties } from "react";
 
-import { HeroWaveCanvas } from "@/components/hero-wave-canvas";
-
 export function HomeHero() {
   return (
     <section
@@ -16,8 +14,6 @@ export function HomeHero() {
         } as CSSProperties
       }
     >
-      <HeroWaveCanvas hostSelector="[data-hero-wave]" />
-
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(19,19,19,0.18)_0%,rgba(19,19,19,0.74)_70%,rgba(19,19,19,0.94)_100%)]"

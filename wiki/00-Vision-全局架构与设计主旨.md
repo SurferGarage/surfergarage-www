@@ -24,7 +24,7 @@ SurferGarage V2 **不是传统企业官网**，而是 **高信息密度的数字
 | 角色 | 语义 | 说明 |
 |------|------|------|
 | **The Canvas（空间底色）** | 深海黑 / Canvas Black | 主背景恒定深色，避免刷新亮度跳变 |
-| **The Typography（信息骨架）** | 高对比正文 + 英文全大写标签体系 | 主标题与 manifesto 使用流体字号；全大写元数据需配合 **letter-spacing**（见 `02-视觉与动效系统.md`） |
+| **The Typography（信息骨架）** | 高对比正文 + 英文全大写标签体系 | `body` 默认 **`font-weight: 300`** + **灰度字体平滑**（削弱暗底白字膨胀感）；标题/字标仍用显式 `font-medium` 等覆盖；跑马灯 **`letter-spacing: -0.02em`**（巨型全大写混凝土块） |
 | **The Energy（环境能量）** | 闪电蓝 / 海冲青作为**光**而非正文色 | Glow River、Shader 光带、Bloom、跑马灯描边等「暗流」 |
 | **The Accent（交互点睛）** | 海冲青用于链接、关键标签、行动点 | 正文不滥用霓虹色块 |
 
@@ -62,9 +62,10 @@ SurferGarage V2 **不是传统企业官网**，而是 **高信息密度的数字
 ## 4. 动效与性能契约（Motion & Performance Contract）
 
 1. **Scroll-driven 优先**：关键节奏用 **ScrollTrigger + scrub** 与滚动位置绑定，避免与阅读无关的「自嗨时间轴」。
-2. **渲染隔离**：WebGL **仅首屏 Hero**；**IntersectionObserver + `document.hidden`** 控制 `frameloop`，视口外停帧（见 `03`）。
-3. **数据进 GPU 的路径**：波浪强度优先通过 **CSS 自定义属性** 由 GSAP 驱动，Shader **每帧读 computed style** 更新 uniform（实现简单；若 profiling 有压力再改为 ref 直通，见 `00-项目总览.md` 已知风险）。
-4. **降级底线**：`prefers-reduced-motion: reduce` 下 **不挂载 Hero Canvas**，跑马灯等 CSS 动画关闭；**纯静态网格与排版仍必须成立**。
+2. **渲染隔离（路由级持久化）**：`HeroWaveCanvas` **`variant="global"`** 挂在 `app/layout.tsx` 的 `SmoothScroll` 内，与内容区 **兄弟**、`fixed inset-0 z-0 pointer-events-none`，避免未来子路由切换时反复卸载/重编译 WebGL。`--wave-distortion` / `--wave-opacity` 仍由页面内 **`[data-hero-wave]`**（`HomeHero`）承载；无该节点时 Shader 使用默认强度。`IntersectionObserver` 仍观察 **`[data-hero-wave]`**，离开 Manifesto 视口即 `frameloop="never"`。  
+3. **滚动速度 → 流体感**：`LenisContext` 暴露 Lenis 实例；`WaveScrollVelocityBridge` 用 **`gsap.quickTo`**（约 `0.5s` / `power2.out`）平滑 `lenis.velocity`，写入 `:root` 的 **`--wave-scroll-vel`**（0–1），Shader **`uScrollVel`** 每帧读取，增强巨浪「黏性」衰减而非戛然而止。  
+4. **数据进 GPU 的路径**：波浪强度优先通过 **CSS 自定义属性** 由 GSAP 驱动，Shader **每帧读 computed style** 更新 uniform（实现简单；若 profiling 有压力再改为 ref 直通，见 `00-项目总览.md` 已知风险）。  
+5. **降级底线**：`prefers-reduced-motion: reduce` 下 **不挂载 Hero Canvas**，跑马灯等 CSS 动画关闭；**纯静态网格与排版仍必须成立**。
 
 ---
 
@@ -73,7 +74,7 @@ SurferGarage V2 **不是传统企业官网**，而是 **高信息密度的数字
 建议按流水线推进，避免并行扯皮：
 
 1. **[基建]** 锁定全局 CSS 变量、字体、12 列栅格与 hairline 分割语言。  
-2. **[首屏]** 固化 `HeroWaveCanvas` + 跑马灯 + Hero 遮罩层级；Shader 参数以**本节 Layer 1 表格**为单一事实来源。  
+2. **[首屏]** `HeroWaveCanvas` **layout 单例** + `HomeHero` 控制面（`data-hero-wave`）+ 跑马灯 + Hero 遮罩层级；Shader 参数以 **Layer 1 表格** 为单一事实来源。  
 3. **[骨架]** The Proof / The Call 静态网格与占位数据。  
 4. **[编排]** `home-scroll-choreography.tsx`：首屏 → Proof 的 scrub、pin、`ScrollTrigger.refresh` 策略。  
 5. **[内容]** CMS / MDX 注入访谈与列表（与工程解耦，可最后接）。
@@ -84,8 +85,8 @@ SurferGarage V2 **不是传统企业官网**，而是 **高信息密度的数字
 
 | 主题 | 当前落地（experiment 分支） | 可选长期方向（非承诺） |
 |------|------------------------------|-------------------------|
-| WebGL 生命周期 | **Section 级** `HeroWaveCanvas` 挂在 `HomeHero` 内，随首页卸载 | 若未来多页共享同一背景，再评估 **根 `layout` 单例 Canvas** 与路由持久化 |
-| Lenis / ST | `SmoothScroll` 内 `scrollerProxy` + teardown 时 `ScrollTrigger.getAll().kill()` | 若引入第三方 ST，需收窄 kill 范围（见 `01`） |
+| WebGL 生命周期 | **`HeroWaveCanvas variant="global"`** 在 **`app/layout.tsx`**，全视口固定层；**控制量（`--wave-*`）** 仍挂在 **`HomeHero` 的 `[data-hero-wave]`**；详情页若需无波，可在该路由不渲染 `data-hero-wave` 或显式将 `--wave-opacity` 置 0 | 可按路由切多 Canvas / 多场景 FBO；需评估 CWV 与内存 |
+| Lenis / ST | `SmoothScroll` 内 `LenisContext` + `scrollerProxy` + teardown 时 `ScrollTrigger.getAll().kill()` | 若引入第三方 ST，需收窄 kill 范围（见 `01`） |
 | Next 版本 | App Router + **Next.js 16**（以 `package.json` 为准） | 升级时重跑 CWV 与字体策略 |
 
 ---
@@ -122,4 +123,4 @@ Deliver: a concise engineering checklist + anti-patterns list, not marketing pro
 
 ## 9. 附录 C · 与你提供的「长文研究稿」的关系
 
-你提供的《现代前端架构深度解析…》类材料适合作为 **灵感与术语表**；**本 wiki 篇为执行层单一事实来源**：版本号、文件路径、参数表以仓库为准。长文中若与本文或 `01` 冲突（例如「Canvas 必须放在根 layout」），以 **当前实现 + 第六节演进表** 为准，避免文档「超前承诺」。
+你提供的《现代前端架构深度解析…》类材料适合作为 **灵感与术语表**；**本 wiki 篇为执行层单一事实来源**：版本号、文件路径、参数表以仓库为准。研究稿中 **`z-index: -1` 全屏底图** 在根层叠上下文中易踩坑，本仓库采用 **`fixed` + `z-0` + 内容 `z-[1]`** 的显式栈序替代。
