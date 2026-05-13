@@ -67,8 +67,8 @@ void main() {
   p.x *= uResolution.x / max(1.0, uResolution.y);
 
   float t = uTime * 0.16;
-  // Low frequency field: only 3-4 massive wave bands on screen.
-  float n = fbm(uv * vec2(1.65, 0.92) + vec2(t * 0.22, -t * 0.16));
+  // Wider, slower fbm so flow undulates like water, not TV static.
+  float n = fbm(uv * vec2(0.92, 0.52) + vec2(t * 0.14, -t * 0.11));
 
   vec2 pointer = vec2(uPointer.x, 1.0 - uPointer.y);
   float dist = distance(uv, pointer);
@@ -80,20 +80,20 @@ void main() {
   float flow = p.y;
   flow += n * 0.72 * VERTICAL_AMPLITUDE * distortion * scrollBoost;
   flow += pointerBlast * 2.35 * distortion;
-  flow += sin(p.x * 2.7 - t * 1.9) * 0.11 * VERTICAL_AMPLITUDE * distortion * scrollBoost;
+  flow += sin(p.x * 1.35 - t * 1.15) * 0.11 * VERTICAL_AMPLITUDE * distortion * scrollBoost;
 
-  // Thick luminous ribbons; RIBBON_EDGE_SCALE from Ribbon Thickness (8 vs ref 5).
-  float ribbonA = smoothstep(0.22 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 9.0 + p.x * 1.45) - 0.04));
-  float ribbonB = smoothstep(0.26 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 7.1 - p.x * 1.1 + t * 0.72) + 0.08));
+  // Few, broad luminous bands (low spatial freq on flow ≈ water swell, not zebra stripes).
+  float ribbonA = smoothstep(0.24 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 2.85 + p.x * 0.62) - 0.045));
+  float ribbonB = smoothstep(0.28 * RIBBON_EDGE_SCALE, 0.0, abs(sin(flow * 2.25 - p.x * 0.48 + t * 0.38) + 0.07));
   float ribbons = max(ribbonA * 0.95, ribbonB * 0.78);
-  ribbons = pow(ribbons, 0.72);
+  ribbons = pow(ribbons, 0.78);
 
   vec3 blue = vec3(0.0, 0.0, 0.886);
   vec3 cyan = vec3(0.153, 0.843, 0.78);
   // Favor cyan for stronger emission-like readability.
-  float mixV = clamp(0.58 + n * 0.22 + sin(p.x * 1.4 + t) * 0.1, 0.28, 0.95);
+  float mixV = clamp(0.58 + n * 0.22 + sin(p.x * 0.85 + t * 0.65) * 0.1, 0.28, 0.95);
   vec3 waveColor = mix(blue, cyan, mixV);
-  vec3 color = waveColor * ribbons * (3.4 + uScrollVel * 0.55);
+  vec3 color = waveColor * ribbons * (3.55 + uScrollVel * 0.55);
 
   gl_FragColor = vec4(color, ribbons * uOpacity);
 }
