@@ -6,6 +6,7 @@ import { ScrollTrigger } from "@/components/motion/gsap-register";
 import { registerCallReveal } from "@/components/motion/register-call-reveal";
 import { registerDesktopPins } from "@/components/motion/register-desktop-pins";
 import { registerFoundersIntro } from "@/components/motion/register-founders-intro";
+import { registerGithubRepoCards } from "@/components/motion/register-github-repo-cards";
 import { registerHeroChoreography } from "@/components/motion/register-hero-choreography";
 import { registerManifestoScroll } from "@/components/motion/register-manifesto-scroll";
 import { registerProofStreams } from "@/components/motion/register-proof-streams";
@@ -60,6 +61,7 @@ export function HomeScrollChoreography() {
       });
       registerProofStreams(ST_MARKERS);
       registerFoundersIntro(ST_MARKERS);
+      registerGithubRepoCards(ST_MARKERS);
       registerSocialExpand(ST_MARKERS);
       registerCallReveal(ST_MARKERS, callSection);
     });

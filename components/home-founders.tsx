@@ -1,5 +1,6 @@
 import { FounderArticleActions } from "@/components/founder-article-actions";
 import { FounderLazyBilibili } from "@/components/founder-lazy-bilibili";
+import { GithubRepoCard } from "@/components/github-repo-card";
 import { FOUNDER_PANELS } from "@/lib/founder-panels";
 
 /** 创业者访谈叠卡区：桌面端 pin + 内层 transform scrub 见 `home-scroll-choreography`。 */
@@ -61,10 +62,15 @@ export function HomeFounders() {
                 </p>
 
                 {p.kind === "article" ? (
-                  <FounderArticleActions
-                    href={p.articleHref}
-                    linkLabel={p.articleLabel}
-                  />
+                  <>
+                    {p.githubRepo ? (
+                      <GithubRepoCard config={p.githubRepo} />
+                    ) : null}
+                    <FounderArticleActions
+                      href={p.articleHref}
+                      linkLabel={p.articleLabel}
+                    />
+                  </>
                 ) : null}
 
                 {p.kind === "video" ? (

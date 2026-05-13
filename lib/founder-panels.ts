@@ -1,5 +1,7 @@
 /** Founder Media 面板数据（访谈区）。`bvid` 为空时仅展示灰盒，不发起 B 站请求。 */
 
+import type { GitHubRepoCardConfig } from "@/lib/github-repo-card";
+
 export type FounderPanelArticle = {
   kind: "article";
   id: string;
@@ -9,6 +11,8 @@ export type FounderPanelArticle = {
   leadZh: string;
   articleHref: string;
   articleLabel: string;
+  /** 可选：嵌入式 GitHub 仓库卡片（与 `github-repo-card` 组件对齐） */
+  githubRepo?: GitHubRepoCardConfig;
 };
 
 export type FounderPanelVideo = {
@@ -42,8 +46,15 @@ export const FOUNDER_PANELS: FounderPanel[] = [
     meta: "Founder Talk · 发刊词",
     leadZh:
       "长文入口与公众号阅读体验以微信侧为准；此处提供站外归档或延伸阅读链接。",
-    articleHref: "https://github.com/SurferGarage",
-    articleLabel: "打开 GitHub 组织仓库",
+    articleHref: "https://github.com/SurferGarage/Startup-playbook",
+    articleLabel: "在 GitHub 打开 Startup Playbook",
+    githubRepo: {
+      owner: "SurferGarage",
+      repo: "Startup-playbook",
+      description:
+        "浪前开源创业指南：面向 AI 时代的超级个体与愿景增长手册，含核心认知、工具箱与悬赏贡献机制。",
+      showTelemetry: false,
+    },
   },
   {
     kind: "video",
