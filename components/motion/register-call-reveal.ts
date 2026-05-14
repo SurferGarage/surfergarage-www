@@ -1,14 +1,5 @@
 import { gsap } from "@/components/motion/gsap-register";
-
-const revealFrom = {
-  clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-  y: 40,
-} as const;
-
-const revealTo = {
-  clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-  y: 0,
-} as const;
+import { SG_CLIP, SG_REVEAL } from "@/lib/sg-motion-system";
 
 export function registerCallReveal(
   markers: boolean,
@@ -20,7 +11,7 @@ export function registerCallReveal(
 
   const st = {
     trigger: callSection,
-    start: "top 85%",
+    start: "top 84%",
     toggleActions: "play none none reverse" as const,
     markers,
     id: "call-reveal",
@@ -31,11 +22,15 @@ export function registerCallReveal(
   if (callIntro) {
     tl.fromTo(
       callIntro,
-      revealFrom,
       {
-        ...revealTo,
-        duration: 0.95,
-        ease: "expo.out",
+        clipPath: SG_CLIP.revealFrom,
+        y: SG_REVEAL.yFrom,
+      },
+      {
+        clipPath: SG_CLIP.revealTo,
+        y: 0,
+        duration: SG_REVEAL.durationTight,
+        ease: SG_REVEAL.ease,
       },
       0,
     );
@@ -44,14 +39,18 @@ export function registerCallReveal(
   if (callItems.length) {
     tl.fromTo(
       callItems,
-      revealFrom,
       {
-        ...revealTo,
-        duration: 1.2,
-        ease: "expo.out",
-        stagger: 0.15,
+        clipPath: SG_CLIP.revealFrom,
+        y: SG_REVEAL.yFromLift,
       },
-      callIntro ? 0.1 : 0,
+      {
+        clipPath: SG_CLIP.revealTo,
+        y: 0,
+        duration: SG_REVEAL.durationStack,
+        ease: SG_REVEAL.ease,
+        stagger: SG_REVEAL.staggerCallRows,
+      },
+      callIntro ? SG_REVEAL.overlapIntroToMain : 0,
     );
   }
 }

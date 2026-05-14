@@ -8,7 +8,13 @@ import {
   MAIL_HELLO,
   MAIL_PARTNERS,
 } from "@/lib/site-contact";
+import {
+  FOUNDER_BREATH_MIN_H,
+  FOUNDERS_BRIDGE_SECTION_PT,
+  FOUNDERS_EDITORIAL_MB,
+} from "@/lib/founders-scroll-rhythm";
 import type { ReactNode } from "react";
+import { Fragment } from "react";
 
 function ModuleShell({
   eyebrow,
@@ -74,25 +80,25 @@ export function HomeFounders() {
   return (
     <section
       id="founders"
-      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] pb-16 pt-28 md:pb-20 md:pt-40"
+      className={`scroll-mt-[4.5rem] border-b border-[var(--hairline)] pb-16 md:pb-20 ${FOUNDERS_BRIDGE_SECTION_PT}`}
       aria-label="浪前片场"
     >
       <div className="mx-auto max-w-[1440px] px-5 md:px-10 lg:px-12">
         <div className="divide-y divide-[var(--hairline)]" data-founders-stack>
-          {FOUNDER_STACK_MODULES.map((m) => (
-            <article
-              key={m.id}
-              data-founder-panel
-              data-founder-module={m.kind}
-              className="relative first:pt-0"
-            >
-              <div data-founder-card className={FOUNDER_CARD_BASE}>
-                {m.kind === "wechat_oa" ? (
-                  <div className="flex w-full shrink-0 flex-col">
-                    <div
-                      data-founders-intro
-                      className="mb-20 max-w-[52rem] space-y-6 md:mb-32 md:space-y-8"
-                    >
+          {FOUNDER_STACK_MODULES.map((m, stackIdx) => (
+            <Fragment key={m.id}>
+              <article
+                data-founder-panel
+                data-founder-module={m.kind}
+                className="relative first:pt-0"
+              >
+                <div data-founder-card className={FOUNDER_CARD_BASE}>
+                  {m.kind === "wechat_oa" ? (
+                    <div className="flex w-full shrink-0 flex-col">
+                      <div
+                        data-founders-intro
+                        className={`max-w-[52rem] space-y-7 md:space-y-10 ${FOUNDERS_EDITORIAL_MB}`}
+                      >
                       <p className="font-[family-name:var(--font-en)] text-[10px] font-semibold uppercase tracking-[0.26em] text-[var(--muted)]">
                         Editorial
                       </p>
@@ -116,7 +122,7 @@ export function HomeFounders() {
                         Surfing Wave, Build the Great.
                       </p>
                     </div>
-                    <div className="flex w-full shrink-0 flex-col gap-12 md:gap-16">
+                    <div className="flex w-full shrink-0 flex-col gap-16 md:gap-24">
                       <div className="shrink-0">
                         <ModuleShell
                           eyebrow={m.eyebrow}
@@ -130,7 +136,7 @@ export function HomeFounders() {
                       </div>
                     </div>
                   </div>
-                ) : null}
+                  ) : null}
 
                 {m.kind === "video_channel" ? (
                   <FounderPanelColumn>
@@ -220,6 +226,19 @@ export function HomeFounders() {
                 ) : null}
               </div>
             </article>
+            {stackIdx < FOUNDER_STACK_MODULES.length - 1 ? (
+              <div
+                data-founder-breath
+                aria-hidden
+                className={`relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 ${FOUNDER_BREATH_MIN_H} shrink-0 overflow-hidden`}
+              >
+                <div
+                  data-founder-breath-glow
+                  className="sg-founder-breath-glow pointer-events-none absolute inset-[10%_6%] opacity-[0.12] md:inset-[12%_8%]"
+                />
+              </div>
+            ) : null}
+            </Fragment>
           ))}
         </div>
       </div>

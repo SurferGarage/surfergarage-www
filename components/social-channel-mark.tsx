@@ -1,7 +1,7 @@
 import type { SocialChannelMarkId } from "@/lib/social-channels";
 
 const markFrame =
-  "flex h-10 w-10 shrink-0 items-center justify-center rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_42%,transparent)] bg-[linear-gradient(160deg,rgba(255,255,255,0.12)_0%,rgba(6,14,40,0.72)_55%,rgba(4,8,22,0.88)_100%)] text-[var(--brand-teal)] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_6px_20px_-8px_rgba(0,9,226,0.35)] transition-[border-color,box-shadow,color] duration-200 group-hover:border-[color-mix(in_oklch,var(--brand-teal)_62%,transparent)] group-hover:text-[color-mix(in_oklch,var(--brand-teal)_88%,white)] group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_26px_-6px_rgba(0,9,226,0.42)]";
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-white/[0.02] text-[#A1A1AA] transition-[border-color,background-color,color] duration-200 ease-out group-hover:border-[color-mix(in_oklch,var(--brand-primary)_55%,white_12%)] group-hover:bg-white/[0.04] group-hover:text-[#FFFFFF]";
 
 function Icon({ id }: { id: SocialChannelMarkId }) {
   const stroke = "currentColor";

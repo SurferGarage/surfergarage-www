@@ -221,20 +221,15 @@ body {
   outline-offset: 3px;
 }
 
+/* Manifesto 巨型英文骨牌：全大写、高字重、负字距（中文用独立 class，勿混用本类） */
 .wordmark-display {
   font-family: var(--font-en), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 500;
-  line-height: 0.96;
-  letter-spacing: -0.006em;
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
   font-kerning: normal;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   text-rendering: optimizeLegibility;
-}
-
-@media (min-width: 1024px) {
-  .wordmark-display {
-    letter-spacing: -0.01em;
-  }
 }
 
 @keyframes sg-river-drift {
@@ -293,12 +288,12 @@ body {
 }
 
 .sg-river-layer {
-  animation: sg-river-drift 19s ease-in-out infinite;
+  animation: sg-river-drift 24s ease-in-out infinite;
   transform-origin: 62% 14%;
 }
 
 .sg-river-svg {
-  animation: sg-river-breath 14s ease-in-out infinite;
+  animation: sg-river-breath 18s ease-in-out infinite;
 }
 
 .sg-river-path {
@@ -308,17 +303,45 @@ body {
 .sg-river-path-shimmer {
   opacity: calc(0.1 + (1 - var(--sg-dt)) * 0.22);
   stroke-dasharray: 8 72;
-  animation: sg-river-shimmer 22s linear infinite;
+  animation: sg-river-shimmer 28s linear infinite;
 }
 
 .sg-call-orb {
-  animation: sg-orb-float 15s ease-in-out infinite;
+  animation: sg-orb-float 20s ease-in-out infinite;
   transform: translate3d(0, -50%, 0);
 }
 
 .sg-call-orb-core {
-  animation: sg-river-breath 14s ease-in-out infinite;
+  animation: sg-river-breath 18s ease-in-out infinite;
   opacity: 0.78;
+}
+
+/* Founders 叠卡间呼吸带：慢漂移光晕（与 GSAP scrub 叠在 opacity 上） */
+@keyframes sg-founder-breath-drift {
+  0% {
+    transform: translate3d(-4%, 2%, 0) scale(1);
+    background-position: 0% 40%;
+  }
+  50% {
+    transform: translate3d(3%, -3%, 0) scale(1.06);
+    background-position: 100% 60%;
+  }
+  100% {
+    transform: translate3d(-4%, 2%, 0) scale(1);
+    background-position: 0% 40%;
+  }
+}
+
+.sg-founder-breath-glow {
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 72% 58% at 42% 48%, rgba(39, 215, 199, 0.22) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 48% at 78% 62%, rgba(0, 9, 226, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 70% at 50% 88%, rgba(6, 6, 68, 0.35) 0%, transparent 52%);
+  background-size: 160% 160%;
+  filter: blur(48px);
+  animation: sg-founder-breath-drift 36s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 ::selection {
@@ -331,7 +354,8 @@ body {
   .sg-river-svg,
   .sg-river-path-shimmer,
   .sg-call-orb,
-  .sg-call-orb-core {
+  .sg-call-orb-core,
+  .sg-founder-breath-glow {
     animation: none !important;
   }
 

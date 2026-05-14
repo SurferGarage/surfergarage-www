@@ -1,4 +1,5 @@
 import { ScrollTrigger } from "@/components/motion/gsap-register";
+import { SG_SCRUB } from "@/lib/sg-motion-system";
 
 /**
  * 整页滚动进度 → `:root` 上的 `--depth-t`（0 海面 … 1 海底），供 `.sg-main-depth` 等背景渐变使用。
@@ -17,7 +18,7 @@ export function registerGlobalDepthScrub(markers: boolean): void {
     trigger: scrollRoot,
     start: "top top",
     end: "bottom bottom",
-    scrub: 0.55,
+    scrub: SG_SCRUB.globalDepth,
     markers,
     onUpdate(self) {
       root.style.setProperty("--depth-t", self.progress.toFixed(4));

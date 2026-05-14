@@ -1,4 +1,5 @@
 import { gsap } from "@/components/motion/gsap-register";
+import { SG_SCRUB } from "@/lib/sg-motion-system";
 
 /**
  * Manifesto 首屏：随首屏滚动推进的「景深」scrub，与 load 态 `data-hero-reveal` 互补（字标 scale + y%；正文区 wrapper 仅极轻 opacity，见 `06` 红线脚注）。
@@ -14,14 +15,14 @@ export function registerManifestoScroll(markers: boolean): void {
       wordmark,
       { scale: 1, y: 0, transformOrigin: "0% 0%" },
       {
-        scale: 0.9,
-        yPercent: -6,
+        scale: 0.91,
+        yPercent: -5,
         ease: "none",
         scrollTrigger: {
           trigger: root,
           start: "top top",
-          end: "bottom 42%",
-          scrub: 0.65,
+          end: "bottom 44%",
+          scrub: SG_SCRUB.manifestoWordmark,
           invalidateOnRefresh: true,
           markers,
           id: "manifesto-wordmark",
@@ -35,13 +36,13 @@ export function registerManifestoScroll(markers: boolean): void {
       fade,
       { opacity: 1 },
       {
-        opacity: 0.9,
+        opacity: 0.92,
         ease: "none",
         scrollTrigger: {
           trigger: root,
           start: "top top",
-          end: "bottom 36%",
-          scrub: 0.85,
+          end: "bottom 38%",
+          scrub: SG_SCRUB.manifestoFade,
           invalidateOnRefresh: true,
           markers,
           id: "manifesto-fade-depth",

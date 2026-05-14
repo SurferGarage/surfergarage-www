@@ -1,4 +1,5 @@
 import { gsap } from "@/components/motion/gsap-register";
+import { SG_CLIP, SG_REVEAL } from "@/lib/sg-motion-system";
 
 /** Founders 叠卡区上方栏目说明：入场 reveal，与叠卡 pin/scrub 分层，避免抢戏。 */
 export function registerFoundersIntro(markers: boolean): void {
@@ -9,14 +10,14 @@ export function registerFoundersIntro(markers: boolean): void {
   gsap.fromTo(
     intro,
     {
-      clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-      y: 36,
+      clipPath: SG_CLIP.revealFrom,
+      y: SG_REVEAL.yFrom,
     },
     {
-      clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+      clipPath: SG_CLIP.revealTo,
       y: 0,
-      duration: 1.05,
-      ease: "expo.out",
+      duration: SG_REVEAL.duration,
+      ease: SG_REVEAL.ease,
       scrollTrigger: {
         trigger: section,
         start: "top 86%",

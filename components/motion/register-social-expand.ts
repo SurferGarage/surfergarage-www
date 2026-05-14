@@ -1,4 +1,5 @@
 import { gsap } from "@/components/motion/gsap-register";
+import { SG_SCRUB, SG_SOCIAL } from "@/lib/sg-motion-system";
 
 export function registerSocialExpand(markers: boolean): void {
   const socialSection = document.querySelector<HTMLElement>("#social");
@@ -8,16 +9,23 @@ export function registerSocialExpand(markers: boolean): void {
 
   if (!socialSection || !socialStage || !socialCards.length) return;
 
-  gsap.set(socialStage, { clipPath: "inset(0 11% 0 11%)" });
-  gsap.set(socialCards, { y: 26 });
-  if (socialIntro) gsap.set(socialIntro, { y: 24, opacity: 0.84 });
+  gsap.set(socialStage, {
+    clipPath: `inset(0 ${SG_SOCIAL.stageClipInset} 0 ${SG_SOCIAL.stageClipInset})`,
+  });
+  gsap.set(socialCards, { y: SG_SOCIAL.cardYFrom });
+  if (socialIntro) {
+    gsap.set(socialIntro, {
+      y: SG_SOCIAL.introYFrom,
+      opacity: SG_SOCIAL.introOpacityFrom,
+    });
+  }
 
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: socialSection,
-      start: "top 82%",
-      end: "top 24%",
-      scrub: 1,
+      start: "top 80%",
+      end: "top 26%",
+      scrub: SG_SCRUB.socialExpand,
       invalidateOnRefresh: true,
       markers,
       id: "social-expand",
@@ -46,7 +54,7 @@ export function registerSocialExpand(markers: boolean): void {
       y: 0,
       ease: "none",
       duration: 1,
-      stagger: { each: 0.1 },
+      stagger: { each: SG_SOCIAL.timelineCardStaggerEach },
     },
     0,
   );

@@ -1,9 +1,10 @@
 import { gsap } from "@/components/motion/gsap-register";
+import { SG_LOAD, SG_SCRUB } from "@/lib/sg-motion-system";
 
 export type HeroChoreographyRefs = {
   heroScrub: HTMLElement | null;
   heroWave: HTMLElement | null;
-  /** 浪面收束 scrub 的触发区（现为 `#social`，原 `#proof` 已移除） */
+  /** 浪面收束 scrub 的触发区（现为 `#social`） */
   waveCalmTrigger: HTMLElement | null;
 };
 
@@ -14,17 +15,17 @@ export function registerHeroChoreography(
   const { heroScrub, heroWave, waveCalmTrigger } = refs;
 
   gsap.from("[data-hero-reveal]", {
-    y: 28,
-    duration: 0.95,
-    stagger: 0.06,
-    ease: "power3.out",
-    delay: 0.06,
+    y: SG_LOAD.heroRevealY,
+    duration: SG_LOAD.heroRevealDuration,
+    stagger: SG_LOAD.heroRevealStagger,
+    ease: SG_LOAD.ease,
+    delay: SG_LOAD.heroRevealDelay,
   });
 
   if (heroScrub) {
     gsap.fromTo(
       heroScrub,
-      { y: 10 },
+      { y: 8 },
       {
         y: 0,
         ease: "none",
@@ -32,7 +33,7 @@ export function registerHeroChoreography(
           trigger: heroScrub,
           start: "top 88%",
           end: "top 48%",
-          scrub: true,
+          scrub: SG_SCRUB.heroParagraph,
           markers,
           id: "manifesto-scrub",
         },
@@ -53,7 +54,7 @@ export function registerHeroChoreography(
         trigger: waveCalmTrigger,
         start: "top 95%",
         end: "top 40%",
-        scrub: true,
+        scrub: SG_SCRUB.heroWaveCalm,
         markers,
         id: "hero-wave-calm",
       },

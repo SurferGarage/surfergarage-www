@@ -3,7 +3,7 @@
 import { gsap, ScrollTrigger } from "@/components/motion/gsap-register";
 import {
   FOUNDER_WECHAT_PIN_END,
-  WECHAT_SCRUB_EDGE_DWELL,
+  mapWechatPinProgressToHorizontalScrub,
 } from "@/lib/founder-wechat-pin-end";
 import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
 import Image from "next/image";
@@ -64,17 +64,9 @@ function syncCardTheaterArc(
   });
 }
 
-/** 垂直 scrub 原始进度 → 水平 scrollLeft 用进度：两侧各 `dwell` 贴边「多耗」一点纵向行程，避免首尾一露就翻屏 */
-function mapWechatScrubProgress(raw: number, dwell: number): number {
-  const d = Math.min(0.45, Math.max(0, dwell));
-  if (raw <= d) return 0;
-  if (raw >= 1 - d) return 1;
-  return (raw - d) / (1 - 2 * d);
-}
-
 /**
  * Surfing Founders 微信专栏 · 全宽「展台」：
- * - 桌面：**ScrollTrigger 进度两侧略作 dwell** 再映射到 `scrollLeft`，首尾卡片多停留一段纵向滚动；中段仍与 pin 总长匹配（见 `founder-wechat-pin-end.ts`）。
+ * - 桌面：pin 进度经 `mapWechatPinProgressToHorizontalScrub` 映射到 `scrollLeft`（导语段不推进横滑）；滚轴对称 `padding` + `scroll-padding-inline` 使卡片相对视口居中滑动。
  * - 单卡：视口中心对称 **rotateY + translateZ** 环抱弧；**translateY** 叠 **经过中线的高斯脉冲**（向上微顶再随横移收回），突出每张卡独立节奏。
  * - 整层仅保留轻微 rotateX（进度 + 可选指针俯仰），**不再叠整层 rotateY/rotateZ**，避免与环抱弧打架成「斜弧」。
  */
@@ -121,10 +113,7 @@ export function WeChatOfficialFeed() {
 
     mm.add("(min-width: 768px)", () => {
       const syncScrollToProgress = (rawProgress: number) => {
-        const progress = mapWechatScrubProgress(
-          rawProgress,
-          WECHAT_SCRUB_EDGE_DWELL,
-        );
+        const progress = mapWechatPinProgressToHorizontalScrub(rawProgress);
         pinProgressRef.current = progress;
         const el = scrollerRef.current;
         if (!el) return;
@@ -323,7 +312,7 @@ export function WeChatOfficialFeed() {
             >
               <div
                 ref={scrollerRef}
-                className="wechat-official-feed-scroll flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-hidden overscroll-behavior-x-contain px-0 py-6 [scrollbar-width:none] md:snap-none md:gap-8 md:overflow-x-hidden md:overscroll-behavior-x-none md:py-10 [&::-webkit-scrollbar]:hidden"
+                className="wechat-official-feed-scroll flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-hidden overscroll-behavior-x-contain px-[max(0.75rem,calc((100vw-min(94vw,30rem))/2))] py-6 [scrollbar-width:none] [scroll-padding-inline:max(0.75rem,calc((100vw-min(94vw,30rem))/2))] md:gap-8 md:overflow-x-hidden md:overscroll-behavior-x-none md:px-[max(1rem,calc((100vw-min(78vw,40rem))/2))] md:py-10 md:[scroll-padding-inline:max(1rem,calc((100vw-min(78vw,40rem))/2))] [&::-webkit-scrollbar]:hidden"
                 style={{
                   maskImage:
                     "linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%)",
@@ -338,13 +327,13 @@ export function WeChatOfficialFeed() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`${item.titleZh}，Surfing Founders 人物访谈 微信专栏，在新标签页打开`}
+                    aria-label={`${item.titleZh}。Surfing Founders 人物访谈 微信专栏，在新标签页打开`}
                     className="relative shrink-0 snap-center [transform-style:preserve-3d]"
                     style={{
                       transform: "translateZ(0px) translateY(0px) rotateY(0deg)",
                     }}
                   >
-                    <div className="group/card flex w-[min(94vw,30rem)] flex-col overflow-hidden rounded-lg border-2 border-[rgba(0,0,0,0.85)] bg-[#0a0a0c] shadow-[0_28px_80px_-12px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.06)_inset,0_0_60px_-20px_rgba(39,215,199,0.12)] transition-[transform,box-shadow] duration-300 group-hover/card:-translate-y-1 group-hover/card:shadow-[0_36px_100px_-16px_rgba(0,9,226,0.35),0_0_0_1px_rgba(39,215,199,0.2)_inset] sm:w-[min(90vw,34rem)] md:w-[min(78vw,40rem)] lg:w-[min(62vw,44rem)] xl:w-[min(52vw,48rem)]">
+                    <div className="group/card flex w-[min(94vw,30rem)] flex-col overflow-hidden rounded-sm border border-white/10 bg-white/[0.02] transition-[background-color,border-color] duration-200 ease-out hover:bg-white/[0.04] sm:w-[min(90vw,34rem)] md:w-[min(78vw,40rem)] lg:w-[min(62vw,44rem)] xl:w-[min(52vw,48rem)]">
                       <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#111]">
                         <Image
                           src={item.imageSrc}
@@ -354,18 +343,12 @@ export function WeChatOfficialFeed() {
                           sizes="(max-width: 640px) 94vw, (max-width: 1024px) 78vw, 52vw"
                           priority={i < 2}
                         />
-                        <span
-                          aria-hidden
-                          className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0009e2]/95 via-[#0009e2]/60 to-transparent px-4 pb-3 pt-12 font-[family-name:var(--font-zh)] text-[13px] font-medium leading-snug tracking-wide text-white/95 [text-shadow:0_1px_18px_rgba(0,0,0,0.45)] line-clamp-2 md:px-5 md:pb-3.5 md:pt-14 md:text-[15px] md:leading-snug"
-                        >
-                          {item.stripZh}
-                        </span>
                       </div>
-                      <div className="space-y-3 border-t border-white/[0.08] bg-[linear-gradient(180deg,rgba(19,19,19,0.98)_0%,#08080a_100%)] px-5 py-5 md:space-y-3.5 md:px-6 md:py-6">
-                        <p className="line-clamp-5 text-pretty font-[family-name:var(--font-zh)] text-[17px] font-medium leading-snug tracking-[-0.01em] text-[var(--foreground)] md:text-[19px] md:leading-snug lg:text-[21px]">
+                      <div className="space-y-2 border-t border-white/[0.08] bg-[linear-gradient(180deg,rgba(19,19,19,0.98)_0%,#08080a_100%)] px-5 py-5 md:space-y-2.5 md:px-6 md:py-6">
+                        <p className="line-clamp-6 text-pretty font-[family-name:var(--font-zh)] text-[17px] font-medium leading-snug tracking-[-0.01em] text-[var(--foreground)] md:text-[19px] md:leading-snug lg:text-[21px]">
                           {item.titleZh}
                         </p>
-                        <p className="font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--brand-teal)] md:text-xs">
+                        <p className="pt-1 font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)] md:text-xs">
                           WeChat 专栏 · 阅读全文 ↗
                         </p>
                       </div>

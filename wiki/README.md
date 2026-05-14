@@ -18,6 +18,7 @@
 
 ## 更新日志（维护札记）
 
+- **2026-05-11**：代码审查同步 wiki：`#social`↔`#founders` **海沟**（`data-social-founders-trench` / `SOCIAL_FOUNDERS_TRENCH_MIN_H`）；Founders **叠卡呼吸带**（`data-founder-breath` / `register-founder-breath` / `.sg-founder-breath-glow`）；Manifesto **12 列 + 浪前 / SURFERGARAGE** 与对比度修正；**移除**全页 SVG 噪点层；Connect **扁平渠道卡** + **`articles` 居中栏**；微信展台 **`mapWechatPinProgressToHorizontalScrub`**、**居中横滑 padding**、**`wechat-official-feed` 仅 `titleZh`**；`npm run lint` / `npm run build` 通过。
 - **2026-05-14**：Connect 渠道卡玻璃渐变面 + 右上 `SocialChannelMark`（`lib/social-channels.ts` 的 `mark`）；Founders 微信屏标题「Surfing Founders 人物访谈」；`data-founders-intro` 与 `#founders` / `#social` 纵向节奏；顶栏仅 SurferGarage；Manifesto 主标题浪前 + Surfer Garage；移除 Proof 流相关模块；`npm run lint` / `npm run build` 通过。
 
 ---

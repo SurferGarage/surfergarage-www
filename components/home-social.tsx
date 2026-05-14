@@ -3,29 +3,31 @@ import {
   type SocialChannel,
   type SocialChannelKind,
 } from "@/lib/social-channels";
+import { FOUNDERS_BRIDGE_SOCIAL_PB } from "@/lib/founders-scroll-rhythm";
 import { SocialChannelMark } from "@/components/social-channel-mark";
 
+/** 扁平粗野：无渐变、无阴影、无 hover 位移；仅底色 / 边框微变 */
 const cardBase =
-  "group relative flex h-full min-h-[11.5rem] flex-col rounded-sm border border-white/[0.14] bg-[linear-gradient(165deg,rgba(255,255,255,0.1)_0%,rgba(12,20,52,0.52)_42%,rgba(5,8,26,0.84)_100%)] px-4 py-5 shadow-[0_22px_60px_-30px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-[6px] transition-[border-color,box-shadow,transform] duration-200 md:min-h-[12rem] md:px-5 md:py-6";
+  "group relative flex h-full min-h-[11.5rem] flex-col rounded-sm border border-white/10 bg-white/[0.02] px-4 py-5 transition-[background-color,border-color,color] duration-200 ease-out md:min-h-[12.5rem] md:px-5 md:py-6";
 
 const cardHoverable =
-  "hover:-translate-y-0.5 hover:border-[color-mix(in_oklch,var(--brand-teal)_52%,transparent)] hover:shadow-[0_28px_72px_-28px_rgba(0,9,226,0.42),inset_0_1px_0_rgba(255,255,255,0.16)]";
+  "hover:bg-white/[0.05] hover:border-[color-mix(in_oklch,var(--brand-primary)_58%,white_10%)]";
 
 const cardStatic =
-  "cursor-default hover:translate-y-0 hover:border-white/[0.14] hover:shadow-[0_22px_60px_-30px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,255,255,0.12)]";
+  "cursor-default hover:bg-white/[0.02] hover:border-white/10";
 
 function channelBadge(kind: SocialChannelKind) {
   switch (kind) {
     case "article":
-      return "Article";
+      return "ARTICLE";
     case "video":
-      return "Video";
+      return "VIDEO";
     case "audio":
-      return "Podcast";
+      return "PODCAST";
     case "community":
-      return "Community";
+      return "COMMUNITY";
     default:
-      return "Open Source";
+      return "OPEN SOURCE";
   }
 }
 
@@ -36,26 +38,28 @@ function SocialChannelCard({ ch }: { ch: SocialChannel }) {
   const body = (
     <>
       <div className="flex items-start justify-between gap-3">
-        <span className="font-[family-name:var(--font-en)] text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--brand-teal)]">
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[color-mix(in_oklch,var(--brand-teal)_52%,#94a3b8)]">
           {channelBadge(ch.kind)}
         </span>
         <SocialChannelMark id={ch.mark} />
       </div>
-      <span className="mt-2 font-[family-name:var(--font-en)] text-sm font-medium text-[var(--foreground)] md:text-base">
-        {ch.labelEn}
-      </span>
-      <span className="mt-1 font-[family-name:var(--font-zh)] text-[13px] text-[var(--muted-strong)]">
-        {ch.labelZh}
-      </span>
-      <span className="mt-3 font-[family-name:var(--font-zh)] text-xs leading-relaxed text-[var(--muted)]">
+      <div className="flex min-h-[5.5rem] flex-1 flex-col justify-center py-3">
+        <span className="font-[family-name:var(--font-en)] text-base font-medium leading-tight text-[#FFFFFF] md:text-[1.05rem]">
+          {ch.labelEn}
+        </span>
+        <span className="mt-1.5 font-[family-name:var(--font-zh)] text-[12px] leading-snug text-[#A1A1AA] md:text-[13px]">
+          {ch.labelZh}
+        </span>
+      </div>
+      <span className="font-[family-name:var(--font-zh)] text-[11px] leading-relaxed text-[#A1A1AA] md:text-xs">
         {ch.descriptionZh}
       </span>
       {isHttp ? (
-        <span className="mt-auto pt-4 font-[family-name:var(--font-en)] text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--muted)] transition-colors group-hover:text-[var(--brand-teal)]">
+        <span className="mt-auto border-t border-white/[0.06] pt-3 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[#A1A1AA] transition-colors group-hover:text-[rgba(255,255,255,0.88)]">
           新标签页打开 ↗
         </span>
       ) : (
-        <span className="mt-auto pt-4 font-[family-name:var(--font-en)] text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+        <span className="mt-auto border-t border-white/[0.06] pt-3 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[#A1A1AA]">
           即将更新
         </span>
       )}
@@ -87,7 +91,7 @@ export function HomeSocial() {
   return (
     <section
       id="social"
-      className="scroll-mt-[4.5rem] border-t border-b border-[var(--hairline)] pt-16 pb-24 md:pt-20 md:pb-32"
+      className={`scroll-mt-[4.5rem] border-t border-b border-[var(--hairline)] pt-16 md:pt-20 ${FOUNDERS_BRIDGE_SOCIAL_PB}`}
       aria-labelledby="social-heading"
     >
       <div className="mx-auto max-w-[1440px] px-5 md:px-10 lg:px-12">
@@ -136,7 +140,13 @@ export function HomeSocial() {
                   </p>
                 </header>
 
-                <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <ul
+                  className={
+                    sec.id === "articles"
+                      ? "mt-10 mx-auto flex w-full max-w-md flex-col gap-4"
+                      : "mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                  }
+                >
                   {sec.channels.map((ch) => (
                     <SocialChannelCard key={ch.id} ch={ch} />
                   ))}

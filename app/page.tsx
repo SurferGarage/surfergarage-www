@@ -6,6 +6,7 @@ import { HomeHero } from "@/components/home-hero";
 import { HomeScrollChoreography } from "@/components/home-scroll-choreography";
 import { UnderwaterLightStage } from "@/components/underwater-light-stage";
 import { WaterVolumeFx } from "@/components/water-volume-fx";
+import { SOCIAL_FOUNDERS_TRENCH_MIN_H } from "@/lib/founders-scroll-rhythm";
 import Image from "next/image";
 
 export default function Home() {
@@ -82,6 +83,12 @@ export default function Home() {
         <HomeHero />
 
         <HomeSocial />
+
+        <div
+          aria-hidden
+          data-social-founders-trench
+          className={`relative left-1/2 w-screen max-w-[100vw] shrink-0 -translate-x-1/2 ${SOCIAL_FOUNDERS_TRENCH_MIN_H}`}
+        />
 
         <HomeFounders />
 

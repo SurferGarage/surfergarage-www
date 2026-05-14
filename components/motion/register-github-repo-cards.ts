@@ -1,4 +1,5 @@
 import { gsap } from "@/components/motion/gsap-register";
+import { SG_CLIP, SG_REVEAL } from "@/lib/sg-motion-system";
 
 /** Founders 区内嵌 GitHub 仓库卡片：与 `call-reveal` 同气质的入场，避免与叠卡 pin scrub 抢 transform。 */
 export function registerGithubRepoCards(markers: boolean): void {
@@ -9,14 +10,14 @@ export function registerGithubRepoCards(markers: boolean): void {
     gsap.fromTo(
       card,
       {
-        clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-        y: 32,
+        clipPath: SG_CLIP.revealFrom,
+        y: SG_REVEAL.yFromCard,
       },
       {
-        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+        clipPath: SG_CLIP.revealTo,
         y: 0,
-        duration: 1.05,
-        ease: "expo.out",
+        duration: SG_REVEAL.duration,
+        ease: SG_REVEAL.ease,
         scrollTrigger: {
           trigger: card,
           start: "top 90%",

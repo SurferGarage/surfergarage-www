@@ -6,6 +6,7 @@ import { ScrollTrigger } from "@/components/motion/gsap-register";
 import { registerCallReveal } from "@/components/motion/register-call-reveal";
 import { registerDesktopPins } from "@/components/motion/register-desktop-pins";
 import { registerGlobalDepthScrub } from "@/components/motion/register-global-depth-scrub";
+import { registerFounderBreath } from "@/components/motion/register-founder-breath";
 import { registerFoundersIntro } from "@/components/motion/register-founders-intro";
 import { registerGithubRepoCards } from "@/components/motion/register-github-repo-cards";
 import { registerHeroChoreography } from "@/components/motion/register-hero-choreography";
@@ -13,6 +14,10 @@ import { registerManifestoScroll } from "@/components/motion/register-manifesto-
 import { registerSocialExpand } from "@/components/motion/register-social-expand";
 import gsap from "gsap";
 
+/**
+ * 首页滚动编排：注册顺序为 **L0 深度 → L1 Hero/Manifesto → L2 区块 reveal →（md+）L3 pin**。
+ * 时长 / scrub / stagger 以 `lib/sg-motion-system.ts` 为单一事实源。
+ */
 const ST_MARKERS =
   typeof process !== "undefined" &&
   process.env.NEXT_PUBLIC_GSAP_DEBUG === "1";
@@ -58,6 +63,7 @@ export function HomeScrollChoreography() {
         waveCalmTrigger: socialSection,
       });
       registerFoundersIntro(ST_MARKERS);
+      registerFounderBreath(ST_MARKERS);
       registerGithubRepoCards(ST_MARKERS);
       registerSocialExpand(ST_MARKERS);
       registerCallReveal(ST_MARKERS, callSection);

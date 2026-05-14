@@ -1,5 +1,6 @@
 import { gsap, ScrollTrigger } from "@/components/motion/gsap-register";
 import { FOUNDER_WECHAT_PIN_END } from "@/lib/founder-wechat-pin-end";
+import { SG_FOUNDER_PIN, SG_SCRUB } from "@/lib/sg-motion-system";
 
 export type DesktopPinsRefs = {
   manifestoPin: HTMLElement | null;
@@ -35,15 +36,15 @@ export function registerDesktopPins(
       card,
       { scale: 1, y: 0 },
       {
-        scale: 0.9,
-        y: -40,
+        scale: SG_FOUNDER_PIN.scaleTo,
+        y: SG_FOUNDER_PIN.yTo,
         ease: "none",
         scrollTrigger: {
           trigger: panel,
           start: "top top",
           end: endScroll,
           pin: true,
-          scrub: 0.45,
+          scrub: SG_SCRUB.founderPin,
           anticipatePin: 1,
           markers,
           id: `founder-stack-${i}`,
