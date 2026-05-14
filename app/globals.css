@@ -18,28 +18,169 @@
   --wave-scroll-vel: 0;
   /* 整页下潜：0 = 海面侧，1 = 海底侧（由 register-global-depth-scrub 写入） */
   --depth-t: 0;
+  /* 供全站背景/光河/顶栏统一读取，避免各处重复 clamp */
+  --sg-dt: clamp(0, var(--depth-t, 0), 1);
+  /* 丁达尔层首帧：与 JS 同步前默认强光 */
+  --uwl-tyndall: 1;
 }
 
-/* 主列纵向渐变：随 --depth-t 下潜，顶区由浅青浪前感过渡到闪电蓝再沉入 abyss */
+/* 整页列纵向渐变：随 --depth-t 海面（浅青浪前感）→ 海军/闪电蓝带 → 海底 abyss */
 .sg-main-depth {
-  --dt: clamp(0, var(--depth-t, 0), 1);
   background: linear-gradient(
     180deg,
+    color-mix(in oklch, var(--brand-teal) calc(28% * (1 - var(--sg-dt))), var(--depth-surface)) 0%,
+    color-mix(in oklch, var(--depth-surface) calc(38% - var(--sg-dt) * 16%), var(--depth-mid)) 24%,
+    color-mix(in oklch, var(--brand-primary) calc(36% * (1 - var(--sg-dt) * 0.88)), var(--depth-mid)) 50%,
+    color-mix(in oklch, var(--depth-mid) calc(44% + var(--sg-dt) * 48%), var(--depth-abyss)) 80%,
+    color-mix(in oklch, var(--depth-abyss) calc(100% - var(--sg-dt) * 10%), #050506 calc(var(--sg-dt) * 28%)) 100%
+  );
+}
+
+/* 顶栏：随下潜略加深，与主列同轨；半透明 + blur 由 utility 叠加 */
+
+/* 全站水下光氛：须叠在 `page.tsx` 内 `.sg-main-depth` 之上，否则实色渐变会完全挡住光球 */
+.uwl-stage {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  isolation: isolate;
+  mix-blend-mode: screen;
+}
+
+.uwl-surface {
+  position: absolute;
+  inset-inline: -12%;
+  top: -14%;
+  height: 52%;
+  transform: scaleY(-1);
+  transform-origin: 50% 0%;
+  opacity: 0.88;
+  background:
+    radial-gradient(ellipse 95% 82% at 50% 100%, rgba(235, 255, 255, 0.52), transparent 52%),
+    radial-gradient(ellipse 42% 28% at 50% 100%, rgba(255, 255, 255, 0.22), transparent 62%),
+    linear-gradient(188deg, rgba(150, 240, 255, 0.36) 0%, transparent 46%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 100%);
+}
+
+/* 水面「开孔」：顶缘强光渗入 */
+.uwl-aperture {
+  position: absolute;
+  left: 50%;
+  top: -5%;
+  width: min(94vw, 58rem);
+  height: 24vh;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 56% 48% at 50% 0%,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(220, 252, 255, 0.45) 22%,
+    rgba(120, 210, 255, 0.16) 48%,
+    transparent 74%
+  );
+  filter: blur(22px) saturate(1.35);
+  opacity: calc(0.52 + var(--uwl-tyndall, 1) * 0.48);
+  mix-blend-mode: screen;
+}
+
+/* 丁达尔光柱：多束窄锥 + 随深度减弱 */
+.uwl-godrays {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: calc(0.42 + var(--uwl-tyndall, 1) * 0.58);
+}
+
+.uwl-ray {
+  position: absolute;
+  left: 50%;
+  top: -8%;
+  width: 13vmin;
+  height: 132vh;
+  transform: translateX(-50%) rotate(var(--uwl-ray-deg, 0deg));
+  transform-origin: 50% 0%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 252, 0.72) 0%,
+    rgba(200, 248, 255, 0.42) 12%,
+    rgba(110, 205, 245, 0.2) 34%,
+    rgba(50, 120, 200, 0.08) 58%,
+    transparent 86%
+  );
+  filter: blur(7px);
+  opacity: 0.5;
+  mix-blend-mode: screen;
+}
+
+.uwl-godrays .uwl-ray:nth-child(1),
+.uwl-godrays .uwl-ray:nth-child(7) {
+  width: 8vmin;
+  opacity: 0.34;
+  filter: blur(11px);
+}
+
+.uwl-godrays .uwl-ray:nth-child(2),
+.uwl-godrays .uwl-ray:nth-child(6) {
+  width: 10vmin;
+  opacity: 0.42;
+  filter: blur(9px);
+}
+
+.uwl-godrays .uwl-ray:nth-child(4) {
+  width: 17vmin;
+  opacity: 0.62;
+  filter: blur(5px);
+}
+
+.uwl-orb-shell {
+  position: absolute;
+  width: min(150vmin, 920px);
+  height: min(150vmin, 920px);
+  left: calc(var(--uwl-orb-x, 0.5) * 100vw);
+  top: calc(var(--uwl-orb-y, 0.12) * 100vh);
+  transform: translate(-50%, -50%) translateZ(0);
+  will-change: left, top;
+}
+
+.uwl-orb-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 38%,
+    var(--uwl-orb-mid, rgb(58, 214, 198)) 0%,
+    var(--uwl-orb-soft, rgba(39, 215, 199, 0.45)) 38%,
+    transparent 68%
+  );
+  filter: blur(42px) saturate(1.35);
+  opacity: calc(0.62 + var(--uwl-color-t, 0) * 0.28);
+}
+
+.uwl-orb-hot {
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 48% 44%,
+    rgba(255, 252, 225, calc(0.35 + var(--uwl-color-t, 0) * 0.5)) 0%,
+    transparent 55%
+  );
+  filter: blur(20px);
+  opacity: calc(0.55 + var(--uwl-color-t, 0) * 0.38);
+}
+
+.sg-header-depth {
+  background: color-mix(
+    in oklch,
     color-mix(
         in oklch,
-        var(--brand-teal) calc(22% * (1 - var(--dt))),
-        var(--depth-surface)
+        var(--brand-teal) calc(10% * (1 - var(--sg-dt))),
+        color-mix(in oklch, var(--depth-mid) calc(52% + var(--sg-dt) * 36%), var(--depth-abyss))
       )
-      0%,
-    color-mix(
-        in oklch,
-        var(--brand-primary) calc(32% * (1 - var(--dt) * 0.9)),
-        var(--depth-mid)
-      )
-      38%,
-    color-mix(in oklch, var(--depth-mid) calc(55% + var(--dt) * 35%), var(--depth-abyss)) 72%,
-    color-mix(in oklch, var(--depth-abyss) calc(100% - var(--dt) * 18%), #070708 calc(var(--dt) * 22%))
-      100%
+      90%,
+    transparent
   );
 }
 
@@ -51,7 +192,13 @@
 
 html {
   scrollbar-gutter: stable;
-  background: var(--background);
+  /* 与主列同色温：橡皮筋/露边时不跳回纯 --background */
+  background: color-mix(
+    in oklch,
+    color-mix(in oklch, var(--depth-surface) calc(22% * (1 - var(--sg-dt))), var(--depth-mid))
+      calc(58% + var(--sg-dt) * 32%),
+    var(--depth-abyss)
+  );
 }
 
 body {
@@ -140,6 +287,11 @@ body {
   }
 }
 
+/* 光河：浅海时更亮，深潜时收进背景 */
+.sg-river-depth {
+  opacity: calc(0.1 + (1 - var(--sg-dt)) * 0.24);
+}
+
 .sg-river-layer {
   animation: sg-river-drift 19s ease-in-out infinite;
   transform-origin: 62% 14%;
@@ -150,11 +302,11 @@ body {
 }
 
 .sg-river-path {
-  opacity: 0.74;
+  opacity: calc(0.38 + (1 - var(--sg-dt)) * 0.42);
 }
 
 .sg-river-path-shimmer {
-  opacity: 0.24;
+  opacity: calc(0.1 + (1 - var(--sg-dt)) * 0.22);
   stroke-dasharray: 8 72;
   animation: sg-river-shimmer 22s linear infinite;
 }
@@ -169,51 +321,6 @@ body {
   opacity: 0.78;
 }
 
-@keyframes sg-marquee-roll {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.sg-marquee-wrap {
-  background: linear-gradient(
-    180deg,
-    rgba(19, 19, 19, 0.04) 0%,
-    rgba(19, 19, 19, 0.5) 42%,
-    rgba(19, 19, 19, 0.92) 100%
-  );
-  will-change: transform, clip-path;
-}
-
-.sg-marquee-track {
-  display: flex;
-  width: max-content;
-  min-width: 200%;
-  gap: 3.5rem;
-  padding: 0 1rem;
-  white-space: nowrap;
-  font-family: var(--font-en), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(6rem, 16vw, 20rem);
-  font-weight: 700;
-  line-height: 0.84;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(243, 244, 246, 0.94);
-  text-shadow: 0 0 14px rgba(243, 244, 246, 0.14);
-  animation: sg-marquee-roll 20s linear infinite;
-  user-select: none;
-}
-
-@media (min-width: 768px) {
-  .sg-marquee-track {
-    -webkit-text-stroke: 2px rgba(243, 244, 246, 0.94);
-  }
-}
-
 ::selection {
   background: rgba(39, 215, 199, 0.22);
   color: var(--foreground);
@@ -224,8 +331,7 @@ body {
   .sg-river-svg,
   .sg-river-path-shimmer,
   .sg-call-orb,
-  .sg-call-orb-core,
-  .sg-marquee-track {
+  .sg-call-orb-core {
     animation: none !important;
   }
 

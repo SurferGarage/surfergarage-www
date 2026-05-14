@@ -3,7 +3,6 @@ import { gsap } from "@/components/motion/gsap-register";
 export type HeroChoreographyRefs = {
   heroScrub: HTMLElement | null;
   heroWave: HTMLElement | null;
-  heroMarquee: HTMLElement | null;
   proof: HTMLElement | null;
 };
 
@@ -11,7 +10,7 @@ export function registerHeroChoreography(
   markers: boolean,
   refs: HeroChoreographyRefs,
 ): void {
-  const { heroScrub, heroWave, heroMarquee, proof } = refs;
+  const { heroScrub, heroWave, proof } = refs;
 
   gsap.from("[data-hero-reveal]", {
     y: 28,
@@ -56,22 +55,6 @@ export function registerHeroChoreography(
         scrub: true,
         markers,
         id: "hero-wave-calm",
-      },
-    });
-  }
-
-  if (heroMarquee && proof) {
-    gsap.to(heroMarquee, {
-      yPercent: 115,
-      clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-      ease: "none",
-      scrollTrigger: {
-        trigger: proof,
-        start: "top 98%",
-        end: "top 45%",
-        scrub: true,
-        markers,
-        id: "hero-marquee-out",
       },
     });
   }

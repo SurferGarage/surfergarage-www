@@ -4,11 +4,11 @@ export function GlowRiver() {
   return (
     <div
       aria-hidden
-      className="sg-river-layer pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      className="sg-river-layer sg-river-depth pointer-events-none absolute inset-0 z-[1] overflow-hidden"
       style={{ willChange: "transform, filter", transform: "translateZ(0)" }}
     >
       <svg
-        className="sg-river-svg h-[220vh] w-full opacity-30 [filter:blur(90px)]"
+        className="sg-river-svg h-[220vh] w-full [filter:blur(90px)]"
         viewBox="0 0 1440 3200"
         preserveAspectRatio="none"
       >

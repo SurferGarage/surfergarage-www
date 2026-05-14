@@ -4,7 +4,7 @@ export function HomeHero() {
   return (
     <section
       id="manifesto"
-      className="relative h-[100svh] min-h-[46rem] scroll-mt-[4.5rem] overflow-hidden border-b border-[var(--hairline)] pt-24 md:pt-28"
+      className="relative h-[100svh] min-h-[46rem] scroll-mt-[4.5rem] overflow-hidden pt-24 md:pt-28"
       aria-labelledby="hero-title"
       data-hero-wave
       style={
@@ -20,12 +20,7 @@ export function HomeHero() {
         } as CSSProperties
       }
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(19,19,19,0.18)_0%,rgba(19,19,19,0.74)_70%,rgba(19,19,19,0.94)_100%)]"
-      />
-
-      <div className="relative z-[3] mx-auto grid w-full max-w-[1440px] grid-cols-12 gap-x-4 px-5 pb-[24vh] md:gap-x-6 md:pb-[22vh] lg:px-12">
+      <div className="relative z-[3] mx-auto grid w-full max-w-[1440px] grid-cols-12 gap-x-4 px-5 pb-16 md:gap-x-6 md:pb-20 lg:px-12 [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_12px_48px_rgba(0,0,0,0.35)]">
         <div
           className="col-span-12 mb-10 md:col-span-4 md:mb-0 md:self-start md:pr-8"
           data-manifesto-pin
@@ -84,17 +79,6 @@ export function HomeHero() {
               我们记录海里的人：不包装，不造神，只看真实闭环。每篇内容都必须回答四个问题：做了什么、踩了什么坑、付了什么代价、用户是否买单。
             </p>
           </div>
-        </div>
-      </div>
-
-      <div
-        aria-hidden
-        data-hero-marquee
-        className="sg-marquee-wrap absolute bottom-[-5%] left-0 z-[4] h-[24vh] min-h-[8rem] w-full overflow-hidden border-t border-[var(--hairline)]"
-      >
-        <div className="sg-marquee-track">
-          <span>BUILDER INSTEAD OF TALKER ✦ SURFING WAVE, BUILD THE GREAT ✦ </span>
-          <span>BUILDER INSTEAD OF TALKER ✦ SURFING WAVE, BUILD THE GREAT ✦ </span>
         </div>
       </div>
     </section>

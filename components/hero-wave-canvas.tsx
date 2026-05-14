@@ -5,15 +5,11 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
-/**
- * Topo grid: only horizontal + vertical lines (no triangle wireframe soup).
- * Tuned for calm contrast — brand teal as accent, not full-screen neon.
- */
-const GRID_SEG = 30;
+const GRID_SEG = 72;
 const GRID_HALF = 21;
-const HERO_BLOOM_INTENSITY = 0.92;
-const HERO_BLOOM_THRESHOLD = 0.52;
-const HERO_BLOOM_SMOOTHING = 0.11;
+const HERO_BLOOM_INTENSITY = 1.05;
+const HERO_BLOOM_THRESHOLD = 0.26;
+const HERO_BLOOM_SMOOTHING = 0.26;
 
 function waveY(
   x: number,
@@ -30,26 +26,30 @@ function waveY(
   return w * amp;
 }
 
-function buildGridLineGeometry(nx: number, nz: number, half: number) {
+/** 平滑海面片：无网格线，仅起伏着色 + Bloom */
+function buildSeaSurfaceGeometry(nx: number, half: number) {
   const vx = nx + 1;
-  const vz = nz + 1;
+  const vz = nx + 1;
   const vertCount = vx * vz;
   const positions = new Float32Array(vertCount * 3);
   const colors = new Float32Array(vertCount * 3);
-
   const indices: number[] = [];
+
   for (let j = 0; j < vz; j++) {
-    for (let i = 0; i < vx - 1; i++) {
-      const a = j * vx + i;
-      const b = j * vx + i + 1;
-      indices.push(a, b);
+    for (let i = 0; i < vx; i++) {
+      const k = j * vx + i;
+      positions[k * 3] = (i / nx) * 2 * half - half;
+      positions[k * 3 + 1] = 0;
+      positions[k * 3 + 2] = (j / nx) * 2 * half - half;
     }
   }
-  for (let i = 0; i < vx; i++) {
-    for (let j = 0; j < vz - 1; j++) {
+  for (let j = 0; j < nx; j++) {
+    for (let i = 0; i < nx; i++) {
       const a = j * vx + i;
-      const b = (j + 1) * vx + i;
-      indices.push(a, b);
+      const b = j * vx + i + 1;
+      const c = (j + 1) * vx + i + 1;
+      const d = (j + 1) * vx + i;
+      indices.push(a, b, d, b, c, d);
     }
   }
 
@@ -58,18 +58,7 @@ function buildGridLineGeometry(nx: number, nz: number, half: number) {
   geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
   geo.setIndex(indices);
   geo.computeBoundingSphere();
-
-  const ix = new Float32Array(vertCount);
-  const iz = new Float32Array(vertCount);
-  for (let j = 0; j < vz; j++) {
-    for (let i = 0; i < vx; i++) {
-      const k = j * vx + i;
-      ix[k] = (i / nx) * 2 * half - half;
-      iz[k] = (j / nz) * 2 * half - half;
-    }
-  }
-
-  return { colors, geo, ix, iz, vertCount };
+  return { geo, vertCount };
 }
 
 function CameraRig({ hostSelector }: { hostSelector: string }) {
@@ -99,11 +88,11 @@ function CameraRig({ hostSelector }: { hostSelector: string }) {
   return null;
 }
 
-function CyberSeaGrid({ hostSelector }: { hostSelector: string }) {
-  const lineRef = useRef<THREE.LineSegments>(null);
+function CyberSeaSurface({ hostSelector }: { hostSelector: string }) {
+  const meshRef = useRef<THREE.Mesh>(null);
   const hostRef = useRef<HTMLElement | null>(null);
-  const { geo, ix, iz, vertCount } = useMemo(
-    () => buildGridLineGeometry(GRID_SEG, GRID_SEG, GRID_HALF),
+  const { geo, vertCount } = useMemo(
+    () => buildSeaSurfaceGeometry(GRID_SEG, GRID_HALF),
     [],
   );
 
@@ -121,7 +110,7 @@ function CyberSeaGrid({ hostSelector }: { hostSelector: string }) {
   const tmp = useMemo(() => new THREE.Color(), []);
 
   useFrame((state) => {
-    const mesh = lineRef.current;
+    const mesh = meshRef.current;
     if (!mesh) return;
 
     let distortion = 1;
@@ -151,16 +140,14 @@ function CyberSeaGrid({ hostSelector }: { hostSelector: string }) {
     const carr = colAttr.array as Float32Array;
 
     for (let k = 0; k < vertCount; k++) {
-      const x = ix[k];
-      const z = iz[k];
+      const x = arr[k * 3];
+      const z = arr[k * 3 + 2];
       const y = waveY(x, z, t, amp, boost);
-      arr[k * 3] = x;
       arr[k * 3 + 1] = y;
-      arr[k * 3 + 2] = z;
 
       const crest = (y / (amp + 1e-4) + 1) * 0.5;
       tmp.copy(base.b).lerp(base.t, Math.min(1, crest * 0.85 + boost * 0.12));
-      tmp.multiplyScalar((0.35 + opacity * 0.55) * depthShade);
+      tmp.multiplyScalar((0.48 + opacity * 0.68) * depthShade);
       carr[k * 3] = tmp.r;
       carr[k * 3 + 1] = tmp.g;
       carr[k * 3 + 2] = tmp.b;
@@ -168,20 +155,21 @@ function CyberSeaGrid({ hostSelector }: { hostSelector: string }) {
     posAttr.needsUpdate = true;
     colAttr.needsUpdate = true;
 
-    const mat = mesh.material as THREE.LineBasicMaterial;
-    mat.opacity = Math.min(1, 0.22 + opacity * 0.52);
+    const mat = mesh.material as THREE.MeshBasicMaterial;
+    mat.opacity = Math.min(1, 0.22 + opacity * 0.55);
     mat.transparent = true;
   });
 
   return (
-    <lineSegments geometry={geo} ref={lineRef}>
-      <lineBasicMaterial
+    <mesh ref={meshRef} geometry={geo}>
+      <meshBasicMaterial
         depthTest
         depthWrite={false}
         transparent
         vertexColors
+        side={THREE.DoubleSide}
       />
-    </lineSegments>
+    </mesh>
   );
 }
 
@@ -247,7 +235,7 @@ function HeroWaveCanvasActive({
         style={{ width: "100%", height: "100%" }}
       >
         <CameraRig hostSelector={hostSelector} />
-        <CyberSeaGrid hostSelector={hostSelector} />
+        <CyberSeaSurface hostSelector={hostSelector} />
         <EffectComposer>
           <Bloom
             intensity={HERO_BLOOM_INTENSITY}

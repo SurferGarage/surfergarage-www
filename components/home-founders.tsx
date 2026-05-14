@@ -48,7 +48,7 @@ function ModuleShell({
 function EmptyModuleCanvas({ label }: { label: string }) {
   return (
     <div
-      className="mt-10 flex min-h-[min(40svh,22rem)] w-full max-w-[56rem] flex-col items-center justify-center rounded-sm border border-dashed border-[var(--hairline)] bg-[rgba(19,19,19,0.35)] px-6 py-16 md:mt-12 md:min-h-[min(44svh,26rem)]"
+      className="mt-10 flex min-h-[min(40svh,22rem)] w-full min-w-0 flex-col items-center justify-center rounded-sm border border-dashed border-[var(--hairline)] bg-[rgba(19,19,19,0.35)] px-6 py-16 md:mt-12 md:min-h-[min(44svh,26rem)]"
       aria-label={label}
     >
       <span className="font-[family-name:var(--font-en)] text-[10px] uppercase tracking-[0.24em] text-[var(--muted)]">
@@ -59,9 +59,9 @@ function EmptyModuleCanvas({ label }: { label: string }) {
   );
 }
 
-/** 叠卡每一屏：移动端保底高度；桌面 ≥ 一屏高 + 内容垂直居中（pin 时全模块统一） */
+/** 叠卡每一屏：与区块 intro 同宽左对齐；桌面 ≥ 一屏高 + 内容垂直居中（pin 时全模块统一） */
 const FOUNDER_CARD_BASE =
-  "mx-auto flex w-full min-h-[52svh] flex-col py-10 md:min-h-[100dvh] md:justify-center md:py-8 lg:py-12";
+  "flex w-full min-h-[52svh] min-w-0 flex-col py-10 md:min-h-[100dvh] md:justify-center md:py-8 lg:py-12";
 
 function FounderPanelColumn({ children }: { children: React.ReactNode }) {
   return (
@@ -111,14 +111,7 @@ export function HomeFounders() {
               data-founder-module={m.kind}
               className="relative first:pt-0"
             >
-              <div
-                data-founder-card
-                className={
-                  m.kind === "wechat_oa"
-                    ? `${FOUNDER_CARD_BASE} max-w-[min(100vw,92rem)]`
-                    : `${FOUNDER_CARD_BASE} max-w-[56rem]`
-                }
-              >
+              <div data-founder-card className={FOUNDER_CARD_BASE}>
                 {m.kind === "wechat_oa" ? (
                   <div className="flex w-full shrink-0 flex-col md:gap-12">
                     <div className="shrink-0">

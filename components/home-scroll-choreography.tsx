@@ -47,7 +47,6 @@ export function HomeScrollChoreography() {
     );
     const heroScrub = document.querySelector<HTMLElement>("[data-hero-scrub]");
     const heroWave = document.querySelector<HTMLElement>("[data-hero-wave]");
-    const heroMarquee = document.querySelector<HTMLElement>("[data-hero-marquee]");
     const proof = document.querySelector<HTMLElement>("#proof");
     const proofPin = document.querySelector<HTMLElement>("[data-proof-pin]");
     const proofStreams = document.querySelector<HTMLElement>(
@@ -61,7 +60,6 @@ export function HomeScrollChoreography() {
       registerHeroChoreography(ST_MARKERS, {
         heroScrub,
         heroWave,
-        heroMarquee,
         proof,
       });
       registerProofStreams(ST_MARKERS);

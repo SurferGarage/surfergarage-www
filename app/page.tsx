@@ -4,12 +4,23 @@ import { HomeSocial } from "@/components/home-social";
 import { GlowRiver } from "@/components/glow-river";
 import { HomeHero } from "@/components/home-hero";
 import { HomeScrollChoreography } from "@/components/home-scroll-choreography";
+import { UnderwaterLightStage } from "@/components/underwater-light-stage";
+import { WaterVolumeFx } from "@/components/water-volume-fx";
 import { PROOF_STREAMS } from "@/lib/proof-streams";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="relative flex min-h-full flex-col">
+    <div className="relative isolate flex min-h-full min-w-0 flex-col overflow-x-clip">
+      <div className="pointer-events-none absolute inset-0 z-0 sg-main-depth" aria-hidden />
+
+      <GlowRiver />
+
+      <div className="pointer-events-none absolute inset-0 z-[2]">
+        <WaterVolumeFx />
+        <UnderwaterLightStage />
+      </div>
+
       <a
         href="#manifesto"
         className="fixed left-4 top-4 z-[100] -translate-y-[160%] rounded-sm border border-[var(--hairline)] bg-[var(--background)] px-4 py-2 font-[family-name:var(--font-zh)] text-sm text-[var(--foreground)] shadow-lg transition-transform duration-200 focus:translate-y-0"
@@ -17,9 +28,7 @@ export default function Home() {
         跳到主要内容
       </a>
 
-      <GlowRiver />
-
-      <header className="sticky top-0 z-10 border-b border-[var(--hairline)] bg-[var(--background)]/90 backdrop-blur-sm">
+      <header className="sg-header-depth sticky top-0 z-10 border-b border-[var(--hairline)] backdrop-blur-sm">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 md:px-10 lg:px-12">
           <a
             href="#manifesto"
@@ -74,7 +83,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="sg-main-depth flex-1">
+      <main className="relative z-[3] flex-1">
         <HomeHero />
 
         <section
@@ -182,7 +191,7 @@ export default function Home() {
         <HomeCall />
       </main>
 
-      <footer className="border-t border-[var(--hairline)] py-10">
+      <footer className="relative z-[3] border-t border-[var(--hairline)] py-10">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 md:flex-row md:items-center md:justify-between md:px-10 lg:px-12">
           <div className="flex items-center gap-2">
             <span
