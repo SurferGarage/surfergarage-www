@@ -75,7 +75,7 @@ export function FounderLazyBilibili({ bvid, title }: FounderLazyBilibiliProps) {
             <p className="font-[family-name:var(--font-zh)] text-xs leading-relaxed text-[var(--muted-strong)]">
               {canLoad
                 ? "进入视口后将加载内嵌播放器。"
-                : "在 `lib/founder-panels.ts` 填入 `bvid` 后，此处自动启用 iframe。"}
+                : "在 Founder Media「视频号」板块接入播放器或链接后，此处将展示内容。"}
             </p>
           </div>
         )}

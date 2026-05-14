@@ -31,7 +31,7 @@ export function GithubRepoCard({ config, className = "" }: GithubRepoCardProps) 
   return (
     <div
       data-github-repo-card
-      className={`group/github-card relative mt-10 overflow-hidden rounded-sm border border-[var(--hairline)] bg-[rgba(19,19,19,0.72)] shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-[2px] transition-[border-color,box-shadow] duration-200 hover:border-[var(--brand-teal)]/35 hover:shadow-[0_0_0_1px_rgba(39,215,199,0.06)] md:mt-12 ${className}`}
+      className={`group/github-card relative overflow-hidden rounded-sm border border-[var(--hairline)] bg-[rgba(19,19,19,0.72)] shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-[2px] transition-[border-color,box-shadow] duration-200 hover:border-[var(--brand-teal)]/35 hover:shadow-[0_0_0_1px_rgba(39,215,199,0.06)] ${className}`}
     >
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(165deg,rgba(39,215,199,0.04)_0%,transparent_42%,transparent_100%)] opacity-90" />
 
