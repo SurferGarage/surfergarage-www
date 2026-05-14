@@ -95,7 +95,7 @@ export default function Home() {
         <HomeCall />
       </main>
 
-      <footer className="relative z-[3] border-t border-[var(--hairline)] py-10">
+      <footer className="relative z-[3] border-t border-[var(--hairline)] bg-[var(--background)] py-10">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 md:flex-row md:items-center md:justify-between md:px-10 lg:px-12">
           <div className="flex items-center gap-2">
             <span

@@ -56,17 +56,17 @@ void main() {
   vec2 d = uv - sun;
   float toSun = length(d);
 
-  float hole = smoothstep(0.38, 0.0, toSun) * smoothstep(0.0, 0.26, 0.26 - uv.y);
+  float hole = (1.0 - smoothstep(0.0, 0.38, toSun)) * smoothstep(0.0, 0.26, 0.26 - uv.y);
   hole *= (1.0 - dep * 0.88);
 
   vec2 cuv = uv * vec2(5.2, 6.4) + vec2(t * 0.12, t * 0.095) + mv * vec2(0.1, -0.06);
   float caustRaw = fbm(cuv) * 0.55 + fbm(cuv * 1.75 + vec2(7.2, 3.1)) * 0.45;
   float caust =
-    pow(caustRaw, 1.22) * smoothstep(0.72, 0.0, uv.y) * (0.88 + 0.12 * sin(t * 0.7 + caustRaw * 6.283));
+    pow(caustRaw, 1.22) * (1.0 - smoothstep(0.0, 0.72, uv.y)) * (0.88 + 0.12 * sin(t * 0.7 + caustRaw * 6.283));
   caust *= (1.0 - dep * 0.58);
 
   float cone =
-    exp(-abs(d.x) / (d.y * 0.52 + 0.004)) * smoothstep(1.02, 0.03, uv.y);
+    exp(-abs(d.x) / max(d.y * 0.52 + 0.004, 0.02)) * (1.0 - smoothstep(0.03, 1.02, uv.y));
   cone *= (0.5 + mv * 0.5) * (1.0 - dep * 0.72);
   cone *= 0.52 + 0.48 * noise(vec2(d.y * 19.0, d.x * 6.5 - t * 1.85));
 
