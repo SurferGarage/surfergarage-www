@@ -3,14 +3,15 @@ import { gsap } from "@/components/motion/gsap-register";
 export type HeroChoreographyRefs = {
   heroScrub: HTMLElement | null;
   heroWave: HTMLElement | null;
-  proof: HTMLElement | null;
+  /** 浪面收束 scrub 的触发区（现为 `#social`，原 `#proof` 已移除） */
+  waveCalmTrigger: HTMLElement | null;
 };
 
 export function registerHeroChoreography(
   markers: boolean,
   refs: HeroChoreographyRefs,
 ): void {
-  const { heroScrub, heroWave, proof } = refs;
+  const { heroScrub, heroWave, waveCalmTrigger } = refs;
 
   gsap.from("[data-hero-reveal]", {
     y: 28,
@@ -39,7 +40,7 @@ export function registerHeroChoreography(
     );
   }
 
-  if (heroWave && proof) {
+  if (heroWave && waveCalmTrigger) {
     gsap.to(heroWave, {
       "--wave-distortion": 0.06,
       "--wave-opacity": 0.1,
@@ -49,7 +50,7 @@ export function registerHeroChoreography(
       "--hero-look-z": 0.4,
       ease: "none",
       scrollTrigger: {
-        trigger: proof,
+        trigger: waveCalmTrigger,
         start: "top 95%",
         end: "top 40%",
         scrub: true,

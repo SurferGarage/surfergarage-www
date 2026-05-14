@@ -1,7 +1,10 @@
 "use client";
 
 import { gsap, ScrollTrigger } from "@/components/motion/gsap-register";
-import { FOUNDER_WECHAT_PIN_END } from "@/lib/founder-wechat-pin-end";
+import {
+  FOUNDER_WECHAT_PIN_END,
+  WECHAT_SCRUB_EDGE_DWELL,
+} from "@/lib/founder-wechat-pin-end";
 import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
 import Image from "next/image";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -16,6 +19,13 @@ const TILT_ENV_EXPONENT = 1.38;
 const WRAP_ROT_Y = 22;
 const WRAP_LIFT = 28;
 const WRAP_Z = 20;
+
+/** 卡片中心经过视口水平中线时：额外向上「冒」一截（高斯包络），形成切换节奏 */
+const CENTER_POP_PX = 13;
+/** 越大峰越尖、越像「点一下」 */
+const CENTER_POP_SHARP = 5.5;
+/** 用视口宽归一化中心距离；越小峰越窄 */
+const CENTER_POP_WIDTH_FR = 0.19;
 
 function syncCardTheaterArc(
   scroller: HTMLDivElement,
@@ -32,6 +42,7 @@ function syncCardTheaterArc(
   const midX = sr.left + sr.width / 2;
   /** 略小于半宽，让最靠边仍有一点弧度，避免「只有一侧在弯」 */
   const norm = Math.max(sr.width * 0.38, 120);
+  const popScale = 0.18 + 0.82 * envelope;
 
   scroller.querySelectorAll<HTMLElement>("[data-wechat-card]").forEach((el) => {
     const r = el.getBoundingClientRect();
@@ -41,13 +52,30 @@ function syncCardTheaterArc(
     const rotY = cx * WRAP_ROT_Y * envelope;
     const lift = -w * WRAP_LIFT * envelope;
     const tz = w * WRAP_Z * envelope;
-    el.style.transform = `translateZ(${tz}px) translateY(${lift}px) rotateY(${rotY}deg)`;
+    const u =
+      (r.left + r.width / 2 - midX) /
+      Math.max(sr.width * CENTER_POP_WIDTH_FR, 96);
+    const centerPop =
+      -CENTER_POP_PX *
+      Math.exp(-CENTER_POP_SHARP * u * u) *
+      popScale;
+    const ty = lift + centerPop;
+    el.style.transform = `translateZ(${tz}px) translateY(${ty}px) rotateY(${rotY}deg)`;
   });
 }
 
+/** 垂直 scrub 原始进度 → 水平 scrollLeft 用进度：两侧各 `dwell` 贴边「多耗」一点纵向行程，避免首尾一露就翻屏 */
+function mapWechatScrubProgress(raw: number, dwell: number): number {
+  const d = Math.min(0.45, Math.max(0, dwell));
+  if (raw <= d) return 0;
+  if (raw >= 1 - d) return 1;
+  return (raw - d) / (1 - 2 * d);
+}
+
 /**
- * 微信公众号 · 全宽「展台」：
- * - 桌面：ScrollTrigger **进度 → 横滑**；单卡 **以 scroller 视口中心为轴** 的环抱弧（对称 rotateY + 抛物线抬升），随 scrub 幅度渐强。
+ * Surfing Founders 微信专栏 · 全宽「展台」：
+ * - 桌面：**ScrollTrigger 进度两侧略作 dwell** 再映射到 `scrollLeft`，首尾卡片多停留一段纵向滚动；中段仍与 pin 总长匹配（见 `founder-wechat-pin-end.ts`）。
+ * - 单卡：视口中心对称 **rotateY + translateZ** 环抱弧；**translateY** 叠 **经过中线的高斯脉冲**（向上微顶再随横移收回），突出每张卡独立节奏。
  * - 整层仅保留轻微 rotateX（进度 + 可选指针俯仰），**不再叠整层 rotateY/rotateZ**，避免与环抱弧打架成「斜弧」。
  */
 export function WeChatOfficialFeed() {
@@ -92,7 +120,11 @@ export function WeChatOfficialFeed() {
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 768px)", () => {
-      const syncScrollToProgress = (progress: number) => {
+      const syncScrollToProgress = (rawProgress: number) => {
+        const progress = mapWechatScrubProgress(
+          rawProgress,
+          WECHAT_SCRUB_EDGE_DWELL,
+        );
         pinProgressRef.current = progress;
         const el = scrollerRef.current;
         if (!el) return;
@@ -248,11 +280,11 @@ export function WeChatOfficialFeed() {
 
   return (
     <div className="mt-4 w-full md:mt-0">
-      <p className="mb-4 max-w-[56rem] font-[family-name:var(--font-en)] text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">
-        {reducedMotion
-          ? "减少动效：请横向滑动浏览全部文章"
-          : "向下滚动本屏：环抱弧随进度渐强；悬停在卡片上滚轮仍可正常翻页"}
-      </p>
+      {reducedMotion ? (
+        <p className="mb-5 max-w-[56rem] font-[family-name:var(--font-zh)] text-[13px] leading-relaxed text-[var(--muted-strong)] md:mb-6 md:text-[15px]">
+          减少动效：请横向滑动浏览专栏。
+        </p>
+      ) : null}
 
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-x-clip overflow-y-visible px-1 pb-16 pt-10 md:px-4 md:pb-28 md:pt-20">
         <div
@@ -306,7 +338,7 @@ export function WeChatOfficialFeed() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`${item.titleZh}，在新标签页打开微信公众号文章`}
+                    aria-label={`${item.titleZh}，Surfing Founders 人物访谈 微信专栏，在新标签页打开`}
                     className="relative shrink-0 snap-center [transform-style:preserve-3d]"
                     style={{
                       transform: "translateZ(0px) translateY(0px) rotateY(0deg)",
@@ -324,17 +356,17 @@ export function WeChatOfficialFeed() {
                         />
                         <span
                           aria-hidden
-                          className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0009e2]/95 via-[#0009e2]/55 to-transparent px-3 pb-2.5 pt-10 font-[family-name:var(--font-en)] text-[10px] font-semibold uppercase tracking-[0.2em] text-white md:text-[11px]"
+                          className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0009e2]/95 via-[#0009e2]/60 to-transparent px-4 pb-3 pt-12 font-[family-name:var(--font-zh)] text-[13px] font-medium leading-snug tracking-wide text-white/95 [text-shadow:0_1px_18px_rgba(0,0,0,0.45)] line-clamp-2 md:px-5 md:pb-3.5 md:pt-14 md:text-[15px] md:leading-snug"
                         >
-                          Surfing Founders
+                          {item.stripZh}
                         </span>
                       </div>
-                      <div className="space-y-2 border-t border-white/[0.06] bg-[linear-gradient(180deg,rgba(19,19,19,0.98)_0%,#08080a_100%)] px-4 py-4 md:px-5 md:py-5">
-                        <p className="line-clamp-4 text-pretty font-[family-name:var(--font-zh)] text-[14px] font-medium leading-snug text-[var(--foreground)] md:text-[15px] md:leading-snug">
+                      <div className="space-y-3 border-t border-white/[0.08] bg-[linear-gradient(180deg,rgba(19,19,19,0.98)_0%,#08080a_100%)] px-5 py-5 md:space-y-3.5 md:px-6 md:py-6">
+                        <p className="line-clamp-5 text-pretty font-[family-name:var(--font-zh)] text-[17px] font-medium leading-snug tracking-[-0.01em] text-[var(--foreground)] md:text-[19px] md:leading-snug lg:text-[21px]">
                           {item.titleZh}
                         </p>
-                        <p className="font-[family-name:var(--font-en)] text-[10px] uppercase tracking-[0.2em] text-[var(--brand-teal)]">
-                          WeChat Official · 打开 ↗
+                        <p className="font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--brand-teal)] md:text-xs">
+                          WeChat 专栏 · 阅读全文 ↗
                         </p>
                       </div>
                     </div>

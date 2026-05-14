@@ -1,6 +1,6 @@
 /**
  * Founder Media 纵向叠卡：每屏约一整视窗，桌面 pin + scrub 见 `register-desktop-pins`。
- * 模块内容与顺序在此集中配置；微信公众号 / 宣传图等可先占位，后续再接素材或接口。
+ * 模块内容与顺序在此集中配置；Surfing Founders 微信专栏 / 宣传图等可先占位，后续再接素材或接口。
  */
 
 import type { GitHubRepoCardConfig } from "@/lib/github-repo-card";
@@ -15,11 +15,11 @@ export type FounderStackKind =
 export type FounderStackModule = {
   id: string;
   kind: FounderStackKind;
-  /** 小标签，如 Module 01 / WECHAT */
+  /** 小标签 */
   eyebrow: string;
   titleZh: string;
   titleEn: string;
-  /** 副文案；微信公众号与宣传图模块刻意留空时可省略 */
+  /** 副文案；宣传图模块可省略 */
   leadZh?: string;
   /** 仅 `github_repo` */
   githubRepo?: GitHubRepoCardConfig;
@@ -29,48 +29,47 @@ export const FOUNDER_STACK_MODULES: FounderStackModule[] = [
   {
     id: "m-wechat",
     kind: "wechat_oa",
-    eyebrow: "WeChat · Module 01",
-    titleZh: "微信公众号",
-    titleEn: "Official Account",
+    eyebrow: "Founders · WeChat",
+    titleZh: "Surfing Founders 人物访谈",
+    titleEn: "Column · conversations",
   },
   {
     id: "m-video",
     kind: "video_channel",
-    eyebrow: "Video · Module 02",
-    titleZh: "视频号",
-    titleEn: "Video Hub",
-    leadZh:
-      "矩阵级视频内容将统一在此呈现；成片会在各视频平台同步投放，此处作为站内聚合入口（内容接入中）。",
+    eyebrow: "Video · Matrix",
+    titleZh: "视频矩阵",
+    titleEn: "Bilibili & syndication",
+    leadZh: "各平台成片与回放在此聚合；外链与栏目随投放节奏接入。",
   },
   {
     id: "m-github",
     kind: "github_repo",
-    eyebrow: "Open Source · Module 03",
-    titleZh: "GitHub 仓库",
-    titleEn: "Live Repository",
-    leadZh: "开源手册与共建进度；仓库指标接入数据后将显示 Stars / Forks 等实时信息。",
+    eyebrow: "Handbook · Open Source",
+    titleZh: "GitHub 手册",
+    titleEn: "Startup Playbook repo",
+    leadZh: "开源共建与悬赏贡献；遥测接入后展示 Stars/Forks。",
     githubRepo: {
       owner: "SurferGarage",
       repo: "Startup-playbook",
       description:
-        "浪前开源创业指南：面向 AI 时代的超级个体与愿景增长手册，含核心认知、工具箱与悬赏贡献机制。",
+        "面向超级个体与愿景增长的开源手册：核心认知、工具箱与贡献机制。",
       showTelemetry: false,
     },
   },
   {
     id: "m-promo",
     kind: "promo_visual",
-    eyebrow: "Visual · Module 04",
-    titleZh: "宣传图片",
-    titleEn: "Campaign Art",
+    eyebrow: "Brand · Visual",
+    titleZh: "视觉物料",
+    titleEn: "Campaign art",
+    leadZh: "活动主视觉与海报位；素材定稿后替换虚线占位。",
   },
   {
     id: "m-contact",
     kind: "contact",
-    eyebrow: "Contact · Module 05",
-    titleZh: "联系我",
-    titleEn: "Contact Me",
-    leadZh:
-      "加入社群、联系 Founders 或商务合作：完整入口与助手二维码见页面底部 The Call 区块。",
+    eyebrow: "Routing · Contact",
+    titleZh: "联络路由",
+    titleEn: "Where to go next",
+    leadZh: "社群、二维码与邮箱集中在页面底部 The Call。",
   },
 ];

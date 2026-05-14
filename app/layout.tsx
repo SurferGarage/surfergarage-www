@@ -19,9 +19,9 @@ const notoSansSC = Noto_Sans_SC({
   display: "swap",
 });
 
-const SITE_TITLE = "浪前 SurferGarage | 构建属于年轻人的创新媒体与社区";
+const SITE_TITLE = "浪前 Surfer Garage | 构建属于年轻人的创新媒体与社区";
 const SITE_DESCRIPTION =
-  "我们寻找那些在时代浪潮中搏浪的 Surfing Founders。用非共识的视角，记录叛逆与创造，让你的故事被世界听见。Surfing wave, build the great.";
+  "我们寻找那些在时代浪潮中搏浪的先行者。Surfing Founders 人物访谈以非共识的视角，记录叛逆与创造，让你的故事被世界听见。Surfing wave, build the great.";
 
 const siteBase = new URL(`${getSiteUrl()}/`);
 
@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     "浪前",
     "创业",
     "SurferGarage",
+    "Surfer Garage",
   ],
   alternates: {
     canonical: "/",
@@ -47,12 +48,12 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     locale: "zh_CN",
     type: "website",
-    siteName: "SurferGarage",
+    siteName: "浪前 Surfer Garage",
     url: siteBase,
     images: [
       {
         url: "/brand-sg-logo.png",
-        alt: "SurferGarage",
+        alt: "浪前 Surfer Garage",
         type: "image/png",
       },
     ],

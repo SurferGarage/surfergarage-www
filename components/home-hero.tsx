@@ -36,7 +36,7 @@ export function HomeHero() {
               </p>
             </div>
             <p className="mt-3 font-[family-name:var(--font-en)] text-[11px] font-normal uppercase tracking-[0.22em] text-[var(--muted)]">
-              海里视角 · Builder Ethos
+              浪前 · 纪录与建造
             </p>
           </div>
         </div>
@@ -48,17 +48,20 @@ export function HomeHero() {
           <div data-manifesto-fade>
             <h1
               id="hero-title"
-              className="wordmark-display text-[clamp(3rem,9.5vw,7.25rem)] text-[var(--foreground)]"
+              className="wordmark-display flex flex-wrap items-baseline gap-x-[0.28em] gap-y-1 text-[clamp(2.75rem,8.2vw,6.75rem)] text-[var(--foreground)]"
               data-hero-reveal
               data-hero-wordmark
             >
-              SurferGarage
+              <span className="font-[family-name:var(--font-zh)] font-medium tracking-tight">
+                浪前
+              </span>
+              <span className="whitespace-nowrap">Surfer&nbsp;Garage</span>
             </h1>
             <p
               className="mt-6 max-w-[34rem] font-[family-name:var(--font-zh)] text-[clamp(1.125rem,2.4vw,1.75rem)] font-medium leading-snug tracking-tight text-[var(--foreground)] md:mt-8"
               data-hero-reveal
             >
-              在非共识处前行。
+              在非共识里造船，而不是在共识里讲故事。
             </p>
             <p
               className="mt-3 max-w-[34rem] font-[family-name:var(--font-en)] text-[clamp(1rem,2vw,1.35rem)] font-normal leading-snug tracking-tight text-[var(--muted-strong)] md:text-xl"
@@ -67,7 +70,7 @@ export function HomeHero() {
               Builder instead of talker.
             </p>
             <p className="mt-4 max-w-[34rem] font-[family-name:var(--font-en)] text-sm tracking-wide text-[var(--brand-teal)]">
-              We don&apos;t record people after landing. We record people still surfing.
+              We record builders still in the water — not the press kit after the exit.
             </p>
           </div>
 
@@ -76,7 +79,7 @@ export function HomeHero() {
               className="font-[family-name:var(--font-zh)] text-[15px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px] md:leading-[1.72]"
               data-hero-scrub
             >
-              我们记录海里的人：不包装，不造神，只看真实闭环。每篇内容都必须回答四个问题：做了什么、踩了什么坑、付了什么代价、用户是否买单。
+              我们只收「可核对」的样本：动作、代价、结果与复盘；拒绝神话叙事与空泛人设。
             </p>
           </div>
         </div>

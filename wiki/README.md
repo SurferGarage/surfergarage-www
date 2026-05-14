@@ -16,6 +16,12 @@
 - **`05-站点深度与模块设计草案.md`**：**纵向色彩隐喻（海面→海底）**、站点 IA、社交 / 采访 / 社群、Linear 式语言、**第六轮滚动动效**、落地顺序
 - **`06-实施计划与验收清单.md`**：**P0→P5 工序**、依赖顺序、每步验收标准、风险与回滚
 
+## 更新日志（维护札记）
+
+- **2026-05-14**：Connect 渠道卡玻璃渐变面 + 右上 `SocialChannelMark`（`lib/social-channels.ts` 的 `mark`）；Founders 微信屏标题「Surfing Founders 人物访谈」；`data-founders-intro` 与 `#founders` / `#social` 纵向节奏；顶栏仅 SurferGarage；Manifesto 主标题浪前 + Surfer Garage；移除 Proof 流相关模块；`npm run lint` / `npm run build` 通过。
+
+---
+
 ## 推荐阅读顺序
 
 0. **先读 `00-Vision-全局架构与设计主旨.md`**（产品与技术取舍的单一事实来源）

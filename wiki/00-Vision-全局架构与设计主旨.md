@@ -42,10 +42,10 @@ SurferGarage V2 **不是传统企业官网**，而是 **高信息密度的数字
   - 底层：**R3F 全屏海面片**（平滑三角网格 + 顶点色起伏）+ **Bloom**（`HERO_BLOOM_*` 与海面细分/相机基线均以 `hero-wave-canvas.tsx` 顶部常量为准，调参时与本文同步更新）。
   - 前层：无全宽渐变遮罩；正文块 **`text-shadow`** 轻压眩光，整体透出全站 **`sg-main-depth`** 纵深渐变。
 
-### Layer 2 — The Proof（内容区）
+### Layer 2 — 内容区（Connect 起）
 
-- **目标**：Founder Talk、活动、招募等 **可扫读证据链**。
-- **动效**：随滚动 **scrub** 压低首屏 `--wave-distortion` / `--wave-opacity`。
+- **目标**：社交矩阵、创始人内容、转化等 **可扫读信息**。
+- **动效**：随滚动 **scrub** 压低首屏 `--wave-distortion` / `--wave-opacity`（ScrollTrigger 触发区为 **`#social`**）。
 - **版式**：**12 列网格** + 细线分割 + 留白；动效只做位移/裁切，不改正文透明度。
 
 ### Layer 3 — The Call（转化）
@@ -71,8 +71,8 @@ SurferGarage V2 **不是传统企业官网**，而是 **高信息密度的数字
 
 1. **[基建]** 锁定全局 CSS 变量、字体、12 列栅格与 hairline 分割语言。  
 2. **[首屏]** `HeroWaveCanvas` **layout 单例** + `HomeHero` 控制面（`data-hero-wave`）+ 跑马灯 + Hero 遮罩层级；Shader 参数以 **Layer 1 表格** 为单一事实来源。  
-3. **[骨架]** The Proof / The Call 静态网格与占位数据。  
-4. **[编排]** `home-scroll-choreography.tsx`：首屏 → Proof 的 scrub、pin、`ScrollTrigger.refresh` 策略。  
+3. **[骨架]** Social / Founders / The Call 静态网格与占位数据。  
+4. **[编排]** `home-scroll-choreography.tsx`：首屏 → `#social` 浪面收束 scrub、各区块 pin、`ScrollTrigger.refresh` 策略。  
 5. **[内容]** CMS / MDX 注入访谈与列表（与工程解耦，可最后接）。
 
 ---
@@ -113,7 +113,7 @@ You are a senior frontend architect. Research and synthesize (with citations whe
 
 4) Postprocessing Bloom in WebGL: threshold/smoothing/mipmapBlur impact on performance and banding; practical defaults for dark UIs with cyan accents.
 
-Deliver: a concise engineering checklist + anti-patterns list, not marketing prose. Assume the product is a single-page marketing site with one hero WebGL field and longform proof section below.
+Deliver: a concise engineering checklist + anti-patterns list, not marketing prose. Assume the product is a single-page marketing site with one hero WebGL field and longform sections below (social, founders, call).
 ```
 
 ---

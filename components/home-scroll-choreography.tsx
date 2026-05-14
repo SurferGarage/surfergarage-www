@@ -10,7 +10,6 @@ import { registerFoundersIntro } from "@/components/motion/register-founders-int
 import { registerGithubRepoCards } from "@/components/motion/register-github-repo-cards";
 import { registerHeroChoreography } from "@/components/motion/register-hero-choreography";
 import { registerManifestoScroll } from "@/components/motion/register-manifesto-scroll";
-import { registerProofStreams } from "@/components/motion/register-proof-streams";
 import { registerSocialExpand } from "@/components/motion/register-social-expand";
 import gsap from "gsap";
 
@@ -47,11 +46,7 @@ export function HomeScrollChoreography() {
     );
     const heroScrub = document.querySelector<HTMLElement>("[data-hero-scrub]");
     const heroWave = document.querySelector<HTMLElement>("[data-hero-wave]");
-    const proof = document.querySelector<HTMLElement>("#proof");
-    const proofPin = document.querySelector<HTMLElement>("[data-proof-pin]");
-    const proofStreams = document.querySelector<HTMLElement>(
-      "[data-proof-streams]",
-    );
+    const socialSection = document.querySelector<HTMLElement>("#social");
     const callSection = document.querySelector<HTMLElement>("#call");
 
     const ctx = gsap.context(() => {
@@ -60,9 +55,8 @@ export function HomeScrollChoreography() {
       registerHeroChoreography(ST_MARKERS, {
         heroScrub,
         heroWave,
-        proof,
+        waveCalmTrigger: socialSection,
       });
-      registerProofStreams(ST_MARKERS);
       registerFoundersIntro(ST_MARKERS);
       registerGithubRepoCards(ST_MARKERS);
       registerSocialExpand(ST_MARKERS);
@@ -74,9 +68,6 @@ export function HomeScrollChoreography() {
       registerDesktopPins(ST_MARKERS, {
         manifestoPin,
         manifestoRight,
-        proof,
-        proofPin,
-        proofStreams,
       });
     });
 

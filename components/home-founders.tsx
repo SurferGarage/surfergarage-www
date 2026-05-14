@@ -25,17 +25,17 @@ function ModuleShell({
 }) {
   return (
     <>
-      <p className="font-[family-name:var(--font-en)] text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--brand-teal)]">
+      <p className="font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--brand-teal)]">
         {eyebrow}
       </p>
-      <h2 className="mt-3 max-w-[48rem] font-[family-name:var(--font-zh)] text-[1.35rem] font-medium leading-snug text-[var(--foreground)] md:text-3xl md:leading-snug">
+      <h2 className="mt-3 max-w-[52rem] font-[family-name:var(--font-zh)] text-[1.5rem] font-medium leading-snug text-[var(--foreground)] md:text-[2rem] md:leading-[1.15]">
         {titleZh}
       </h2>
-      <p className="mt-2 font-[family-name:var(--font-en)] text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">
+      <p className="mt-2 font-[family-name:var(--font-en)] text-[12px] uppercase tracking-[0.18em] text-[var(--muted)] md:text-[13px]">
         {titleEn}
       </p>
       {leadZh ? (
-        <p className="mt-8 max-w-[40rem] font-[family-name:var(--font-zh)] text-sm leading-relaxed text-[var(--muted-strong)]">
+        <p className="mt-8 max-w-[44rem] font-[family-name:var(--font-zh)] text-[15px] leading-relaxed text-[var(--muted-strong)] md:text-[17px] md:leading-relaxed">
           {leadZh}
         </p>
       ) : null}
@@ -74,36 +74,11 @@ export function HomeFounders() {
   return (
     <section
       id="founders"
-      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] py-16 md:py-20"
-      aria-labelledby="founders-heading"
+      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] pb-16 pt-28 md:pb-20 md:pt-40"
+      aria-label="浪前片场"
     >
       <div className="mx-auto max-w-[1440px] px-5 md:px-10 lg:px-12">
-        <div data-founders-intro>
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <p
-              id="founders-heading"
-              className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]"
-            >
-              Founder Media
-            </p>
-            <span
-              aria-hidden
-              className="h-1.5 w-1.5 rounded-full bg-[var(--brand-teal)]"
-            />
-            <span className="font-[family-name:var(--font-zh)] text-xs font-medium text-[var(--muted)]">
-              全屏模块 · 纵向叠卡
-            </span>
-          </div>
-          <p className="mt-4 max-w-[40rem] font-[family-name:var(--font-zh)] text-sm leading-relaxed text-[var(--muted-strong)] md:text-[15px]">
-            以下五屏各占约一整视窗高度：向下滚动时当前屏略向后撤，下一屏接棒（桌面端 pin +
-            scrub 与此前一致）。除文案与占位外，布局与动效编排不变。
-          </p>
-        </div>
-
-        <div
-          className="mt-14 divide-y divide-[var(--hairline)] md:mt-20"
-          data-founders-stack
-        >
+        <div className="divide-y divide-[var(--hairline)]" data-founders-stack>
           {FOUNDER_STACK_MODULES.map((m) => (
             <article
               key={m.id}
@@ -113,16 +88,46 @@ export function HomeFounders() {
             >
               <div data-founder-card className={FOUNDER_CARD_BASE}>
                 {m.kind === "wechat_oa" ? (
-                  <div className="flex w-full shrink-0 flex-col md:gap-12">
-                    <div className="shrink-0">
-                      <ModuleShell
-                        eyebrow={m.eyebrow}
-                        titleZh={m.titleZh}
-                        titleEn={m.titleEn}
-                      />
+                  <div className="flex w-full shrink-0 flex-col">
+                    <div
+                      data-founders-intro
+                      className="mb-20 max-w-[52rem] space-y-6 md:mb-32 md:space-y-8"
+                    >
+                      <p className="font-[family-name:var(--font-en)] text-[10px] font-semibold uppercase tracking-[0.26em] text-[var(--muted)]">
+                        Editorial
+                      </p>
+                      <blockquote className="border-l-2 border-[var(--brand-teal)]/55 pl-5 md:pl-7">
+                        <p className="font-[family-name:var(--font-zh)] text-[1.125rem] font-medium leading-snug text-[var(--foreground)] md:text-[1.35rem] md:leading-snug">
+                          在时代浪潮里感受速度、风险与机会——我们把仍在海里建造的人，称作{" "}
+                          <span className="text-[var(--brand-teal)]">
+                            Surfing Founders 人物访谈
+                          </span>
+                          。
+                        </p>
+                      </blockquote>
+                      <p className="font-[family-name:var(--font-zh)] text-[15px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px] md:leading-[1.75]">
+                        浪前 Surfer Garage
+                        以对谈与长文留下可核对的样本：选择、代价、复盘与下一步。不包装神话，只记录仍在发生的航线。
+                      </p>
+                      <p className="font-[family-name:var(--font-zh)] text-[15px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px] md:leading-[1.75]">
+                        我们更相信正在搏浪的先行者：他们未必上岸，却最清楚风向与潮汐。他们的故事值得被更多年轻逐浪者听见——作为火种，而不是标准答案。
+                      </p>
+                      <p className="font-[family-name:var(--font-zh)] text-[15px] leading-[1.8] text-[var(--muted)] md:text-[17px]">
+                        Surfing Wave, Build the Great.
+                      </p>
                     </div>
-                    <div className="flex w-full md:justify-center">
-                      <WeChatOfficialFeed />
+                    <div className="flex w-full shrink-0 flex-col gap-12 md:gap-16">
+                      <div className="shrink-0">
+                        <ModuleShell
+                          eyebrow={m.eyebrow}
+                          titleZh={m.titleZh}
+                          titleEn={m.titleEn}
+                          leadZh={m.leadZh}
+                        />
+                      </div>
+                      <div className="flex w-full md:justify-center">
+                        <WeChatOfficialFeed />
+                      </div>
                     </div>
                   </div>
                 ) : null}
@@ -137,7 +142,7 @@ export function HomeFounders() {
                     >
                       <div className="mt-10 rounded-sm border border-[var(--hairline)] bg-[rgba(19,19,19,0.45)] px-5 py-10 md:mt-12 md:px-8 md:py-14">
                         <p className="font-[family-name:var(--font-zh)] text-sm text-[var(--muted)] md:text-[15px]">
-                          视频列表与封面网格将接在矩阵投放策略确定后配置；当前为结构占位。
+                          各平台成片与回放将在此聚合；链接与栏目表随投放节奏接入。
                         </p>
                       </div>
                     </ModuleShell>
@@ -167,6 +172,7 @@ export function HomeFounders() {
                       eyebrow={m.eyebrow}
                       titleZh={m.titleZh}
                       titleEn={m.titleEn}
+                      leadZh={m.leadZh}
                     >
                       <EmptyModuleCanvas label="宣传图片" />
                     </ModuleShell>
@@ -186,7 +192,7 @@ export function HomeFounders() {
                           href="#call"
                           className="inline-flex items-center justify-center rounded-sm border border-[var(--hairline)] bg-[rgba(19,19,19,0.55)] px-5 py-3 font-[family-name:var(--font-zh)] text-sm text-[var(--foreground)] transition-colors hover:border-[var(--brand-teal)]/45 hover:text-[var(--brand-teal)]"
                         >
-                          前往 The Call（社群与二维码）
+                          前往 The Call
                         </a>
                         <a
                           href={DISCORD_INVITE_URL}

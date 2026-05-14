@@ -4,16 +4,13 @@ import { FOUNDER_WECHAT_PIN_END } from "@/lib/founder-wechat-pin-end";
 export type DesktopPinsRefs = {
   manifestoPin: HTMLElement | null;
   manifestoRight: HTMLElement | null;
-  proof: HTMLElement | null;
-  proofPin: HTMLElement | null;
-  proofStreams: HTMLElement | null;
 };
 
 export function registerDesktopPins(
   markers: boolean,
   refs: DesktopPinsRefs,
 ): void {
-  const { manifestoPin, manifestoRight, proof, proofPin, proofStreams } = refs;
+  const { manifestoPin, manifestoRight } = refs;
 
   if (manifestoPin && manifestoRight) {
     ScrollTrigger.create({
@@ -24,19 +21,6 @@ export function registerDesktopPins(
       pinSpacing: true,
       markers,
       id: "manifesto-pin",
-    });
-  }
-
-  if (proof && proofPin && proofStreams) {
-    ScrollTrigger.create({
-      trigger: proof,
-      start: "center center",
-      endTrigger: proofStreams,
-      end: "bottom bottom",
-      pin: proofPin,
-      pinSpacing: true,
-      markers,
-      id: "proof-pin",
     });
   }
 

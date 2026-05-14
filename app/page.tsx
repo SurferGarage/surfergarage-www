@@ -6,7 +6,6 @@ import { HomeHero } from "@/components/home-hero";
 import { HomeScrollChoreography } from "@/components/home-scroll-choreography";
 import { UnderwaterLightStage } from "@/components/underwater-light-stage";
 import { WaterVolumeFx } from "@/components/water-volume-fx";
-import { PROOF_STREAMS } from "@/lib/proof-streams";
 import Image from "next/image";
 
 export default function Home() {
@@ -42,8 +41,10 @@ export default function Home() {
               className="h-10 w-10 shrink-0 object-contain"
               priority
             />
-            <span className="text-[var(--foreground)]">Surfer</span>
-            <span className="text-[var(--foreground)]">Garage</span>
+            <span className="flex items-baseline gap-1.5">
+              <span className="text-[var(--foreground)]">Surfer</span>
+              <span className="text-[var(--foreground)]">Garage</span>
+            </span>
           </a>
           <nav
             className="hidden gap-9 font-[family-name:var(--font-en)] text-[11px] uppercase tracking-[0.18em] md:flex"
@@ -54,12 +55,6 @@ export default function Home() {
               className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
             >
               Manifesto
-            </a>
-            <a
-              href="#proof"
-              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
-            >
-              The Proof
             </a>
             <a
               href="#social"
@@ -86,104 +81,6 @@ export default function Home() {
       <main className="relative z-[3] flex-1">
         <HomeHero />
 
-        <section
-          id="proof"
-          className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] py-20 md:py-28"
-          aria-labelledby="proof-heading"
-        >
-          <div className="mx-auto grid w-full max-w-[1440px] grid-cols-12 gap-x-4 px-5 md:gap-x-6 lg:px-12">
-            <div
-              className="col-span-12 md:col-span-4 md:pr-8"
-              data-proof-pin
-            >
-              <div data-proof-intro>
-                <p
-                  id="proof-heading"
-                  className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]"
-                >
-                  The Proof
-                </p>
-                <p className="mt-4 font-[family-name:var(--font-zh)] text-[15px] leading-relaxed text-[var(--muted-strong)]">
-                  我们不讲趋势预测，只记录真实动作。每条内容都要有决策、代价、验证结果；没有证据链，就不发布。
-                </p>
-              </div>
-            </div>
-
-            <div
-              className="col-span-12 mt-14 md:col-span-7 md:col-start-6 md:mt-0"
-              data-proof-streams
-            >
-              {PROOF_STREAMS.map((stream, streamIndex) => (
-                <div
-                  key={stream.key}
-                  data-proof-stream
-                  className={
-                    streamIndex === 0
-                      ? ""
-                      : "mt-16 border-t border-[var(--hairline)] pt-16 md:mt-20 md:pt-20"
-                  }
-                >
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <h2 className="font-[family-name:var(--font-en)] text-sm font-semibold uppercase tracking-[0.14em] text-[var(--foreground)]">
-                      {stream.titleEn}
-                    </h2>
-                    <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[var(--brand-teal)]" />
-                    <span className="font-[family-name:var(--font-zh)] text-sm font-medium text-[var(--muted)]">
-                      {stream.titleZh}
-                    </span>
-                  </div>
-                  {stream.introZh ? (
-                    <p className="mt-4 font-[family-name:var(--font-zh)] text-[13px] leading-relaxed text-[var(--muted)] md:text-sm">
-                      {stream.introZh}
-                    </p>
-                  ) : null}
-
-                  <ul className="mt-8 border-t border-[var(--hairline)]">
-                    {stream.rows.map((row) => (
-                      <li
-                        key={`${stream.key}-${row.title}`}
-                        className="border-b border-[var(--hairline)]"
-                      >
-                        {row.href && row.href !== "#" ? (
-                          <a
-                            href={row.href}
-                            className="group grid grid-cols-12 gap-x-4 py-5 md:py-[1.125rem] md:items-baseline"
-                          >
-                            <span className="col-span-12 font-[family-name:var(--font-zh)] text-[15px] font-medium leading-snug text-[var(--foreground)] transition-colors group-hover:text-[var(--muted-strong)] md:col-span-7 lg:col-span-8">
-                              {row.title}
-                            </span>
-                            <span className="col-span-12 mt-2 font-[family-name:var(--font-en)] text-[11px] uppercase tracking-[0.16em] text-[var(--muted)] md:col-span-3 md:mt-0 lg:col-span-2">
-                              {row.meta}
-                            </span>
-                            <span className="col-span-12 mt-3 font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--muted)] transition-colors group-hover:text-[var(--foreground)] md:col-span-2 md:mt-0 md:text-right">
-                              View →
-                            </span>
-                          </a>
-                        ) : (
-                          <div
-                            className="group grid grid-cols-12 gap-x-4 py-5 md:py-[1.125rem] md:items-baseline"
-                            aria-label="内容即将上线"
-                          >
-                            <span className="col-span-12 font-[family-name:var(--font-zh)] text-[15px] font-medium leading-snug text-[var(--foreground)] md:col-span-7 lg:col-span-8">
-                              {row.title}
-                            </span>
-                            <span className="col-span-12 mt-2 font-[family-name:var(--font-en)] text-[11px] uppercase tracking-[0.16em] text-[var(--muted)] md:col-span-3 md:mt-0 lg:col-span-2">
-                              {row.meta}
-                            </span>
-                            <span className="col-span-12 mt-3 font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--muted)] md:col-span-2 md:mt-0 md:text-right">
-                              Soon
-                            </span>
-                          </div>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <HomeSocial />
 
         <HomeFounders />
@@ -199,11 +96,11 @@ export default function Home() {
               className="h-1.5 w-1.5 rounded-full bg-[var(--brand-teal)]"
             />
             <p className="font-[family-name:var(--font-en)] text-[11px] uppercase tracking-[0.2em] text-[var(--muted)]">
-              © {new Date().getFullYear()} SurferGarage
+              © {new Date().getFullYear()} 浪前 Surfer Garage
             </p>
           </div>
-          <p className="font-[family-name:var(--font-zh)] text-xs text-[var(--muted)]">
-            Surfing wave, build the great.
+          <p className="font-[family-name:var(--font-zh)] text-xs text-[var(--muted)] md:text-sm">
+            站点与内容持续迭代；以仓库与专栏为准。
           </p>
         </div>
       </footer>

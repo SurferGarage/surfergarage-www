@@ -62,10 +62,10 @@ export function HomeCall() {
                       小浪 @SurferGarage
                     </span>
                     <span className="mt-3 block font-[family-name:var(--font-zh)] text-base text-[var(--muted-strong)] md:text-lg">
-                      入群与审核咨询：使用微信扫一扫添加小浪。
+                      入群与材料咨询：先加小浪微信。
                     </span>
                     <p className="mt-4 max-w-md font-[family-name:var(--font-zh)] text-xs leading-relaxed text-[var(--muted)]">
-                      商务合作、媒体与演讲请发邮件（见下方），避免占用助手好友位。
+                      商务与演讲仍走下方邮箱，减少好友位占用。
                     </p>
                   </div>
                   <AssistantQrSlot />
@@ -82,7 +82,7 @@ export function HomeCall() {
                     Join the Garage
                   </span>
                   <span className="mt-3 block font-[family-name:var(--font-zh)] text-base text-[var(--muted-strong)] md:text-lg">
-                    加入 Discord：活动、组队与高密度 Builder 讨论
+                    Discord：活动、组队与 Builder 讨论
                   </span>
                 </a>
               </li>
