@@ -21,7 +21,7 @@ const notoSansSC = Noto_Sans_SC({
 
 const SITE_TITLE = "浪前 Surfer Garage | 构建属于年轻人的创新媒体与社区";
 const SITE_DESCRIPTION =
-  "我们寻找那些在时代浪潮中搏浪的先行者。Surfing Founders 人物访谈以非共识的视角，记录叛逆与创造，让你的故事被世界听见。Surfing wave, build the great.";
+  "我们寻找那些在时代浪潮中搏浪的先行者。Surfing Founders 人物访谈以非共识的视角，记录叛逆与创造，让你的故事被世界听见。Surfing Wave, Build the Great.";
 
 const siteBase = new URL(`${getSiteUrl()}/`);
 

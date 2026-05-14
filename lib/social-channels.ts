@@ -1,6 +1,6 @@
 /**
  * 出站渠道清单。`href` 非 http(s) 时在 UI 中渲染为信息卡（见 `home-social`）。
- * Connect 区按 **文章 / 视频与播客 / 开源** 分块展示；Discord 不在此区（入口见 The Call）。
+ * 触点区按 **文章 / 视频与播客 / 开源** 分块展示；Discord 不在此区（入口见「联络」）。
  */
 export type SocialChannelKind =
   | "article"
@@ -37,7 +37,7 @@ const wechatArticle: SocialChannel = {
   labelEn: "WeChat",
   labelZh: "公众号专栏",
   href: "#",
-  descriptionZh: "中文长文连载；选篇请在 Founders「浪前片场」横滑展台打开。",
+  descriptionZh: "中文长文连载；选篇请在「片场」横滑微信展台打开。",
 };
 
 const videoChannels: SocialChannel[] = [
@@ -64,7 +64,7 @@ const videoChannels: SocialChannel[] = [
     kind: "video",
     mark: "twitter",
     labelEn: "X (Twitter)",
-    labelZh: "Twitter · 视频",
+    labelZh: "X（Twitter）· 视频",
     href: "#",
     descriptionZh: "主页链接待上架。",
   },

@@ -97,7 +97,7 @@ export function UnderwaterLightStage(): ReactNode {
       const baseX = 0.5 + wander + impulseRef.current + (vel - 0.5) * 0.06;
       root.style.setProperty("--uwl-orb-x", clamp(baseX, 0.34, 0.66).toFixed(4));
 
-      const colorT = depthOk ? dtRaw : p;
+      const colorT = depthOk ? clamp(dtRaw, 0, 1) : p;
       setOrbColors(root, colorT);
       const tyndall = 1 - clamp(colorT, 0, 1) * 0.82;
       root.style.setProperty("--uwl-tyndall", tyndall.toFixed(4));

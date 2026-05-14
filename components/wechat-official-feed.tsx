@@ -5,46 +5,65 @@ import {
   FOUNDER_WECHAT_PIN_END,
   mapWechatPinProgressToHorizontalScrub,
 } from "@/lib/founder-wechat-pin-end";
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
 import Image from "next/image";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-const BASE_ROT_X = 12;
-const MAX_ROT_X_POINTER = 4;
-const LERP = 0.09;
-/** 3D 幅度相对滚动进度晚一点起来：开头几乎平视，越往下越「张扬」 */
-const TILT_ENV_EXPONENT = 1.38;
+const BASE_ROT_X = 8;
+const MAX_ROT_X_POINTER = 3.2;
+const LERP = 0.11;
+/** 3D 随 pin 进度渐起 */
+const TILT_ENV_EXPONENT = 1.08;
 
-/** 相对视口中心的环抱弧（carousel）：左右 rotateY 对称，中间略抬、略推向镜头 */
+/** 环抱弧：展台感略加强 */
 const WRAP_ROT_Y = 22;
-const WRAP_LIFT = 28;
-const WRAP_Z = 20;
+const WRAP_LIFT = 26;
+const WRAP_Z = 34;
 
-/** 卡片中心经过视口水平中线时：额外向上「冒」一截（高斯包络），形成切换节奏 */
-const CENTER_POP_PX = 13;
-/** 越大峰越尖、越像「点一下」 */
-const CENTER_POP_SHARP = 5.5;
-/** 用视口宽归一化中心距离；越小峰越窄 */
-const CENTER_POP_WIDTH_FR = 0.19;
+type WechatPointerSpot = {
+  readonly x: number;
+  readonly y: number;
+  readonly active: boolean;
+};
 
+/**
+ * 单卡 3D 展台弧：在 **未变换** 的 `[data-wechat-card]` 上量几何，把 transform 写到
+ * `[data-wechat-tilt]`，避免「量到的是上一帧 transform 后的盒」→ 反馈抖动。
+ */
 function syncCardTheaterArc(
   scroller: HTMLDivElement,
   envelope: number,
+  pointer: WechatPointerSpot,
 ): void {
   if (envelope < 0.04) {
     scroller.querySelectorAll<HTMLElement>("[data-wechat-card]").forEach((el) => {
-      el.style.transform = "translateZ(0px) translateY(0px) rotateY(0deg)";
+      const tilt = el.querySelector<HTMLElement>("[data-wechat-tilt]");
+      if (tilt) {
+        tilt.style.transform =
+          "translateZ(0px) translateY(0px) rotateY(0deg) rotateX(0deg) scale3d(1,1,1)";
+        tilt.style.opacity = "";
+      }
+      const spot = el.querySelector<HTMLElement>("[data-wechat-spot]");
+      if (spot) {
+        spot.style.opacity = "0";
+        spot.style.removeProperty("--wx");
+        spot.style.removeProperty("--wy");
+      }
+      const inner = el.querySelector<HTMLElement>("[data-wechat-card-inner]");
+      if (inner) inner.style.boxShadow = "";
     });
     return;
   }
 
   const sr = scroller.getBoundingClientRect();
   const midX = sr.left + sr.width / 2;
-  /** 略小于半宽，让最靠边仍有一点弧度，避免「只有一侧在弯」 */
-  const norm = Math.max(sr.width * 0.38, 120);
-  const popScale = 0.18 + 0.82 * envelope;
+  const norm = Math.max(sr.width * 0.36, 120);
 
   scroller.querySelectorAll<HTMLElement>("[data-wechat-card]").forEach((el) => {
+    const tilt = el.querySelector<HTMLElement>("[data-wechat-tilt]");
+    if (!tilt) return;
+
     const r = el.getBoundingClientRect();
     const cxRaw = (r.left + r.width / 2 - midX) / norm;
     const cx = Math.max(-1, Math.min(1, cxRaw));
@@ -52,29 +71,65 @@ function syncCardTheaterArc(
     const rotY = cx * WRAP_ROT_Y * envelope;
     const lift = -w * WRAP_LIFT * envelope;
     const tz = w * WRAP_Z * envelope;
-    const u =
-      (r.left + r.width / 2 - midX) /
-      Math.max(sr.width * CENTER_POP_WIDTH_FR, 96);
-    const centerPop =
-      -CENTER_POP_PX *
-      Math.exp(-CENTER_POP_SHARP * u * u) *
-      popScale;
-    const ty = lift + centerPop;
-    el.style.transform = `translateZ(${tz}px) translateY(${ty}px) rotateY(${rotY}deg)`;
+    const ty = lift;
+
+    let hovering = false;
+    if (envelope > 0.04) {
+      hovering =
+        pointer.x >= r.left &&
+        pointer.x <= r.right &&
+        pointer.y >= r.top &&
+        pointer.y <= r.bottom;
+    }
+
+    const focus = 0.9 + 0.16 * w;
+    tilt.style.opacity = String(0.58 + 0.42 * w);
+    tilt.style.transform = `translateZ(${tz}px) translateY(${ty}px) rotateY(${rotY}deg) rotateX(0deg) scale3d(${focus},${focus},1)`;
+
+    const spot = el.querySelector<HTMLElement>("[data-wechat-spot]");
+    if (spot) {
+      if (hovering) {
+        const px = ((pointer.x - r.left) / Math.max(1, r.width)) * 100;
+        const py = ((pointer.y - r.top) / Math.max(1, r.height)) * 100;
+        spot.style.setProperty("--wx", `${px}%`);
+        spot.style.setProperty("--wy", `${py}%`);
+        spot.style.opacity = String(0.28 + 0.45 * w * envelope);
+      } else {
+        spot.style.opacity = "0";
+        spot.style.removeProperty("--wx");
+        spot.style.removeProperty("--wy");
+      }
+    }
+
+    const inner = el.querySelector<HTMLElement>("[data-wechat-card-inner]");
+    if (inner) {
+      if (w > 0.74 && envelope > 0.08) {
+        inner.style.boxShadow =
+          "0 0 0 1px rgba(39,215,199,0.45), 0 0 48px -8px rgba(0,9,226,0.55), 0 32px 90px -28px rgba(0,9,226,0.35)";
+      } else if (hovering) {
+        inner.style.boxShadow =
+          "0 0 0 1px rgba(255,255,255,0.14), 0 22px 60px -22px rgba(0,0,0,0.65)";
+      } else {
+        inner.style.boxShadow = "";
+      }
+    }
   });
 }
 
 /**
  * Surfing Founders 微信专栏 · 全宽「展台」：
- * - 桌面：pin 进度经 `mapWechatPinProgressToHorizontalScrub` 映射到 `scrollLeft`（导语段不推进横滑）；滚轴对称 `padding` + `scroll-padding-inline` 使卡片相对视口居中滑动。
- * - 单卡：视口中心对称 **rotateY + translateZ** 环抱弧；**translateY** 叠 **经过中线的高斯脉冲**（向上微顶再随横移收回），突出每张卡独立节奏。
- * - 整层仅保留轻微 rotateX（进度 + 可选指针俯仰），**不再叠整层 rotateY/rotateZ**，避免与环抱弧打架成「斜弧」。
+ * - 桌面：**pin 进度与 `scrollLeft` 在 ST `onUpdate` 内瞬时同相绑定**（竖滚在 pin 内全部「喂给」横条，跑完才离开该 pin 段）；RAF 只做展台弧与整层俯仰，**不再改写 scrollLeft**（避免滞后导致条拖不动、竖滚先跑完）。
+ * - 单卡 3D：**几何在 `[data-wechat-card]` 上量、变换在 `[data-wechat-tilt]`**；桌面展台弧强度与 **`pinProgressRef`（与 `scrollLeft` 瞬时一致）** 同相。
+ * - 整层轻微 rotateX + 指针俯仰。
  */
 export function WeChatOfficialFeed() {
   const stageRef = useRef<HTMLDivElement>(null);
   const tiltLayerRef = useRef<HTMLDivElement>(null);
   const zoneRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  /** 桌面 md+ 且 ScrollTrigger 已挂上：由 pin 驱动横滑；否则不改写 scrollLeft（移动端手滑） */
+  const desktopWechatScrubRef = useRef(false);
+  const pointerClientRef = useRef({ x: 0, y: 0 });
 
   const [reducedMotion, setReducedMotion] = useState(false);
   const pinProgressRef = useRef(0);
@@ -112,15 +167,28 @@ export function WeChatOfficialFeed() {
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 768px)", () => {
-      const syncScrollToProgress = (rawProgress: number) => {
+      desktopWechatScrubRef.current = true;
+
+      const bindPinToScroller = (rawProgress: number) => {
         const progress = mapWechatPinProgressToHorizontalScrub(rawProgress);
         pinProgressRef.current = progress;
         const el = scrollerRef.current;
         if (!el) return;
         const max = Math.max(0, el.scrollWidth - el.clientWidth);
         el.scrollLeft = progress * max;
-        const env = progress ** TILT_ENV_EXPONENT;
-        syncCardTheaterArc(el, env);
+      };
+
+      /** 布局刷新或首帧：瞬时对齐 */
+      const snapScrollerToProgress = (rawProgress: number) => {
+        bindPinToScroller(rawProgress);
+        const el = scrollerRef.current;
+        if (!el) return;
+        const p = pinProgressRef.current;
+        syncCardTheaterArc(el, p ** TILT_ENV_EXPONENT, {
+          x: pointerClientRef.current.x,
+          y: pointerClientRef.current.y,
+          active: pointerInsideRef.current,
+        });
       };
 
       const st = ScrollTrigger.create({
@@ -130,10 +198,10 @@ export function WeChatOfficialFeed() {
         end: FOUNDER_WECHAT_PIN_END,
         invalidateOnRefresh: true,
         onUpdate(self) {
-          syncScrollToProgress(self.progress);
+          bindPinToScroller(self.progress);
         },
         onRefresh(self) {
-          syncScrollToProgress(self.progress);
+          snapScrollerToProgress(self.progress);
         },
       });
 
@@ -143,9 +211,10 @@ export function WeChatOfficialFeed() {
       };
       scroller?.addEventListener("load", onImgLoad, true);
 
-      syncScrollToProgress(st.progress);
+      snapScrollerToProgress(st.progress);
 
       return () => {
+        desktopWechatScrubRef.current = false;
         scroller?.removeEventListener("load", onImgLoad, true);
         st.kill();
       };
@@ -175,7 +244,18 @@ export function WeChatOfficialFeed() {
       const sc = scrollerRef.current;
       if (sc) {
         sc.querySelectorAll<HTMLElement>("[data-wechat-card]").forEach((a) => {
-          a.style.removeProperty("transform");
+          a.querySelectorAll<HTMLElement>("[data-wechat-tilt]").forEach((tilt) => {
+            tilt.style.removeProperty("transform");
+            tilt.style.removeProperty("opacity");
+          });
+          a.querySelectorAll<HTMLElement>("[data-wechat-spot]").forEach((s) => {
+            s.style.opacity = "0";
+            s.style.removeProperty("--wx");
+            s.style.removeProperty("--wy");
+          });
+          a.querySelectorAll<HTMLElement>("[data-wechat-card-inner]").forEach((inner) => {
+            inner.style.boxShadow = "";
+          });
         });
       }
       return;
@@ -186,7 +266,7 @@ export function WeChatOfficialFeed() {
       if (cancelled) return;
       const rawP = Math.max(0, Math.min(1, pinProgressRef.current));
       const tiltEnv = rawP ** TILT_ENV_EXPONENT;
-      const scale = 1 + 0.035 * tiltEnv;
+      const scale = 1 + 0.032 * tiltEnv;
 
       const inside = pointerInsideRef.current;
       const cy = pointerCyRef.current;
@@ -209,7 +289,20 @@ export function WeChatOfficialFeed() {
 
       const sc = scrollerRef.current;
       if (sc) {
-        syncCardTheaterArc(sc, tiltEnv);
+        const spot: WechatPointerSpot = {
+          x: pointerClientRef.current.x,
+          y: pointerClientRef.current.y,
+          active: pointerInsideRef.current,
+        };
+        let cardEnv: number;
+        if (desktopWechatScrubRef.current) {
+          cardEnv = pinProgressRef.current ** TILT_ENV_EXPONENT;
+        } else {
+          const maxW = Math.max(0, sc.scrollWidth - sc.clientWidth);
+          const scrollT = maxW > 0 ? sc.scrollLeft / maxW : 0;
+          cardEnv = scrollT ** TILT_ENV_EXPONENT;
+        }
+        syncCardTheaterArc(sc, cardEnv, spot);
       }
 
       rafTilt.current = requestAnimationFrame(loop);
@@ -225,6 +318,7 @@ export function WeChatOfficialFeed() {
     if (reducedMotion) return;
 
     const onPointerMove = (e: PointerEvent) => {
+      pointerClientRef.current = { x: e.clientX, y: e.clientY };
       const stage = stageRef.current;
       if (!stage) return;
       const r = stage.getBoundingClientRect();
@@ -252,9 +346,14 @@ export function WeChatOfficialFeed() {
     if (!el) return;
 
     const bump = () => {
-      const rawP = pinProgressRef.current;
-      const env = rawP ** TILT_ENV_EXPONENT;
-      syncCardTheaterArc(el, env);
+      const max = Math.max(0, el.scrollWidth - el.clientWidth);
+      const scrollT = max > 0 ? el.scrollLeft / max : 0;
+      const env = scrollT ** TILT_ENV_EXPONENT;
+      syncCardTheaterArc(el, env, {
+        x: pointerClientRef.current.x,
+        y: pointerClientRef.current.y,
+        active: pointerInsideRef.current,
+      });
     };
 
     el.addEventListener("scroll", bump, { passive: true });
@@ -278,7 +377,7 @@ export function WeChatOfficialFeed() {
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-x-clip overflow-y-visible px-1 pb-16 pt-10 md:px-4 md:pb-28 md:pt-20">
         <div
           ref={stageRef}
-          className="relative mx-auto w-full max-w-[100vw] [perspective:min(175vw,1750px)] [perspective-origin:50%_42%]"
+          className="relative mx-auto w-full max-w-[100vw] [perspective:min(200vw,2000px)] [perspective-origin:50%_38%]"
         >
           <div
             aria-hidden
@@ -315,9 +414,9 @@ export function WeChatOfficialFeed() {
                 className="wechat-official-feed-scroll flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-hidden overscroll-behavior-x-contain px-[max(0.75rem,calc((100vw-min(94vw,30rem))/2))] py-6 [scrollbar-width:none] [scroll-padding-inline:max(0.75rem,calc((100vw-min(94vw,30rem))/2))] md:gap-8 md:overflow-x-hidden md:overscroll-behavior-x-none md:px-[max(1rem,calc((100vw-min(78vw,40rem))/2))] md:py-10 md:[scroll-padding-inline:max(1rem,calc((100vw-min(78vw,40rem))/2))] [&::-webkit-scrollbar]:hidden"
                 style={{
                   maskImage:
-                    "linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%)",
+                    "linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%)",
                   WebkitMaskImage:
-                    "linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%)",
+                    "linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%)",
                 }}
               >
                 {WECHAT_OFFICIAL_FEED.map((item, i) => (
@@ -328,30 +427,57 @@ export function WeChatOfficialFeed() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${item.titleZh}。Surfing Founders 人物访谈 微信专栏，在新标签页打开`}
-                    className="relative shrink-0 snap-center [transform-style:preserve-3d]"
-                    style={{
-                      transform: "translateZ(0px) translateY(0px) rotateY(0deg)",
-                    }}
+                    className="relative block shrink-0 snap-center"
                   >
-                    <div className="group/card flex w-[min(94vw,30rem)] flex-col overflow-hidden rounded-sm border border-white/10 bg-white/[0.02] transition-[background-color,border-color] duration-200 ease-out hover:bg-white/[0.04] sm:w-[min(90vw,34rem)] md:w-[min(78vw,40rem)] lg:w-[min(62vw,44rem)] xl:w-[min(52vw,48rem)]">
-                      <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#111]">
-                        <Image
-                          src={item.imageSrc}
-                          alt=""
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
-                          sizes="(max-width: 640px) 94vw, (max-width: 1024px) 78vw, 52vw"
-                          priority={i < 2}
-                        />
-                      </div>
-                      <div className="space-y-2 border-t border-white/[0.08] bg-[linear-gradient(180deg,rgba(19,19,19,0.98)_0%,#08080a_100%)] px-5 py-5 md:space-y-2.5 md:px-6 md:py-6">
-                        <p className="line-clamp-6 text-pretty font-[family-name:var(--font-zh)] text-[17px] font-medium leading-snug tracking-[-0.01em] text-[var(--foreground)] md:text-[19px] md:leading-snug lg:text-[21px]">
-                          {item.titleZh}
-                        </p>
-                        <p className="pt-1 font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)] md:text-xs">
-                          WeChat 专栏 · 阅读全文 ↗
-                        </p>
-                      </div>
+                    <div
+                      data-wechat-tilt
+                      className="origin-center will-change-transform [transform-style:preserve-3d]"
+                      style={{
+                        transform:
+                          "translateZ(0px) translateY(0px) rotateY(0deg) rotateX(0deg) scale3d(1,1,1)",
+                      }}
+                    >
+                      <CardContainer className="relative h-full w-full" maxTilt={11}>
+                        <CardBody
+                          data-wechat-card-inner
+                          className="group/card relative flex w-[min(94vw,30rem)] flex-col overflow-hidden rounded-xl border border-white/[0.12] bg-white/[0.03] shadow-[0_4px_24px_-8px_rgba(0,0,0,0.45)] transition-[border-color,box-shadow] duration-300 ease-out hover:border-teal-400/30 hover:shadow-[0_28px_90px_-24px_rgba(0,9,226,0.35),0_0_0_1px_rgba(39,215,199,0.12)] sm:w-[min(90vw,34rem)] md:w-[min(78vw,40rem)] lg:w-[min(62vw,44rem)] xl:w-[min(52vw,48rem)]"
+                        >
+                          <div
+                            data-wechat-spot
+                            aria-hidden
+                            className="pointer-events-none absolute inset-0 z-[6] rounded-xl opacity-0 transition-opacity duration-150"
+                            style={{
+                              mixBlendMode: "screen",
+                              background:
+                                "radial-gradient(ellipse 130% 115% at var(--wx,50%) var(--wy,48%), rgba(39,215,199,0.42), rgba(0,9,226,0.14) 38%, transparent 68%)",
+                            }}
+                          />
+                          <CardItem
+                            translateZ={56}
+                            className="relative z-[1] aspect-[16/9] w-full overflow-hidden bg-[#111]"
+                          >
+                            <Image
+                              src={item.imageSrc}
+                              alt=""
+                              fill
+                              className="object-cover transition-transform duration-500 ease-out group-hover/card:scale-[1.07]"
+                              sizes="(max-width: 640px) 94vw, (max-width: 1024px) 78vw, 52vw"
+                              priority={i < 2}
+                            />
+                          </CardItem>
+                          <CardItem
+                            translateZ={42}
+                            className="relative z-[1] space-y-2 border-t border-white/[0.08] bg-[linear-gradient(180deg,rgba(19,19,19,0.98)_0%,#08080a_100%)] px-5 py-5 md:space-y-2.5 md:px-6 md:py-6"
+                          >
+                            <p className="line-clamp-6 text-pretty font-[family-name:var(--font-zh)] text-[17px] font-medium leading-snug tracking-[-0.01em] text-[var(--foreground)] md:text-[19px] md:leading-snug lg:text-[21px]">
+                              {item.titleZh}
+                            </p>
+                            <p className="pt-1 font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)] md:text-xs">
+                              WeChat 专栏 · 阅读全文 ↗
+                            </p>
+                          </CardItem>
+                        </CardBody>
+                      </CardContainer>
                     </div>
                   </a>
                 ))}

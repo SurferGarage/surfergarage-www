@@ -198,7 +198,7 @@ export function HomeFounders() {
                           href="#call"
                           className="inline-flex items-center justify-center rounded-sm border border-[var(--hairline)] bg-[rgba(19,19,19,0.55)] px-5 py-3 font-[family-name:var(--font-zh)] text-sm text-[var(--foreground)] transition-colors hover:border-[var(--brand-teal)]/45 hover:text-[var(--brand-teal)]"
                         >
-                          前往 The Call
+                          前往联络
                         </a>
                         <a
                           href={DISCORD_INVITE_URL}

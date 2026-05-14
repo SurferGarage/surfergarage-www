@@ -48,32 +48,32 @@ export default function Home() {
             </span>
           </a>
           <nav
-            className="hidden gap-9 font-[family-name:var(--font-en)] text-[11px] uppercase tracking-[0.18em] md:flex"
-            aria-label="Primary"
+            className="hidden gap-8 font-[family-name:var(--font-zh)] text-[13px] font-medium tracking-[0.14em] md:flex"
+            aria-label="主导航"
           >
             <a
               href="#manifesto"
               className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
             >
-              Manifesto
+              宣言
             </a>
             <a
               href="#social"
               className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
             >
-              Connect
+              触点
             </a>
             <a
               href="#founders"
               className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
             >
-              Founders
+              片场
             </a>
             <a
               href="#call"
               className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
             >
-              The Call
+              联络
             </a>
           </nav>
         </div>

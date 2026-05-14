@@ -98,17 +98,17 @@ export function HomeSocial() {
         <div className="max-w-[48rem]" data-social-intro>
           <p
             id="social-heading"
-            className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]"
+            className="font-[family-name:var(--font-zh)] text-[11px] font-medium tracking-[0.22em] text-[var(--foreground)]"
           >
-            Connect
+            触点
           </p>
           <p className="mt-4 max-w-[40rem] font-[family-name:var(--font-zh)] text-[15px] leading-relaxed text-[var(--muted-strong)] md:text-[17px]">
-            出站矩阵：文章、映像与播客、GitHub。社群、加好友与商务入口集中在{" "}
+            出站矩阵：文章、视频与播客、GitHub。社群、加好友与商务入口集中在{" "}
             <a
               href="#call"
               className="text-[var(--brand-teal)] underline-offset-4 transition-colors hover:text-[var(--foreground)] hover:underline"
             >
-              The Call
+              联络
             </a>
             。可点的卡片在新标签页打开；「即将更新」的渠道尚未挂链。
           </p>
@@ -143,7 +143,7 @@ export function HomeSocial() {
                 <ul
                   className={
                     sec.id === "articles"
-                      ? "mt-10 mx-auto flex w-full max-w-md flex-col gap-4"
+                      ? "mt-10 grid w-full max-w-md grid-cols-1 gap-4"
                       : "mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
                   }
                 >

@@ -43,14 +43,14 @@ export function HomeCall() {
         >
           <p
             id="call-heading"
-            className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]"
+            className="font-[family-name:var(--font-zh)] text-[11px] font-medium tracking-[0.22em] text-[var(--foreground)]"
           >
-            The Call
+            联络
           </p>
         </div>
 
         <div className="col-span-12 md:col-span-8 md:col-start-5">
-          <nav aria-label="Primary actions">
+          <nav aria-label="联络区主要操作">
             <ul className="flex flex-col">
               <li className="border-t border-[var(--hairline)]" data-call-item>
                 <div className="flex flex-col gap-8 py-8 md:flex-row md:items-start md:justify-between md:gap-12 md:py-10">

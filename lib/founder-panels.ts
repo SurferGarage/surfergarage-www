@@ -45,8 +45,8 @@ export const FOUNDER_STACK_MODULES: FounderStackModule[] = [
     id: "m-github",
     kind: "github_repo",
     eyebrow: "Handbook · Open Source",
-    titleZh: "GitHub 手册",
-    titleEn: "Startup Playbook repo",
+    titleZh: "Startup Playbook",
+    titleEn: "STARTUP PLAYBOOK · 共建仓库",
     leadZh: "开源共建与悬赏贡献；遥测接入后展示 Stars/Forks。",
     githubRepo: {
       owner: "SurferGarage",
@@ -70,6 +70,6 @@ export const FOUNDER_STACK_MODULES: FounderStackModule[] = [
     eyebrow: "Routing · Contact",
     titleZh: "联络路由",
     titleEn: "Where to go next",
-    leadZh: "社群、二维码与邮箱集中在页面底部 The Call。",
+    leadZh: "社群、二维码与邮箱集中在页面底部「联络」。",
   },
 ];

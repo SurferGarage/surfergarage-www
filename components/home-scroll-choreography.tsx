@@ -15,7 +15,7 @@ import { registerSocialExpand } from "@/components/motion/register-social-expand
 import gsap from "gsap";
 
 /**
- * 首页滚动编排：注册顺序为 **L0 深度 → L1 Hero/Manifesto → L2 区块 reveal →（md+）L3 pin**。
+ * 首页滚动编排：`gsap.context` 内 **`register-*` 顺序** 与 L0→L3 语义对齐（**精确表**见 `wiki/07-动画编排与统筹.md` §4）。
  * 时长 / scrub / stagger 以 `lib/sg-motion-system.ts` 为单一事实源。
  */
 const ST_MARKERS =

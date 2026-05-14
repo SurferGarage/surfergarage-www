@@ -44,7 +44,7 @@ export function FounderArticleActions({
         type="button"
         onClick={copyLink}
         className="rounded-sm border border-[var(--hairline)] px-3 py-2 font-[family-name:var(--font-zh)] text-xs text-[var(--muted-strong)] transition-colors hover:border-[var(--brand-teal)]/40 hover:text-[var(--foreground)]"
-        aria-label="复制文章链接"
+        aria-label="复制链接"
       >
         复制链接
       </button>

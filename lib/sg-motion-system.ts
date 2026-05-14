@@ -6,6 +6,8 @@
  * - **L1**：Manifesto 字标 + 极轻淡入；Hero 段落 scrub
  * - **L2**：Connect 揭幕、Founders intro、GitHub 卡、Call 揭示（toggle + expo，短促利落）
  * - **L3**：Founder 全屏 pin 缩放（scrub 略紧，避免「粘滞打架」）
+ *
+ * **编排表**（`register-*` 顺序、`ScrollTrigger.id`、例外 ST）：`wiki/07-动画编排与统筹.md`
  */
 
 export const SG_CLIP = {

@@ -44,7 +44,7 @@ export const WECHAT_OFFICIAL_FEED: WechatOfficialFeedItem[] = [
   {
     id: "wx-05",
     titleZh:
-      "对话「Cirtus.AI」Sid：拒绝AI做伴侣，要做AI「监护人」 | Surfing Founders",
+      "对话「Citrus.AI」Sid：拒绝AI做伴侣，要做AI「监护人」 | Surfing Founders",
     href: "https://mp.weixin.qq.com/",
     imageSrc: "/wechat-feed/05.png",
   },

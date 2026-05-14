@@ -17,7 +17,6 @@ precision highp float;
 uniform float uTime;
 uniform float uDepth;
 uniform float uVel;
-uniform vec2 uRes;
 varying vec2 vUv;
 
 float hash(vec2 p) {
@@ -82,16 +81,11 @@ void main() {
   vec3 lit = mix(mix(cyan, white, hole * 0.75), gold, warm);
   lit *= beam;
 
-  vec2 guv = uv * uRes * 0.1 + t * vec2(0.06, 0.045);
-  float dust = step(0.991, hash(floor(guv) + floor(t * 3.2)));
-  dust *= smoothstep(0.92, 0.08, uv.y) * (0.14 + cone * 0.42 + caust * 0.25);
-  dust *= (1.0 - dep * 0.55);
-
   vec3 deepFog = vec3(0.04, 0.1, 0.2) * (0.35 + dep * 0.45) * smoothstep(0.15, 0.95, uv.y);
   vec3 scatterTint = vec3(0.08, 0.22, 0.28) * caust * (1.0 - uv.y) * 0.55;
-  vec3 outc = lit + white * dust * 0.55 + deepFog + scatterTint;
+  vec3 outc = lit + deepFog + scatterTint;
   float lum = dot(outc, vec3(0.299, 0.587, 0.114));
-  float a = clamp(lum * 1.25 + dust * 0.35 + length(deepFog) * 2.2, 0.0, 0.86);
+  float a = clamp(lum * 1.25 + length(deepFog) * 2.2, 0.0, 0.86);
   gl_FragColor = vec4(outc, a);
 }
 `;
@@ -108,16 +102,13 @@ function FixedOrthoCamera() {
 
 function WaterVolumeQuad() {
   const matRef = useRef<THREE.ShaderMaterial>(null);
-  const { size } = useThree();
 
   const shader = useMemo(() => {
-    const uRes = new THREE.Vector2(1, 1);
     return {
       uniforms: {
         uTime: { value: 0 },
         uDepth: { value: 0 },
         uVel: { value: 0 },
-        uRes: { value: uRes },
       },
       vertexShader: VERT,
       fragmentShader: FRAG,
@@ -128,7 +119,6 @@ function WaterVolumeQuad() {
     const mat = matRef.current;
     if (!mat) return;
     mat.uniforms.uTime.value = state.clock.elapsedTime;
-    mat.uniforms.uRes.value.set(size.width, size.height);
     const root = document.documentElement;
     const cs = getComputedStyle(root);
     const d = Number.parseFloat(cs.getPropertyValue("--depth-t"));
@@ -154,7 +144,7 @@ function WaterVolumeQuad() {
 }
 
 /**
- * 全屏水下体积感：焦散 + 丁达尔锥 + 微粒（GLSL），读 `--depth-t` / `--wave-scroll-vel`。
+ * 全屏水下体积感：焦散 + 丁达尔锥（GLSL），读 `--depth-t` / `--wave-scroll-vel`。
  * 叠在实色渐变之上，与 `UnderwaterLightStage` 的 CSS 光球互补。
  */
 export function WaterVolumeFx(): ReactNode {

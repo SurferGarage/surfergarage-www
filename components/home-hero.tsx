@@ -31,12 +31,12 @@ export function HomeHero() {
                 aria-hidden
                 className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-teal)]"
               />
-              <p className="font-[family-name:var(--font-en)] text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--foreground)]">
-                Manifesto
+              <p className="font-[family-name:var(--font-zh)] text-[11px] font-medium tracking-[0.22em] text-[var(--foreground)]">
+                宣言
               </p>
             </div>
             <p className="mt-3 font-[family-name:var(--font-en)] text-[11px] font-normal uppercase tracking-[0.22em] text-[var(--muted)]">
-              浪前 · 纪录与建造
+              浪前 · 记录与建造
             </p>
           </div>
         </div>
