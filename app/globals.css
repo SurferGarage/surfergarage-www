@@ -16,15 +16,30 @@
   --depth-abyss: #131313;
   /* Lenis → GSAP quickTo → hero fragment uniform (0–1). */
   --wave-scroll-vel: 0;
+  /* 整页下潜：0 = 海面侧，1 = 海底侧（由 register-global-depth-scrub 写入） */
+  --depth-t: 0;
 }
 
-/* 主列纵向渐变；WebGL 底床在 layout，此处背景为半透明叠层感由渐变自身提供 */
+/* 主列纵向渐变：随 --depth-t 下潜，顶区由浅青浪前感过渡到闪电蓝再沉入 abyss */
 .sg-main-depth {
+  --dt: clamp(0, var(--depth-t, 0), 1);
   background: linear-gradient(
     180deg,
-    var(--depth-surface) 0%,
-    var(--depth-mid) 42%,
-    var(--depth-abyss) 100%
+    color-mix(
+        in oklch,
+        var(--brand-teal) calc(22% * (1 - var(--dt))),
+        var(--depth-surface)
+      )
+      0%,
+    color-mix(
+        in oklch,
+        var(--brand-primary) calc(32% * (1 - var(--dt) * 0.9)),
+        var(--depth-mid)
+      )
+      38%,
+    color-mix(in oklch, var(--depth-mid) calc(55% + var(--dt) * 35%), var(--depth-abyss)) 72%,
+    color-mix(in oklch, var(--depth-abyss) calc(100% - var(--dt) * 18%), #070708 calc(var(--dt) * 22%))
+      100%
   );
 }
 

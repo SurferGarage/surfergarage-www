@@ -138,6 +138,10 @@ function CyberSeaGrid({ hostSelector }: { hostSelector: string }) {
     const rootCs = getComputedStyle(document.documentElement);
     const sv = Number.parseFloat(rootCs.getPropertyValue("--wave-scroll-vel"));
     const boost = Number.isFinite(sv) ? sv : 0;
+    const dtRaw = Number.parseFloat(rootCs.getPropertyValue("--depth-t"));
+    const depthShade = Number.isFinite(dtRaw)
+      ? Math.max(0.55, 1 - dtRaw * 0.32)
+      : 1;
     const t = state.clock.elapsedTime;
     const amp = Math.max(0.06, distortion) * 0.78;
 
@@ -156,7 +160,7 @@ function CyberSeaGrid({ hostSelector }: { hostSelector: string }) {
 
       const crest = (y / (amp + 1e-4) + 1) * 0.5;
       tmp.copy(base.b).lerp(base.t, Math.min(1, crest * 0.85 + boost * 0.12));
-      tmp.multiplyScalar(0.35 + opacity * 0.55);
+      tmp.multiplyScalar((0.35 + opacity * 0.55) * depthShade);
       carr[k * 3] = tmp.r;
       carr[k * 3 + 1] = tmp.g;
       carr[k * 3 + 2] = tmp.b;

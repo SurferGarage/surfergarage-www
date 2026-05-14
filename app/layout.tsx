@@ -78,7 +78,9 @@ export default function RootLayout({
       <body className="min-h-full">
         <SmoothScroll>
           <HeroWaveCanvas hostSelector="[data-hero-wave]" variant="global" />
-          <div className="relative z-[1] min-h-full">{children}</div>
+          <div className="relative z-[1] min-h-full" data-scroll-depth-root>
+            {children}
+          </div>
         </SmoothScroll>
       </body>
     </html>

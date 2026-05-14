@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { ScrollTrigger } from "@/components/motion/gsap-register";
 import { registerCallReveal } from "@/components/motion/register-call-reveal";
 import { registerDesktopPins } from "@/components/motion/register-desktop-pins";
+import { registerGlobalDepthScrub } from "@/components/motion/register-global-depth-scrub";
 import { registerFoundersIntro } from "@/components/motion/register-founders-intro";
 import { registerGithubRepoCards } from "@/components/motion/register-github-repo-cards";
 import { registerHeroChoreography } from "@/components/motion/register-hero-choreography";
@@ -32,7 +33,10 @@ export function HomeScrollChoreography() {
     if (reduced === null) return;
 
     if (reduced) {
-      return;
+      document.documentElement.style.setProperty("--depth-t", "0");
+      return () => {
+        document.documentElement.style.removeProperty("--depth-t");
+      };
     }
 
     const manifestoRight = document.querySelector<HTMLElement>(
@@ -52,6 +56,7 @@ export function HomeScrollChoreography() {
     const callSection = document.querySelector<HTMLElement>("#call");
 
     const ctx = gsap.context(() => {
+      registerGlobalDepthScrub(ST_MARKERS);
       registerManifestoScroll(ST_MARKERS);
       registerHeroChoreography(ST_MARKERS, {
         heroScrub,

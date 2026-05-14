@@ -1,4 +1,5 @@
 import { gsap, ScrollTrigger } from "@/components/motion/gsap-register";
+import { FOUNDER_WECHAT_PIN_END } from "@/lib/founder-wechat-pin-end";
 
 export type DesktopPinsRefs = {
   manifestoPin: HTMLElement | null;
@@ -43,6 +44,9 @@ export function registerDesktopPins(
   founderPanels.forEach((panel, i) => {
     const card = panel.querySelector<HTMLElement>("[data-founder-card]");
     if (!card) return;
+    const isWechat = panel.dataset.founderModule === "wechat_oa";
+    /** 公众号首屏：更长 pin/scrub，便于在中央多滚一段再进入视频号 */
+    const endScroll = isWechat ? FOUNDER_WECHAT_PIN_END : "+=115%";
     gsap.fromTo(
       card,
       { scale: 1, y: 0 },
@@ -53,7 +57,7 @@ export function registerDesktopPins(
         scrollTrigger: {
           trigger: panel,
           start: "top top",
-          end: "+=115%",
+          end: endScroll,
           pin: true,
           scrub: 0.45,
           anticipatePin: 1,
