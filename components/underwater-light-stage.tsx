@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { useLenis } from "@/components/lenis-context";
+import { getScrollDepthT, getWaveScrollVel } from "@/lib/sg-scroll-signals";
 
 function clamp(n: number, a: number, b: number): number {
   return Math.max(a, Math.min(b, n));
@@ -75,9 +76,7 @@ export function UnderwaterLightStage(): ReactNode {
       const max = maxScroll();
       const p = clamp(scroll / max, 0, 1);
 
-      const dtRaw = Number.parseFloat(
-        getComputedStyle(root).getPropertyValue("--depth-t"),
-      );
+      const dtRaw = getScrollDepthT();
       const depthOk = Number.isFinite(dtRaw);
       const yProg = depthOk ? clamp(dtRaw, 0, 1) : p;
       const orbY = 0.07 + yProg * 0.78;
@@ -88,10 +87,7 @@ export function UnderwaterLightStage(): ReactNode {
       impulseRef.current =
         impulseRef.current * 0.88 + clamp(delta, -120, 120) * 0.00035;
 
-      const velRaw = Number.parseFloat(
-        getComputedStyle(root).getPropertyValue("--wave-scroll-vel"),
-      );
-      const vel = Number.isFinite(velRaw) ? velRaw : 0;
+      const vel = getWaveScrollVel();
 
       const wander = Math.sin(scroll * 0.0018) * 0.055;
       const baseX = 0.5 + wander + impulseRef.current + (vel - 0.5) * 0.06;

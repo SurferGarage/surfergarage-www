@@ -1,25 +1,31 @@
 /**
- * Founder Media 纵向叠卡：每屏约一整视窗，桌面 pin + scrub 见 `register-desktop-pins`。
- * 模块内容与顺序在此集中配置；Surfing Founders 微信专栏 / 宣传图等可先占位，后续再接素材或接口。
+ * 浪前片场 sticky stack（V3 拆分版）：
+ *
+ * - **wechat_column**：微信专栏（文字 · 长文访谈）独立成屏，YC 式左右大画幅
+ * - **video_studio**：B 站播客（视频 · 嘉宾对谈）独立成屏，YC 式三栏全宽
+ * - **github_repo**：Startup Playbook 开源 + contributors + recent activity
+ *
+ * Visual Garage 已从 sticky stack 移出，作为独立非 pin section 自由舒展。
  */
 
 import type { GitHubRepoCardConfig } from "@/lib/github-repo-card";
 
 export type FounderStackKind =
-  | "wechat_oa"
-  | "video_channel"
+  | "wechat_column"
+  | "video_studio"
   | "github_repo"
-  | "promo_visual"
-  | "contact";
+  | "brand_visual";
 
 export type FounderStackModule = {
   id: string;
   kind: FounderStackKind;
+  /** 章节子编号 */
+  index: string;
   /** 小标签 */
   eyebrow: string;
   titleZh: string;
   titleEn: string;
-  /** 副文案；宣传图模块可省略 */
+  /** 副文案 */
   leadZh?: string;
   /** 仅 `github_repo` */
   githubRepo?: GitHubRepoCardConfig;
@@ -28,48 +34,43 @@ export type FounderStackModule = {
 export const FOUNDER_STACK_MODULES: FounderStackModule[] = [
   {
     id: "m-wechat",
-    kind: "wechat_oa",
+    kind: "wechat_column",
+    index: "03.a",
     eyebrow: "Founders · WeChat",
-    titleZh: "Surfing Founders 人物访谈",
-    titleEn: "Column · conversations",
+    titleZh: "人物访谈",
+    titleEn: "WeChat · long-form",
   },
   {
     id: "m-video",
-    kind: "video_channel",
-    eyebrow: "Video · Matrix",
-    titleZh: "视频矩阵",
-    titleEn: "Bilibili & syndication",
-    leadZh: "各平台成片与回放在此聚合；外链与栏目随投放节奏接入。",
+    kind: "video_studio",
+    index: "03.b",
+    eyebrow: "Founders · Video",
+    titleZh: "视频播客",
+    titleEn: "Bilibili · S01",
+    leadZh: "6 席 · 每人 4 期",
   },
   {
     id: "m-github",
     kind: "github_repo",
+    index: "03.c",
     eyebrow: "Handbook · Open Source",
     titleZh: "Startup Playbook",
-    titleEn: "STARTUP PLAYBOOK · 共建仓库",
-    leadZh: "开源共建与悬赏贡献；遥测接入后展示 Stars/Forks。",
+    titleEn: "Open source handbook",
+    leadZh: "超级个体开源手册",
     githubRepo: {
       owner: "SurferGarage",
       repo: "Startup-playbook",
-      description:
-        "面向超级个体与愿景增长的开源手册：核心认知、工具箱与贡献机制。",
+      description: "超级个体 · 认知与工具箱",
       showTelemetry: false,
     },
   },
   {
-    id: "m-promo",
-    kind: "promo_visual",
-    eyebrow: "Brand · Visual",
-    titleZh: "视觉物料",
-    titleEn: "Campaign art",
-    leadZh: "活动主视觉与海报位；素材定稿后替换虚线占位。",
-  },
-  {
-    id: "m-contact",
-    kind: "contact",
-    eyebrow: "Routing · Contact",
-    titleZh: "联络路由",
-    titleEn: "Where to go next",
-    leadZh: "社群、二维码与邮箱集中在页面底部「联络」。",
+    id: "m-visual",
+    kind: "brand_visual",
+    index: "03.d",
+    eyebrow: "Brand · Visual Garage",
+    titleZh: "视觉车库",
+    titleEn: "Brand assets",
+    leadZh: "字标与主视觉 · 媒体可自取",
   },
 ];

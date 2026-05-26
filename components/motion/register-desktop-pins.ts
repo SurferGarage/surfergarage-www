@@ -1,6 +1,7 @@
-import { gsap, ScrollTrigger } from "@/components/motion/gsap-register";
+import { gsap } from "@/components/motion/gsap-register";
+import { motionPin, motionPinScrub, type MotionMarkers } from "@/components/motion/sg-motion-primitives";
 import { FOUNDER_WECHAT_PIN_END } from "@/lib/founder-wechat-pin-end";
-import { SG_FOUNDER_PIN, SG_SCRUB } from "@/lib/sg-motion-system";
+import { SG_FOUNDER_PIN, SG_SELECTORS, SG_ST_ID, SG_TRIGGER } from "@/lib/sg-motion-system";
 
 export type DesktopPinsRefs = {
   manifestoPin: HTMLElement | null;
@@ -8,48 +9,40 @@ export type DesktopPinsRefs = {
 };
 
 export function registerDesktopPins(
-  markers: boolean,
+  markers: MotionMarkers,
   refs: DesktopPinsRefs,
 ): void {
   const { manifestoPin, manifestoRight } = refs;
 
   if (manifestoPin && manifestoRight) {
-    ScrollTrigger.create({
-      trigger: manifestoRight,
-      start: "top 10%",
-      end: "bottom bottom",
-      pin: manifestoPin,
-      pinSpacing: true,
+    motionPin(
+      manifestoPin,
+      manifestoRight,
       markers,
-      id: "manifesto-pin",
-    });
+      SG_ST_ID.manifestoPin,
+      SG_TRIGGER.manifestoPin,
+    );
   }
 
-  const founderPanels = gsap.utils.toArray<HTMLElement>("[data-founder-panel]");
+  const founderPanels = gsap.utils.toArray<HTMLElement>(SG_SELECTORS.founderPanel);
   founderPanels.forEach((panel, i) => {
-    const card = panel.querySelector<HTMLElement>("[data-founder-card]");
+    const card = panel.querySelector<HTMLElement>(SG_SELECTORS.founderCard);
     if (!card) return;
-    const isWechat = panel.dataset.founderModule === "wechat_oa";
-    /** 公众号首屏：更长 pin/scrub，便于在中央多滚一段再进入视频号 */
-    const endScroll = isWechat ? FOUNDER_WECHAT_PIN_END : "+=115%";
-    gsap.fromTo(
+    /** Founder Studio（微信+视频 tab 合并）与原 wechat_oa 共用更长的 pin end，
+     * 给 tab 切换 + 横滑 / 视频展台预留观看时间。 */
+    const isStudio =
+      panel.dataset.founderModule === "founder_studio" ||
+      panel.dataset.founderModule === "wechat_oa";
+    const endScroll = isStudio ? FOUNDER_WECHAT_PIN_END : SG_FOUNDER_PIN.defaultEnd;
+
+    motionPinScrub(
       card,
-      { scale: 1, y: 0 },
-      {
-        scale: SG_FOUNDER_PIN.scaleTo,
-        y: SG_FOUNDER_PIN.yTo,
-        ease: "none",
-        scrollTrigger: {
-          trigger: panel,
-          start: "top top",
-          end: endScroll,
-          pin: true,
-          scrub: SG_SCRUB.founderPin,
-          anticipatePin: 1,
-          markers,
-          id: `founder-stack-${i}`,
-        },
-      },
+      panel,
+      markers,
+      SG_ST_ID.founderStack(i),
+      endScroll,
+      SG_FOUNDER_PIN.scaleTo,
+      SG_FOUNDER_PIN.yTo,
     );
   });
 }

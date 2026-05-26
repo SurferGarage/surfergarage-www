@@ -1,63 +1,58 @@
-import { gsap } from "@/components/motion/gsap-register";
-import { SG_LOAD, SG_SCRUB } from "@/lib/sg-motion-system";
+import {
+  motionLoadStagger,
+  motionScrubCssVars,
+  motionScrubFromTo,
+  type MotionMarkers,
+} from "@/components/motion/sg-motion-primitives";
+import { syncHeroWaveFromElement } from "@/lib/sg-scroll-signals";
+import {
+  SG_HERO_WAVE_CALM,
+  SG_SCRUB,
+  SG_SELECTORS,
+  SG_ST_ID,
+  SG_TRIGGER,
+} from "@/lib/sg-motion-system";
 
 export type HeroChoreographyRefs = {
   heroScrub: HTMLElement | null;
   heroWave: HTMLElement | null;
-  /** 浪面收束 scrub 的触发区（现为 `#social`） */
   waveCalmTrigger: HTMLElement | null;
 };
 
 export function registerHeroChoreography(
-  markers: boolean,
+  markers: MotionMarkers,
   refs: HeroChoreographyRefs,
 ): void {
   const { heroScrub, heroWave, waveCalmTrigger } = refs;
 
-  gsap.from("[data-hero-reveal]", {
-    y: SG_LOAD.heroRevealY,
-    duration: SG_LOAD.heroRevealDuration,
-    stagger: SG_LOAD.heroRevealStagger,
-    ease: SG_LOAD.ease,
-    delay: SG_LOAD.heroRevealDelay,
-  });
+  motionLoadStagger(SG_SELECTORS.heroReveal);
 
   if (heroScrub) {
-    gsap.fromTo(
+    motionScrubFromTo(
       heroScrub,
       { y: 8 },
-      {
-        y: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroScrub,
-          start: "top 88%",
-          end: "top 48%",
-          scrub: SG_SCRUB.heroParagraph,
-          markers,
-          id: "manifesto-scrub",
-        },
-      },
+      { y: 0 },
+      markers,
+      SG_ST_ID.heroParagraph,
+      heroScrub,
+      SG_TRIGGER.heroParagraph,
+      SG_SCRUB.heroParagraph,
     );
   }
 
   if (heroWave && waveCalmTrigger) {
-    gsap.to(heroWave, {
-      "--wave-distortion": 0.06,
-      "--wave-opacity": 0.1,
-      "--hero-cam-y": 1.05,
-      "--hero-cam-z": 3.65,
-      "--hero-look-y": -4.35,
-      "--hero-look-z": 0.4,
-      ease: "none",
-      scrollTrigger: {
-        trigger: waveCalmTrigger,
-        start: "top 95%",
-        end: "top 40%",
-        scrub: SG_SCRUB.heroWaveCalm,
-        markers,
-        id: "hero-wave-calm",
+    syncHeroWaveFromElement(heroWave);
+    motionScrubCssVars(
+      heroWave,
+      SG_HERO_WAVE_CALM,
+      markers,
+      SG_ST_ID.heroWaveCalm,
+      waveCalmTrigger,
+      SG_TRIGGER.heroWaveCalm,
+      SG_SCRUB.heroWaveCalm,
+      (el) => {
+        if (el instanceof HTMLElement) syncHeroWaveFromElement(el);
       },
-    });
+    );
   }
 }

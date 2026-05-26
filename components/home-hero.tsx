@@ -1,6 +1,19 @@
+import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import { formatHeroTicker, getSiteStats } from "@/lib/site-stats";
 import type { CSSProperties } from "react";
 
+/** 影院化 Hero：左下时间码、右下数据 ticker、底部 scroll cue、字标字符级 stagger（由 register-hero-wordmark-stagger 接管） */
 export function HomeHero() {
+  const stats = getSiteStats();
+  const tickerText = formatHeroTicker(stats);
+
+  const now = new Date();
+  const recYear = now.getUTCFullYear();
+  const recMonth = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const seasonCode = `${stats.season.toUpperCase().replace(/\s+/g, "")} · VOL ${String(
+    stats.episodes,
+  ).padStart(2, "0")}`;
+
   return (
     <section
       id="manifesto"
@@ -20,7 +33,10 @@ export function HomeHero() {
         } as CSSProperties
       }
     >
-      <div className="relative z-[3] mx-auto grid w-full max-w-[1440px] grid-cols-12 gap-x-4 px-5 pb-16 md:gap-x-6 md:pb-20 lg:px-12 [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_12px_48px_rgba(0,0,0,0.35)]">
+      {/* 主体网格 */}
+      <div
+        className={`relative z-[3] grid w-full grid-cols-12 gap-x-4 pb-16 md:gap-x-6 md:pb-20 ${SG_PAGE_SHELL_CLASS} [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_12px_48px_rgba(0,0,0,0.35)]`}
+      >
         <div
           className="col-span-12 mb-8 md:col-span-2 md:col-start-1 md:mb-0 md:self-start"
           data-manifesto-pin
@@ -31,11 +47,11 @@ export function HomeHero() {
                 aria-hidden
                 className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-teal)]"
               />
-              <p className="font-[family-name:var(--font-zh)] text-[11px] font-medium tracking-[0.22em] text-[var(--foreground)]">
-                宣言
+              <p className="editorial-eyebrow text-[var(--foreground)]">
+                § 01 — 宣言
               </p>
             </div>
-            <p className="mt-3 font-[family-name:var(--font-en)] text-[11px] font-normal uppercase tracking-[0.22em] text-[var(--muted)]">
+            <p className="mt-3 editorial-eyebrow text-[var(--muted)]">
               浪前 · 记录与建造
             </p>
           </div>
@@ -46,11 +62,7 @@ export function HomeHero() {
           data-manifesto-right
         >
           <div data-manifesto-fade>
-            <h1
-              id="hero-title"
-              className="text-left"
-              data-hero-reveal
-            >
+            <h1 id="hero-title" className="text-left" data-hero-reveal>
               <div
                 className="flex max-w-[min(100%,92rem)] flex-col items-start"
                 data-hero-wordmark
@@ -58,37 +70,76 @@ export function HomeHero() {
                 <span className="mb-2 font-[family-name:var(--font-zh)] text-[13px] font-light leading-none tracking-[0.14em] text-[#A1A1AA] md:mb-2.5 md:text-[15px] md:tracking-[0.18em]">
                   浪前
                 </span>
-                <span className="wordmark-display block w-full uppercase text-[clamp(2.4rem,6.2vw,7.25rem)] text-[var(--foreground)]">
+                <span
+                  className="wordmark-display block w-full overflow-hidden uppercase text-[clamp(2.4rem,6.2vw,7.25rem)] text-[var(--foreground)]"
+                  data-hero-letters
+                >
                   SURFERGARAGE
                 </span>
               </div>
             </h1>
-            <p
-              className="mt-7 max-w-[40rem] font-[family-name:var(--font-zh)] text-[clamp(1.125rem,2.2vw,1.65rem)] font-medium leading-snug tracking-tight text-[var(--foreground)] md:mt-9"
-              data-hero-reveal
-            >
-              在非共识里造船，而不是在共识里讲故事。
-            </p>
-            <p
-              className="mt-3 max-w-[40rem] font-[family-name:var(--font-en)] text-[clamp(1rem,1.85vw,1.3rem)] font-normal leading-snug tracking-tight text-[var(--muted-strong)] md:text-xl"
-              data-hero-reveal
-            >
-              Builder instead of talker.
-            </p>
-            <p
-              className="mt-4 max-w-[40rem] font-[family-name:var(--font-en)] text-sm leading-relaxed tracking-tight text-[rgba(255,255,255,0.72)] md:text-[15px]"
-              data-hero-reveal
-            >
-              We record builders still in the water — not the press kit after the exit.
-            </p>
+
+            <div className="mt-7 max-w-[48rem] md:mt-9" data-hero-reveal>
+              <p className="font-[family-name:var(--font-zh)] text-[clamp(1.125rem,2.2vw,1.75rem)] font-medium leading-snug tracking-tight text-[var(--foreground)]">
+                在非共识里造船，而不是在共识里讲故事。
+              </p>
+            </div>
           </div>
 
           <div>
             <p
-              className="max-w-[40rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px] md:leading-[1.72]"
+              className="max-w-[48rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px] md:leading-[1.72]"
               data-hero-scrub
             >
-              我们只收「可核对」的样本：动作、代价、结果与复盘；拒绝神话叙事与空泛人设。
+              只收可核对样本：动作、代价、复盘。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ---- 影院级角标层 ---- */}
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute inset-x-0 bottom-6 z-[3] md:bottom-8 ${SG_PAGE_SHELL_CLASS}`}
+      >
+        <div className="flex items-end justify-between gap-6">
+          {/* 左下：录制时间码 */}
+          <div
+            data-hero-reveal
+            className="flex items-end gap-3 text-[var(--muted-strong)] [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]"
+          >
+            <span className="mt-0.5 h-2 w-2 shrink-0 animate-pulse rounded-full bg-[var(--brand-teal)]" />
+            <div className="leading-none">
+              <p className="editorial-mono text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
+                REC · Live
+              </p>
+              <p className="mt-1.5 editorial-mono-tabular text-[11px] uppercase tracking-[0.12em] text-[var(--foreground)] md:text-[12px]">
+                REC · {recYear}.{recMonth}
+              </p>
+              <p className="mt-1 editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
+                {seasonCode}
+              </p>
+            </div>
+          </div>
+
+          {/* 中：呼吸 scroll cue（仅桌面，避免与移动端 ticker 挤） */}
+          <div className="hidden flex-col items-center gap-2 text-[var(--muted)] md:flex">
+            <span aria-hidden className="sg-scroll-cue-line" />
+            <p className="editorial-eyebrow text-[10px]">
+              Scroll
+            </p>
+          </div>
+
+          {/* 右下：站点数据 ticker */}
+          <div
+            data-hero-reveal
+            className="text-right text-[var(--muted-strong)] [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]"
+          >
+            <p className="editorial-eyebrow text-[var(--muted)]">
+              Index
+            </p>
+            <p className="mt-1.5 editorial-mono-tabular text-[10.5px] uppercase tracking-[0.16em] text-[var(--foreground)] md:text-[11.5px]">
+              {tickerText}
             </p>
           </div>
         </div>

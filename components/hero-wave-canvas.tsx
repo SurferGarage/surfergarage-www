@@ -5,11 +5,23 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
-const GRID_SEG = 72;
+import { getHeroWaveSignals, getScrollDepthT, getWaveScrollVel } from "@/lib/sg-scroll-signals";
+import {
+  shouldMountHeroWebGL,
+  shouldUseHeroBloom,
+  useSgWebglTier,
+} from "@/lib/sg-webgl-policy";
+import { useReducedMotion } from "@/lib/sg-reduced-motion";
+
 const GRID_HALF = 21;
+const GRID_SEG_BY_TIER: Record<"lite" | "full", number> = {
+  lite: 40,
+  full: 56,
+};
 const HERO_BLOOM_INTENSITY = 1.05;
 const HERO_BLOOM_THRESHOLD = 0.26;
 const HERO_BLOOM_SMOOTHING = 0.26;
+const FRAME_INTERVAL_MS = 1000 / 30;
 
 function waveY(
   x: number,
@@ -26,7 +38,6 @@ function waveY(
   return w * amp;
 }
 
-/** 平滑海面片：无网格线，仅起伏着色 + Bloom */
 function buildSeaSurfaceGeometry(nx: number, half: number) {
   const vx = nx + 1;
   const vz = nx + 1;
@@ -61,44 +72,28 @@ function buildSeaSurfaceGeometry(nx: number, half: number) {
   return { geo, vertCount };
 }
 
-function CameraRig({ hostSelector }: { hostSelector: string }) {
-  const hostRef = useRef<HTMLElement | null>(null);
+function CameraRig() {
   const look = useMemo(() => new THREE.Vector3(), []);
 
-  useEffect(() => {
-    hostRef.current = document.querySelector(hostSelector);
-  }, [hostSelector]);
-
   useFrame((state) => {
-    const el = hostRef.current;
     const camera = state.camera;
-    if (!el || !(camera instanceof THREE.PerspectiveCamera)) return;
-    const cs = getComputedStyle(el);
-    const n = (key: string, fallback: number) => {
-      const raw = cs.getPropertyValue(key).trim();
-      const v = Number.parseFloat(raw);
-      return Number.isFinite(v) ? v : fallback;
-    };
-
-    camera.position.set(n("--hero-cam-x", 0), n("--hero-cam-y", 3.12), n("--hero-cam-z", 7.6));
-    look.set(n("--hero-look-x", 0), n("--hero-look-y", 0.12), n("--hero-look-z", 0));
+    if (!(camera instanceof THREE.PerspectiveCamera)) return;
+    const w = getHeroWaveSignals();
+    camera.position.set(w.camX, w.camY, w.camZ);
+    look.set(w.lookX, w.lookY, w.lookZ);
     camera.lookAt(look);
   });
 
   return null;
 }
 
-function CyberSeaSurface({ hostSelector }: { hostSelector: string }) {
+function CyberSeaSurface({ gridSeg }: { gridSeg: number }) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const hostRef = useRef<HTMLElement | null>(null);
   const { geo, vertCount } = useMemo(
-    () => buildSeaSurfaceGeometry(GRID_SEG, GRID_HALF),
-    [],
+    () => buildSeaSurfaceGeometry(gridSeg, GRID_HALF),
+    [gridSeg],
   );
-
-  useEffect(() => {
-    hostRef.current = document.querySelector(hostSelector);
-  }, [hostSelector]);
+  const lastFrameAt = useRef(0);
 
   const base = useMemo(
     () => ({
@@ -110,27 +105,18 @@ function CyberSeaSurface({ hostSelector }: { hostSelector: string }) {
   const tmp = useMemo(() => new THREE.Color(), []);
 
   useFrame((state) => {
+    const now = state.clock.elapsedTime * 1000;
+    if (now - lastFrameAt.current < FRAME_INTERVAL_MS) return;
+    lastFrameAt.current = now;
+
     const mesh = meshRef.current;
     if (!mesh) return;
 
-    let distortion = 1;
-    let opacity = 0.86;
-    const host = hostRef.current;
-    if (host) {
-      const cs = getComputedStyle(host);
-      const d = Number.parseFloat(cs.getPropertyValue("--wave-distortion"));
-      const o = Number.parseFloat(cs.getPropertyValue("--wave-opacity"));
-      if (Number.isFinite(d)) distortion = d;
-      if (Number.isFinite(o)) opacity = o;
-    }
-
-    const rootCs = getComputedStyle(document.documentElement);
-    const sv = Number.parseFloat(rootCs.getPropertyValue("--wave-scroll-vel"));
-    const boost = Number.isFinite(sv) ? sv : 0;
-    const dtRaw = Number.parseFloat(rootCs.getPropertyValue("--depth-t"));
-    const depthShade = Number.isFinite(dtRaw)
-      ? Math.max(0.55, 1 - dtRaw * 0.32)
-      : 1;
+    const w = getHeroWaveSignals();
+    const distortion = w.distortion;
+    const opacity = w.opacity;
+    const boost = getWaveScrollVel();
+    const depthShade = Math.max(0.55, 1 - getScrollDepthT() * 0.32);
     const t = state.clock.elapsedTime;
     const amp = Math.max(0.06, distortion) * 0.78;
 
@@ -174,19 +160,24 @@ function CyberSeaSurface({ hostSelector }: { hostSelector: string }) {
 }
 
 function HeroWaveCanvasActive({
-  hostSelector,
   variant,
+  tier,
+  hostSelector,
 }: {
-  hostSelector: string;
   variant: "embedded" | "global";
+  tier: "lite" | "full";
+  hostSelector: string;
 }) {
-  const [runLoop, setRunLoop] = useState(true);
+  const [runLoop, setRunLoop] = useState(false);
+  const gridSeg = GRID_SEG_BY_TIER[tier];
+  const useBloom = shouldUseHeroBloom(tier);
+  const dpr: [number, number] = tier === "full" ? [1, 1.25] : [1, 1];
 
   useEffect(() => {
     const host = document.querySelector<HTMLElement>(hostSelector);
     if (!host) return;
 
-    const intersecting = { current: true };
+    const intersecting = { current: false };
     const apply = () => {
       setRunLoop(intersecting.current && !document.hidden);
     };
@@ -198,14 +189,12 @@ function HeroWaveCanvasActive({
         intersecting.current = e.isIntersecting;
         apply();
       },
-      { root: null, rootMargin: "0px 0px 12% 0px", threshold: 0 },
+      { root: null, rootMargin: "0px 0px 8% 0px", threshold: 0 },
     );
     io.observe(host);
     apply();
 
-    const onVisibility = () => {
-      apply();
-    };
+    const onVisibility = () => apply();
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
@@ -223,27 +212,29 @@ function HeroWaveCanvasActive({
     <div className={shellClass} aria-hidden>
       <Canvas
         camera={{ far: 140, fov: 50, near: 0.06, position: [0, 3.12, 7.6] }}
-        dpr={[1, 1.5]}
+        dpr={dpr}
         frameloop={runLoop ? "always" : "never"}
         gl={{
           alpha: true,
-          antialias: true,
+          antialias: false,
           depth: true,
-          powerPreference: "high-performance",
+          powerPreference: "default",
           stencil: false,
         }}
         style={{ width: "100%", height: "100%" }}
       >
-        <CameraRig hostSelector={hostSelector} />
-        <CyberSeaSurface hostSelector={hostSelector} />
-        <EffectComposer>
-          <Bloom
-            intensity={HERO_BLOOM_INTENSITY}
-            luminanceSmoothing={HERO_BLOOM_SMOOTHING}
-            luminanceThreshold={HERO_BLOOM_THRESHOLD}
-            mipmapBlur
-          />
-        </EffectComposer>
+        <CameraRig />
+        <CyberSeaSurface gridSeg={gridSeg} />
+        {useBloom ? (
+          <EffectComposer>
+            <Bloom
+              intensity={HERO_BLOOM_INTENSITY}
+              luminanceSmoothing={HERO_BLOOM_SMOOTHING}
+              luminanceThreshold={HERO_BLOOM_THRESHOLD}
+              mipmapBlur
+            />
+          </EffectComposer>
+        ) : null}
       </Canvas>
     </div>
   );
@@ -254,20 +245,22 @@ export function HeroWaveCanvas({
   variant = "embedded",
 }: {
   hostSelector: string;
-  /** `global`: root layout singleton, fixed under content. */
   variant?: "embedded" | "global";
 }) {
-  const [reduced, setReduced] = useState<boolean | null>(null);
+  const reduced = useReducedMotion();
+  const tier = useSgWebglTier();
 
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduced(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  if (reduced !== false || tier === null || !shouldMountHeroWebGL(tier)) {
+    return null;
+  }
 
-  if (reduced !== false) return null;
+  const activeTier: "lite" | "full" = tier === "full" ? "full" : "lite";
 
-  return <HeroWaveCanvasActive hostSelector={hostSelector} variant={variant} />;
+  return (
+    <HeroWaveCanvasActive
+      hostSelector={hostSelector}
+      variant={variant}
+      tier={activeTier}
+    />
+  );
 }

@@ -1,21 +1,30 @@
-import { HomeCall } from "@/components/home-call";
+import { HomeCall, HomeFit } from "@/components/home-call";
 import { HomeFounders } from "@/components/home-founders";
+import { HomeProof } from "@/components/home-proof";
 import { HomeSocial } from "@/components/home-social";
 import { GlowRiver } from "@/components/glow-river";
 import { HomeHero } from "@/components/home-hero";
 import { HomeScrollChoreography } from "@/components/home-scroll-choreography";
+import { SgAmbientGrid } from "@/components/sg-ambient-grid";
 import { UnderwaterLightStage } from "@/components/underwater-light-stage";
 import { WaterVolumeFx } from "@/components/water-volume-fx";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { SOCIAL_FOUNDERS_TRENCH_MIN_H } from "@/lib/founders-scroll-rhythm";
-import Image from "next/image";
 
 export default function Home() {
   return (
     <div className="relative isolate flex min-h-full min-w-0 flex-col overflow-x-clip">
+      {/* 主列纵向渐变（hero 水下 → 出水线 → editorial paper） */}
       <div className="pointer-events-none absolute inset-0 z-0 sg-main-depth" aria-hidden />
 
+      {/* Blueprint Magazine: 全站固定点阵 + grain（仅出水线后显形） */}
+      <SgAmbientGrid />
+
+      {/* GlowRiver 仍铺满，但 .sg-river-depth 已绑 --ambient-mode，出水线后衰减 */}
       <GlowRiver />
 
+      {/* 水下氛围层：依然全屏，靠 --ambient-mode 在 hero 之后自动 fade */}
       <div className="pointer-events-none absolute inset-0 z-[2]">
         <WaterVolumeFx />
         <UnderwaterLightStage />
@@ -28,89 +37,35 @@ export default function Home() {
         跳到主要内容
       </a>
 
-      <header className="sg-header-depth sticky top-0 z-10 border-b border-[var(--hairline)] backdrop-blur-sm">
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 md:px-10 lg:px-12">
-          <a
-            href="#manifesto"
-            className="flex items-center gap-3.5 rounded-sm font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--foreground)] transition-opacity hover:opacity-85"
-          >
-            <Image
-              src="/brand-sg-logo.png"
-              alt="SurferGarage logo"
-              width={40}
-              height={40}
-              className="h-10 w-10 shrink-0 object-contain"
-              priority
-            />
-            <span className="flex items-baseline gap-1.5">
-              <span className="text-[var(--foreground)]">Surfer</span>
-              <span className="text-[var(--foreground)]">Garage</span>
-            </span>
-          </a>
-          <nav
-            className="hidden gap-8 font-[family-name:var(--font-zh)] text-[13px] font-medium tracking-[0.14em] md:flex"
-            aria-label="主导航"
-          >
-            <a
-              href="#manifesto"
-              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
-            >
-              宣言
-            </a>
-            <a
-              href="#social"
-              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
-            >
-              触点
-            </a>
-            <a
-              href="#founders"
-              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
-            >
-              片场
-            </a>
-            <a
-              href="#call"
-              className="rounded-sm px-1.5 py-1 text-[var(--muted)] transition-colors hover:text-[var(--brand-teal)]"
-            >
-              联络
-            </a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="relative z-[3] flex-1">
         <HomeHero />
 
-        <HomeSocial />
+        {/* 出水线承载段：从水下色温显式切到 editorial paper */}
+        <HomeProof />
+
+        <HomeFounders />
 
         <div
           aria-hidden
           data-social-founders-trench
-          className={`relative left-1/2 w-screen max-w-[100vw] shrink-0 -translate-x-1/2 ${SOCIAL_FOUNDERS_TRENCH_MIN_H}`}
-        />
+          className={`relative w-screen max-w-[100vw] shrink-0 overflow-hidden ml-[calc(50%-50vw)] ${SOCIAL_FOUNDERS_TRENCH_MIN_H}`}
+        >
+          <div
+            data-breath-glow
+            className="sg-founder-breath-glow pointer-events-none absolute inset-[10%_6%] opacity-[0.12] md:inset-[12%_8%]"
+          />
+        </div>
 
-        <HomeFounders />
+        <HomeSocial />
 
         <HomeCall />
+
+        <HomeFit />
       </main>
 
-      <footer className="relative z-[3] border-t border-[var(--hairline)] bg-[var(--background)] py-10">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 md:flex-row md:items-center md:justify-between md:px-10 lg:px-12">
-          <div className="flex items-center gap-2">
-            <span
-              aria-hidden
-              className="h-1.5 w-1.5 rounded-full bg-[var(--brand-teal)]"
-            />
-            <p className="font-[family-name:var(--font-en)] text-[11px] uppercase tracking-[0.2em] text-[var(--muted)]">
-              © {new Date().getFullYear()} 浪前 Surfer Garage
-            </p>
-          </div>
-          <p className="font-[family-name:var(--font-zh)] text-xs text-[var(--muted)] md:text-sm">
-            站点与内容持续迭代；以仓库与专栏为准。
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <HomeScrollChoreography />
     </div>

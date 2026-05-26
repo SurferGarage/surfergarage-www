@@ -1,9 +1,10 @@
 /**
- * Surfing Founders 微信专栏叠卡首屏 ScrollTrigger `end` 字符串。
- * 须与 `register-desktop-pins` 中 `wechat_oa` 面板保持一致，否则横滑与 pin 会错位。
+ * Surfing Founders **公众号叠卡首屏**（`data-founder-card`）ScrollTrigger `end` 字符串。
+ * 须与 `register-desktop-pins` 中 `wechat_oa` 面板保持一致。
  *
- * **导语与横滑解耦**：首屏上半为长文案时，线性映射会让大量纵向滚轮耗在导语上、横滑被压缩。
- * 前 `WECHAT_PIN_SCROLL_INTRO_HOLD` 的 pin 进度不推进横滑；剩余进度再套 dwell 映射到 `scrollLeft`。
+ * 说明：`WeChatOfficialFeed` 已重置为**纯手滑横条**，不再注册 `wechat-feed-scrub-sync`；
+ * 本文件中的 **`WECHAT_PIN_SCROLL_INTRO_HOLD`** / **`mapWechatPinProgressToHorizontalScrub`**
+ * 仅为历史与潜在复用保留；当前仅 **`FOUNDER_WECHAT_PIN_END`** 被 `register-desktop-pins` 引用。
  */
 export const WECHAT_PIN_SCROLL_INTRO_HOLD = 0.38 as const;
 

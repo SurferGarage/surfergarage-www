@@ -1,20 +1,18 @@
 /**
  * Surfing Founders 人物访谈 · 微信专栏：横向新闻卡。
- * `imageSrc` 与 `public/wechat-feed/01.png` … `08.png` 一一对应（顺序即展台从左到右默认顺序）。
- * `titleZh` 须与公众号文章主标题一致；`href` 为单篇永久链接（短链或 `s?__biz=…&mid=…` 形态均可）。
+ * `imageSrc` 与 `public/wechat-feed/01.png` … `08.png` 一一对应。
  */
+
+import { cleanWechatArticleUrl } from "@/lib/wechat-url";
 
 export type WechatOfficialFeedItem = {
   id: string;
-  /** 公众号文章主标题（显示在封面图下方） */
   titleZh: string;
-  /** 点击后打开（新标签页） */
   href: string;
-  /** 封面图：`/wechat-feed/0N.png` 与标题严格同条，勿错位 */
   imageSrc: string;
 };
 
-export const WECHAT_OFFICIAL_FEED: WechatOfficialFeedItem[] = [
+const RAW_FEED: WechatOfficialFeedItem[] = [
   {
     id: "wx-01",
     titleZh: "Surfing Founder：在时代浪潮中，感受速度、风险与机会",
@@ -69,4 +67,33 @@ export const WECHAT_OFFICIAL_FEED: WechatOfficialFeedItem[] = [
     href: "https://mp.weixin.qq.com/s?__biz=MzYyMjg4NTE2NQ==&mid=2247483787&idx=1&sn=f59707a92d2666362207b62be4e5b4ac&chksm=fee31cabc6e05d0447ff4d6d579d1dc29d4b83a0ccf313019da48944ab2a88414fbb3579933c&scene=126&sessionid=1778737037&subscene=undefined&clicktime=1778763628&enterid=1778763628#rd",
     imageSrc: "/wechat-feed/08.png",
   },
+  {
+    id: "wx-09",
+    titleZh: "对话尼克·兰德：逃逸、能动性与技术奇点 | 造浪之人",
+    href: "https://mp.weixin.qq.com/s/_mzUi2P013Rz4XbkK2K1Ew",
+    imageSrc: "/wechat-feed/09.png",
+  },
 ];
+
+export const WECHAT_OFFICIAL_FEED: WechatOfficialFeedItem[] = RAW_FEED.map(
+  (item) => ({
+    ...item,
+    href: cleanWechatArticleUrl(item.href),
+  }),
+);
+
+/** 公众号目录：触点区「文章」侧栏用。
+ * 当前按发布顺序倒序展示（最新在上），保留 8 条；如未来接入真实日期可改 group by month。 */
+export const WECHAT_FEED_DIRECTORY: ReadonlyArray<{
+  id: string;
+  titleZh: string;
+  href: string;
+  ordinal: string;
+}> = WECHAT_OFFICIAL_FEED.slice()
+  .reverse()
+  .map((item, i, arr) => ({
+    id: item.id,
+    titleZh: item.titleZh,
+    href: item.href,
+    ordinal: `Vol.${String(arr.length - i).padStart(2, "0")}`,
+  }));

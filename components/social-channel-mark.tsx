@@ -1,80 +1,102 @@
 import type { SocialChannelMarkId } from "@/lib/social-channels";
 
+/**
+ * 渠道卡右上角线标 — 各平台官方简化 logo
+ *
+ * SVG path 基于 simple-icons (CC0) 与各平台 brand guidelines 的简化版，
+ * 用于 platform identification（编辑/导览用途的 fair use），非商业 endorsement。
+ *
+ * 默认：currentColor = muted-strong 灰白，与 editorial 暗底统一不抢眼；
+ * group-hover：图标切到各平台品牌色（CSS variable `--brand-color` 传入）。
+ */
+
 const markFrame =
-  "flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-white/[0.02] text-[#A1A1AA] transition-[border-color,background-color,color] duration-200 ease-out group-hover:border-[color-mix(in_oklch,var(--brand-primary)_55%,white_12%)] group-hover:bg-white/[0.04] group-hover:text-[#FFFFFF]";
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-[var(--hairline)] bg-[var(--paper-2)] text-[var(--muted-strong)] transition-[border-color,background-color,color] duration-200 ease-out group-hover:border-[var(--hairline-strong)] group-hover:bg-[var(--paper-3)] group-hover:text-[var(--brand-color)]";
+
+/** 各平台 brand color — group-hover 时图标切到这个色 */
+const BRAND_COLOR: Record<SocialChannelMarkId, string> = {
+  wechat: "#07c160",
+  xiaohongshu: "#ff2442",
+  bilibili: "#fb7299",
+  twitter: "#ffffff",
+  youtube: "#ff0000",
+  xiaoyuzhou: "#ff6f00",
+  github: "#ffffff",
+};
 
 function Icon({ id }: { id: SocialChannelMarkId }) {
-  const stroke = "currentColor";
   const common = {
-    width: 22,
-    height: 22,
+    width: 20,
+    height: 20,
     viewBox: "0 0 24 24",
-    fill: "none" as const,
-    stroke,
-    strokeWidth: 1.55,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
+    "aria-hidden": true as const,
   };
 
   switch (id) {
     case "wechat":
+      // simple-icons WeChat (双气泡经典)
       return (
-        <svg {...common} aria-hidden>
-          <path d="M6.5 9.5c0-1.9 2-3.5 4.5-3.5h2c2.5 0 4.5 1.6 4.5 3.5v3.5c0 1.9-2 3.5-4.5 3.5h-1.8L8.5 19v-2.5H9c-2.5 0-4.5-1.6-4.5-3.5V9.5z" />
-          <path d="M9 11h.01M12 11h.01M15 11h.01" strokeWidth={2} />
+        <svg {...common} fill="currentColor">
+          <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .55-.012.822-.034-.17-.59-.262-1.21-.262-1.85 0-3.876 3.351-7.017 7.49-7.017.117 0 .234.003.35.01-.61-2.62-3.473-4.59-6.7-4.59zm-1.71 8.156c-.594 0-1.073-.486-1.073-1.086 0-.6.479-1.087 1.072-1.087.593 0 1.073.487 1.073 1.087 0 .6-.48 1.086-1.073 1.086zm5.815 0c-.594 0-1.073-.486-1.073-1.086 0-.6.479-1.087 1.073-1.087.593 0 1.072.487 1.072 1.087 0 .6-.479 1.086-1.072 1.086zM24 14.66c0-3.439-3.4-6.227-7.591-6.227-4.346 0-7.59 2.788-7.59 6.227 0 3.444 3.244 6.226 7.59 6.226.91 0 1.831-.166 2.703-.467a.61.61 0 0 1 .54.054l1.666.964a.272.272 0 0 0 .142.046c.143 0 .26-.117.26-.262 0-.06-.024-.124-.044-.183l-.343-1.184a.466.466 0 0 1 .172-.534C23.005 18.197 24 16.587 24 14.66zm-10.058-1.07c-.396 0-.715-.323-.715-.724 0-.4.319-.725.715-.725s.715.324.715.725-.319.724-.715.724zm4.916 0c-.396 0-.715-.323-.715-.724 0-.4.319-.725.715-.725s.715.324.715.725-.319.724-.715.724z" />
         </svg>
       );
+
     case "xiaohongshu":
+      // 红方块 + 白"小"字（简化版小红书 mark）
       return (
-        <svg {...common} aria-hidden>
-          <path d="M7 5.5h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2z" />
-          <path d="M9 9h6M9 12.5h6M9 16h4" />
+        <svg {...common}>
+          <rect x="2.5" y="2.5" width="19" height="19" rx="3.5" fill="currentColor" />
+          <path
+            d="M12 7.2v9.6 M8.4 9.5h7.2 M9.7 7.2v3.5 M14.3 7.2v3.5"
+            stroke="var(--paper-2)"
+            strokeWidth="1.55"
+            strokeLinecap="round"
+            fill="none"
+          />
         </svg>
       );
+
     case "bilibili":
+      // simple-icons Bilibili (电视框+天线+笑脸)
       return (
-        <svg {...common} aria-hidden>
-          <path d="M7 7.5h10a2 2 0 0 1 2 2v7.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 17V9.5a2 2 0 0 1 2-2z" />
-          <path d="M9 5.5v2M15 5.5v2" />
-          <path
-            d="M11 11.2l3.5 2-3.5 2v-4z"
-            fill="currentColor"
-            stroke="none"
-          />
+        <svg {...common} fill="currentColor">
+          <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906l-1.174 1.12zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.787 1.894v7.52c.018.764.281 1.395.787 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.787-1.893v-7.52c-.018-.765-.281-1.396-.787-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.387-.947.258-.258.574-.386.946-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z" />
         </svg>
       );
+
     case "twitter":
+      // simple-icons X (Twitter) — 现代 X logo
       return (
-        <svg {...common} aria-hidden>
-          <path d="M5.5 5.5l13 13M18.5 5.5l-13 13" />
+        <svg {...common} fill="currentColor">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
         </svg>
       );
+
     case "youtube":
+      // simple-icons YouTube
       return (
-        <svg {...common} aria-hidden>
-          <path d="M6.5 8h11a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z" />
+        <svg {...common} fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12z" />
+        </svg>
+      );
+
+    case "xiaoyuzhou":
+      // 圆球 + 心形（小宇宙 mark 简化：橙色圆+耳朵+笑脸近似）
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="9.5" fill="currentColor" />
           <path
-            d="M10.5 10.8v2.4l2.8-1.2-2.8-1.2z"
-            fill="currentColor"
-            stroke="none"
+            d="M12 16.2c-2.6-1.8-4-3.4-4-4.8 0-1.2 0.95-2.1 2.2-2.1 0.78 0 1.45 0.4 1.8 1 0.35-0.6 1.02-1 1.8-1 1.25 0 2.2 0.9 2.2 2.1 0 1.4-1.4 3-4 4.8z"
+            fill="var(--paper-2)"
           />
         </svg>
       );
-    case "xiaoyuzhou":
-      return (
-        <svg {...common} aria-hidden>
-          <path d="M4.5 10.5c3-3.8 12-3.8 15 0" />
-          <path d="M6.5 14c2.2-2.4 9.3-2.4 11.5 0" />
-          <path d="M9 17.2c1.4-1.1 4.6-1.1 6 0" />
-        </svg>
-      );
+
     case "github":
+      // simple-icons GitHub (经典 Octocat)
       return (
-        <svg {...common} aria-hidden>
-          <circle cx="6.5" cy="6" r="2" />
-          <circle cx="6.5" cy="18" r="2" />
-          <circle cx="17.5" cy="12" r="2" />
-          <path d="M6.5 8v8M6.5 12h9M17.5 12V9.5a2.5 2.5 0 0 0-2.5-2.5h-2" />
+        <svg {...common} fill="currentColor">
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
         </svg>
       );
   }
@@ -91,6 +113,7 @@ export function SocialChannelMark({
     <div
       aria-hidden
       className={[markFrame, className].filter(Boolean).join(" ")}
+      style={{ "--brand-color": BRAND_COLOR[id] } as React.CSSProperties}
     >
       <Icon id={id} />
     </div>

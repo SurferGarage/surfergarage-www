@@ -1,80 +1,51 @@
 "use client";
 
 import "@/components/motion/gsap-register";
-import { useEffect, useLayoutEffect, useState } from "react";
+import {
+  collectHomeMotionDomRefs,
+  registerHomeDesktopMotion,
+  registerHomeMobileMotion,
+  registerHomeScrollMotion,
+} from "@/components/motion/sg-home-registry";
+import { useLayoutEffect } from "react";
 import { ScrollTrigger } from "@/components/motion/gsap-register";
-import { registerCallReveal } from "@/components/motion/register-call-reveal";
-import { registerDesktopPins } from "@/components/motion/register-desktop-pins";
-import { registerGlobalDepthScrub } from "@/components/motion/register-global-depth-scrub";
-import { registerFounderBreath } from "@/components/motion/register-founder-breath";
-import { registerFoundersIntro } from "@/components/motion/register-founders-intro";
-import { registerGithubRepoCards } from "@/components/motion/register-github-repo-cards";
-import { registerHeroChoreography } from "@/components/motion/register-hero-choreography";
-import { registerManifestoScroll } from "@/components/motion/register-manifesto-scroll";
-import { registerSocialExpand } from "@/components/motion/register-social-expand";
+import { SG_MEDIA_MD_MAX, SG_MEDIA_MD_MIN } from "@/lib/sg-breakpoints";
+import {
+  applyReducedMotionStatic,
+  useReducedMotion,
+} from "@/lib/sg-reduced-motion";
 import gsap from "gsap";
 
-/**
- * 首页滚动编排：`gsap.context` 内 **`register-*` 顺序** 与 L0→L3 语义对齐（**精确表**见 `wiki/07-动画编排与统筹.md` §4）。
- * 时长 / scrub / stagger 以 `lib/sg-motion-system.ts` 为单一事实源。
- */
 const ST_MARKERS =
   typeof process !== "undefined" &&
   process.env.NEXT_PUBLIC_GSAP_DEBUG === "1";
 
+/**
+ * 首页滚动编排唯一 React 挂载点。
+ * 注册顺序与分层见 `sg-home-registry.ts` / `wiki/07-动画编排与统筹.md`。
+ */
 export function HomeScrollChoreography() {
-  const [reduced, setReduced] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduced(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const reduced = useReducedMotion();
 
   useLayoutEffect(() => {
     if (reduced === null) return;
 
     if (reduced) {
-      document.documentElement.style.setProperty("--depth-t", "0");
-      return () => {
-        document.documentElement.style.removeProperty("--depth-t");
-      };
+      return applyReducedMotionStatic();
     }
 
-    const manifestoRight = document.querySelector<HTMLElement>(
-      "[data-manifesto-right]",
-    );
-    const manifestoPin = document.querySelector<HTMLElement>(
-      "[data-manifesto-pin]",
-    );
-    const heroScrub = document.querySelector<HTMLElement>("[data-hero-scrub]");
-    const heroWave = document.querySelector<HTMLElement>("[data-hero-wave]");
-    const socialSection = document.querySelector<HTMLElement>("#social");
-    const callSection = document.querySelector<HTMLElement>("#call");
+    const refs = collectHomeMotionDomRefs();
 
     const ctx = gsap.context(() => {
-      registerGlobalDepthScrub(ST_MARKERS);
-      registerManifestoScroll(ST_MARKERS);
-      registerHeroChoreography(ST_MARKERS, {
-        heroScrub,
-        heroWave,
-        waveCalmTrigger: socialSection,
-      });
-      registerFoundersIntro(ST_MARKERS);
-      registerFounderBreath(ST_MARKERS);
-      registerGithubRepoCards(ST_MARKERS);
-      registerSocialExpand(ST_MARKERS);
-      registerCallReveal(ST_MARKERS, callSection);
+      registerHomeScrollMotion(ST_MARKERS, refs);
     });
 
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 768px)", () => {
-      registerDesktopPins(ST_MARKERS, {
-        manifestoPin,
-        manifestoRight,
-      });
+    mm.add(SG_MEDIA_MD_MAX, () => {
+      registerHomeMobileMotion(ST_MARKERS);
+    });
+    mm.add(SG_MEDIA_MD_MIN, () => {
+      registerHomeDesktopMotion(ST_MARKERS, refs);
     });
 
     ScrollTrigger.refresh();

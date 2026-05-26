@@ -1,28 +1,17 @@
 import { gsap } from "@/components/motion/gsap-register";
-import { SG_SCRUB } from "@/lib/sg-motion-system";
+import { motionBreathGlow, type MotionMarkers } from "@/components/motion/sg-motion-primitives";
+import { SG_SELECTORS, SG_ST_ID } from "@/lib/sg-motion-system";
 
-/** 叠卡之间的呼吸带：随滚流轻微「亮起来」，压低信息密度，不抢正文 ST。 */
-export function registerFounderBreath(markers: boolean): void {
-  const zones = gsap.utils.toArray<HTMLElement>("[data-founder-breath]");
+export function registerFounderBreath(markers: MotionMarkers): void {
+  const zones = gsap.utils.toArray<HTMLElement>(SG_SELECTORS.breathZone);
   zones.forEach((zone, i) => {
-    const glow = zone.querySelector<HTMLElement>("[data-founder-breath-glow]");
+    const glow = zone.querySelector<HTMLElement>(SG_SELECTORS.breathGlow);
     if (!glow) return;
 
-    gsap.fromTo(
-      glow,
-      { opacity: 0.06 },
-      {
-        opacity: 0.34,
-        ease: "none",
-        scrollTrigger: {
-          trigger: zone,
-          start: "top 92%",
-          end: "bottom 8%",
-          scrub: SG_SCRUB.socialExpand * 0.92,
-          markers,
-          id: `founder-breath-${i}`,
-        },
-      },
-    );
+    const id = zone.matches("[data-social-founders-trench]")
+      ? SG_ST_ID.socialFoundersTrench
+      : SG_ST_ID.founderBreath(i);
+
+    motionBreathGlow(glow, zone, markers, id);
   });
 }

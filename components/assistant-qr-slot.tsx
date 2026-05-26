@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import Image from "next/image";
 import { ASSISTANT_WECHAT_QR_SRC } from "@/lib/community-assets";
+import { SG_BP, sgMediaMaxWidth } from "@/lib/sg-breakpoints";
 
 /** 外框略大于常见微信名片二维码，内层 object-contain 保留上下文案与角标 */
 const BOX_W = 228;
@@ -48,7 +49,7 @@ export function AssistantQrSlot() {
         width={720}
         height={960}
         className="h-auto max-h-[280px] w-full object-contain"
-        sizes="(max-width: 768px) 60vw, 228px"
+        sizes={`${sgMediaMaxWidth(SG_BP.md)} 60vw, 228px`}
         unoptimized
         onError={onError}
       />

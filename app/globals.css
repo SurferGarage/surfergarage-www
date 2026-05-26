@@ -1,42 +1,71 @@
 @import "tailwindcss";
 
+/* 响应式断点数值：`lib/sg-breakpoints.ts`（与 Tailwind 默认 screens 一致；勿在 JS 中手写 768 等魔数）。 */
+
 :root {
-  --background: #131313;
+  /* ========== 文字 / hairline ========== */
+  --background: #0b0c10;
   --foreground: #f3f4f6;
+  --foreground-strong: #ffffff;
   --muted: #8b93a8;
   --muted-strong: #d1d5db;
-  --hairline: rgba(139, 147, 168, 0.28);
-  /* 浪前色板：闪电蓝 / 海军蓝 / 脉冲青（见 wiki/06 §10） */
+  --muted-soft: #5d6478;
+  --hairline: rgba(139, 147, 168, 0.22);
+  --hairline-strong: rgba(200, 210, 230, 0.42);
+  --hairline-soft: rgba(139, 147, 168, 0.12);
+
+  /* ========== Editorial Paper 灰阶（#founders 起的内容区） ==========
+   * 0 = 最深页底；4 = 卡 hover；与 Linear/Vercel 暗底接近，但带轻微冷调
+   */
+  --paper-0: #0b0c10;
+  --paper-1: #0f1116;
+  --paper-2: #16181e;
+  --paper-3: #1e2128;
+  --paper-4: #2a2e37;
+
+  /* ========== 品牌色板（Hero 水下场） ========== */
   --brand-primary: #0009e2;
   --brand-navy: #060644;
   --brand-teal: #27d7c7;
-  /* 主内容纵向深度：上偏海军蓝 → 下 Canvas Black */
+  --brand-teal-soft: rgba(39, 215, 199, 0.55);
+  --accent-amber: #e6b964;
+  --accent-amber-soft: rgba(230, 185, 100, 0.55);
+
+  /* ========== 主内容纵向深度（Hero→Founders 的色温过渡） ========== */
   --depth-surface: #0c0c2e;
   --depth-mid: #0f0f22;
-  --depth-abyss: #131313;
+  --depth-abyss: #0b0c10;
+
   /* Lenis → GSAP quickTo → hero fragment uniform (0–1). */
   --wave-scroll-vel: 0;
   /* 整页下潜：0 = 海面侧，1 = 海底侧（由 register-global-depth-scrub 写入） */
   --depth-t: 0;
   /* 供全站背景/光河/顶栏统一读取，避免各处重复 clamp */
   --sg-dt: clamp(0, var(--depth-t, 0), 1);
+  /* 「出水线」：从 hero（dt≈0.04）渐进到 editorial paper（dt≈0.22）；超过即 1。
+   * 由各组件作为 opacity 衰减门控，让水下氛围只在 hero 强存在。 */
+  --surface-mode: clamp(0, calc((var(--sg-dt) - 0.04) / 0.18), 1);
+  /* 反向：1 = 水下，0 = 编辑区 */
+  --ambient-mode: calc(1 - var(--surface-mode));
   /* 丁达尔层首帧：与 JS 同步前默认强光 */
   --uwl-tyndall: 1;
 }
 
-/* 整页列纵向渐变：随 --depth-t 海面（浅青浪前感）→ 海军/闪电蓝带 → 海底 abyss */
+/* 主列纵向渐变：Hero（约 0–8%）保持「海面 → 闪电蓝深水」水下色温；
+ * 8–10% 完成「出水线」过渡到 paper-1；10% 之后整段稳定在 editorial paper，
+ * 让 Proof / Founders / Social / Call 都在同一统一暗色 deck 上，无硬切色带。 */
 .sg-main-depth {
   background: linear-gradient(
     180deg,
-    color-mix(in oklch, var(--brand-teal) calc(28% * (1 - var(--sg-dt))), var(--depth-surface)) 0%,
-    color-mix(in oklch, var(--depth-surface) calc(38% - var(--sg-dt) * 16%), var(--depth-mid)) 24%,
-    color-mix(in oklch, var(--brand-primary) calc(36% * (1 - var(--sg-dt) * 0.88)), var(--depth-mid)) 50%,
-    color-mix(in oklch, var(--depth-mid) calc(44% + var(--sg-dt) * 48%), var(--depth-abyss)) 80%,
-    color-mix(in oklch, var(--depth-abyss) calc(100% - var(--sg-dt) * 10%), #050506 calc(var(--sg-dt) * 28%)) 100%
+    color-mix(in oklch, var(--brand-teal) 22%, var(--depth-surface)) 0%,
+    color-mix(in oklch, var(--brand-primary) 38%, var(--depth-mid)) 4%,
+    var(--depth-mid) 7%,
+    color-mix(in oklch, var(--depth-mid) 52%, var(--paper-1)) 8.5%,
+    var(--paper-1) 10%,
+    var(--paper-1) 68%,
+    var(--paper-0) 100%
   );
 }
-
-/* 顶栏：随下潜略加深，与主列同轨；半透明 + blur 由 utility 叠加 */
 
 /* 全站水下光氛：须叠在 `page.tsx` 内 `.sg-main-depth` 之上，否则实色渐变会完全挡住光球 */
 .uwl-stage {
@@ -46,6 +75,9 @@
   z-index: 0;
   isolation: isolate;
   mix-blend-mode: screen;
+  /* 「出水线」之后氛围层迅速衰减，避免 #founders 起继续抢戏 */
+  opacity: var(--ambient-mode, 1);
+  transition: opacity 280ms ease-out;
 }
 
 .uwl-surface {
@@ -171,33 +203,40 @@
   opacity: calc(0.55 + var(--uwl-color-t, 0) * 0.38);
 }
 
+/* 顶栏深度：Hero 几乎透明（让水下视觉直接透出，仅 backdrop-blur + hairline 底）；
+ * 出水线后渐变为 paper-2 90% 半透实色，与 Blueprint Magazine 编辑区色温一致。 */
 .sg-header-depth {
   background: color-mix(
     in oklch,
-    color-mix(
-        in oklch,
-        var(--brand-teal) calc(10% * (1 - var(--sg-dt))),
-        color-mix(in oklch, var(--depth-mid) calc(52% + var(--sg-dt) * 36%), var(--depth-abyss))
-      )
-      90%,
+    var(--paper-2) calc(8% + var(--surface-mode, 0) * 82%),
     transparent
   );
+  /* Hero 与 paper 区的边底 hairline 同步：Hero 极弱、出水后 hairline-strong */
+  border-bottom-color: color-mix(
+    in oklch,
+    var(--hairline-strong) calc(20% + var(--surface-mode, 0) * 70%),
+    transparent
+  );
+  transition: background-color 240ms ease-out, border-color 240ms ease-out;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-zh), var(--font-en), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-serif: var(--font-serif), "Source Serif Pro", Georgia, serif;
 }
 
 html {
+  /* 与 sticky 顶栏 + section scroll-mt 对齐，Lenis 锚点不挡标题 */
+  scroll-padding-top: 4.5rem;
   scrollbar-gutter: stable;
-  /* 与主列同色温：橡皮筋/露边时不跳回纯 --background */
+  /* 与主列同色温：橡皮筋/露边时不跳回纯黑；橡皮筋范围内仍偏 paper */
   background: color-mix(
     in oklch,
-    color-mix(in oklch, var(--depth-surface) calc(22% * (1 - var(--sg-dt))), var(--depth-mid))
-      calc(58% + var(--sg-dt) * 32%),
-    var(--depth-abyss)
+    var(--depth-mid) calc(36% * (1 - var(--sg-dt))),
+    color-mix(in oklch, var(--paper-1) 70%, var(--paper-0))
   );
 }
 
@@ -221,6 +260,51 @@ body {
   outline-offset: 3px;
 }
 
+/* ============================================================
+ * Editorial Typography 工具类（章节编号、mono 标签、serif 显示）
+ * ============================================================ */
+
+/* §01 — SECTION NAME 章节编号小行：mono + 全大写 + 高字距 */
+.editorial-eyebrow {
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-feature-settings: "tnum" 1, "calt" 0;
+}
+
+/* mono 数字 / 时间码 / 编号；与 editorial-eyebrow 不同字号 */
+.editorial-mono {
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.04em;
+}
+
+.editorial-mono-tabular {
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Editorial Serif：杂志式标题 / 引用 / 大数字 */
+.editorial-serif {
+  font-family: var(--font-serif), "Source Serif Pro", Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+.editorial-serif-italic {
+  font-family: var(--font-serif), "Source Serif Pro", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
 /* Manifesto 巨型英文骨牌：全大写、高字重、负字距（中文用独立 class，勿混用本类） */
 .wordmark-display {
   font-family: var(--font-en), ui-sans-serif, system-ui, sans-serif;
@@ -230,6 +314,13 @@ body {
   font-kerning: normal;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   text-rendering: optimizeLegibility;
+}
+
+/* 字符级 stagger reveal：JS 把字标拆成 <span> 后给每个加 .wordmark-letter；
+ * 默认 invisible 等 JS 入场动画接管。无 JS 时仍可见（fallback）。 */
+.wordmark-letter {
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
 @keyframes sg-river-drift {
@@ -282,9 +373,10 @@ body {
   }
 }
 
-/* 光河：浅海时更亮，深潜时收进背景 */
+/* 光河 · 主流（hero 段强对比，出水线后衰减但保留 baseline） */
 .sg-river-depth {
-  opacity: calc(0.1 + (1 - var(--sg-dt)) * 0.24);
+  opacity: calc(0.06 + var(--ambient-mode, 1) * (0.1 + (1 - var(--sg-dt)) * 0.22));
+  transition: opacity 280ms ease-out;
 }
 
 .sg-river-layer {
@@ -304,6 +396,110 @@ body {
   opacity: calc(0.1 + (1 - var(--sg-dt)) * 0.22);
   stroke-dasharray: 8 72;
   animation: sg-river-shimmer 28s linear infinite;
+}
+
+/* 光河 · 深流：贯穿整页的暗流纹理，paper 区也保留极弱存在感
+ * 不被 ambient-mode 强归零，opacity 公式独立保底；mix-blend-mode 让它叠在暗背景上是「光」 */
+.sg-river-deep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  /* hero 0.18 → paper deep 0.05 — 始终可感知 */
+  opacity: calc(0.05 + (1 - var(--sg-dt)) * 0.13);
+  mix-blend-mode: screen;
+  transition: opacity 320ms ease-out;
+  animation: sg-river-drift 38s ease-in-out infinite;
+  transform-origin: 38% 30%;
+}
+
+.sg-river-deep-svg {
+  width: 100%;
+  height: 100%;
+  filter: blur(150px) saturate(1.08);
+  animation: sg-river-breath 32s ease-in-out infinite;
+}
+
+.sg-river-deep-path {
+  opacity: 0.88;
+}
+
+/* 触控 / 窄屏：关闭 blur 呼吸动画，降低合成器负载 */
+@media (max-width: 1023px), (pointer: coarse) {
+  .sg-river-layer,
+  .sg-river-svg,
+  .sg-river-path-shimmer,
+  .sg-river-deep,
+  .sg-river-deep-svg {
+    animation: none !important;
+  }
+
+  .sg-river-svg {
+    filter: blur(48px) saturate(1.02);
+  }
+
+  .sg-river-deep-svg {
+    filter: blur(90px) saturate(1.04);
+  }
+}
+
+/* ============================================================
+ * Hero scroll cue — 呼吸竖线
+ * ============================================================ */
+@keyframes sg-scroll-cue-pulse {
+  0% {
+    transform: scaleY(0.15);
+    opacity: 0.3;
+  }
+  40% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0.15);
+    opacity: 0;
+  }
+}
+
+.sg-scroll-cue-line {
+  position: relative;
+  width: 1px;
+  height: 56px;
+  background: linear-gradient(180deg, transparent 0%, var(--brand-teal) 50%, transparent 100%);
+  transform-origin: top center;
+  animation: sg-scroll-cue-pulse 2.6s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+  /* Hero 之外不显示 */
+  opacity: calc(var(--ambient-mode, 1));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-scroll-cue-line {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+/* ============================================================
+ * 头部进度细线（绑定 --sg-dt） — 顶栏下方贴边
+ * ============================================================ */
+.sg-header-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    var(--brand-teal) 0%,
+    var(--brand-primary) 50%,
+    var(--brand-teal) 100%
+  );
+  transform-origin: 0% 50%;
+  transform: scaleX(var(--sg-dt));
+  transition: transform 120ms linear;
+  opacity: 0.85;
 }
 
 .sg-call-orb {
@@ -335,9 +531,9 @@ body {
 .sg-founder-breath-glow {
   border-radius: 50%;
   background:
-    radial-gradient(ellipse 72% 58% at 42% 48%, rgba(39, 215, 199, 0.22) 0%, transparent 58%),
-    radial-gradient(ellipse 55% 48% at 78% 62%, rgba(0, 9, 226, 0.18) 0%, transparent 55%),
-    radial-gradient(ellipse 90% 70% at 50% 88%, rgba(6, 6, 68, 0.35) 0%, transparent 52%);
+    radial-gradient(ellipse 72% 58% at 42% 48%, rgba(39, 215, 199, 0.18) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 48% at 78% 62%, rgba(230, 185, 100, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 70% at 50% 88%, rgba(11, 12, 16, 0.45) 0%, transparent 52%);
   background-size: 160% 160%;
   filter: blur(48px);
   animation: sg-founder-breath-drift 36s ease-in-out infinite;
@@ -345,14 +541,195 @@ body {
 }
 
 ::selection {
-  background: rgba(39, 215, 199, 0.22);
-  color: var(--foreground);
+  background: rgba(39, 215, 199, 0.28);
+  color: var(--foreground-strong);
+}
+
+/* 微信专栏横向展台：细滚动条，避免与 edge mask 叠在一起时「条看不见 / 被裁成半截」 */
+.wechat-official-feed-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 147, 168, 0.5) rgba(11, 12, 16, 0.35);
+}
+.wechat-official-feed-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.wechat-official-feed-scroll::-webkit-scrollbar-track {
+  background: rgba(11, 12, 16, 0.45);
+  border-radius: 9999px;
+}
+.wechat-official-feed-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgba(139, 147, 168, 0.5);
+}
+.wechat-official-feed-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 210, 230, 0.55);
+}
+
+/* 横滑列表：非聚焦卡略缩，居中卡略放大（transform 在外链上，与 CardBody 倾角分层） */
+.wechat-feed-card-link {
+  transform: scale(0.94);
+  opacity: 0.82;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease-out;
+  will-change: transform;
+}
+
+.wechat-feed-card-link[data-wechat-focus] {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.wechat-feed-card-link:hover {
+  opacity: 1;
+}
+
+/* ============================================================
+ * Magnet hover — cursor-aware 微交互（L1.5）
+ * 用法：父级 .sg-magnet 设 perspective，子级 .sg-magnet-target 由 JS 写 --mx/--my
+ * 不依赖 JS 时退化为静态。
+ * ============================================================ */
+.sg-magnet {
+  --mx: 0;
+  --my: 0;
+}
+
+.sg-magnet-target {
+  transform: translate3d(calc(var(--mx, 0) * 6px), calc(var(--my, 0) * 6px), 0);
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sg-magnet:hover .sg-magnet-target {
+  transition: transform 80ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sg-magnet-target {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================
+ * Section spotlight — editorial paper 节奏分割
+ * ============================================================ */
+.sg-paper-band {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in oklch, var(--paper-1) 88%, transparent) 18%,
+    var(--paper-1) 50%,
+    color-mix(in oklch, var(--paper-1) 88%, transparent) 82%,
+    transparent 100%
+  );
+}
+
+/* ============================================================
+ * Blueprint Magazine — 全站 ambient 层（dot grid / spotlight / grain）
+ * 所有层都以 --ambient-mode（Hero=1 / Paper=0 → 反向用 var(--surface-mode)）
+ * 门控显隐：水下区不显示，出水线后渐现。
+ * ============================================================ */
+
+/* dot grid：极细的工程图纸坐标点阵；中心明显、边缘 vignette fade */
+.sg-grid-base {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  /* 双层 radial-gradient 模拟「点阵」：1.5px 圆点 / 36px 间距 */
+  background-image: radial-gradient(
+    circle at center,
+    rgba(200, 210, 230, 0.07) 0,
+    rgba(200, 210, 230, 0.07) 1px,
+    transparent 1.5px
+  );
+  background-size: 36px 36px;
+  background-position: 0 0;
+  /* vignette：四周向中心 fade，避免点阵贴边过于密集 */
+  -webkit-mask-image: radial-gradient(
+    ellipse 78% 88% at 50% 50%,
+    #000 38%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 78% 88% at 50% 50%,
+    #000 38%,
+    transparent 100%
+  );
+  /* 出水线后才显形（surface-mode 0 → 1 = Hero → Paper） */
+  opacity: calc(var(--surface-mode, 0) * 1);
+  transition: opacity 320ms ease-out;
+}
+
+/* spotlight：在 [data-spotlight] 元素背后生成 radial 光晕，电影感聚光 */
+.sg-spotlight-host {
+  position: relative;
+  isolation: isolate;
+}
+
+.sg-spotlight-host::before {
+  content: "";
+  position: absolute;
+  inset: -40% -20%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side at 50% 50%,
+    color-mix(in oklch, var(--brand-teal) 18%, transparent) 0%,
+    color-mix(in oklch, var(--brand-primary) 8%, transparent) 32%,
+    transparent 72%
+  );
+  opacity: calc(var(--surface-mode, 0) * 0.55);
+  transition: opacity 400ms ease-out;
+  /* mix-blend-mode 让光叠加到 paper 上更柔和 */
+  mix-blend-mode: screen;
+}
+
+/* spotlight 暖色变体：Call CTA / Brand kit 用 amber */
+.sg-spotlight-host[data-spotlight="amber"]::before {
+  background: radial-gradient(
+    closest-side at 50% 50%,
+    color-mix(in oklch, var(--accent-amber) 16%, transparent) 0%,
+    color-mix(in oklch, var(--accent-amber) 6%, transparent) 36%,
+    transparent 72%
+  );
+}
+
+/* grain：极细印刷噪点，全站叠加，提供「材料质感」而非塑料 LCD 感 */
+.sg-grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.65 0 0 0 0 0.7 0 0 0 0 0.78 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+  background-repeat: repeat;
+  opacity: calc(0.06 + var(--surface-mode, 0) * 0.04);
+  mix-blend-mode: overlay;
+  transition: opacity 320ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-grid-base,
+  .sg-grain,
+  .sg-spotlight-host::before {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wechat-feed-card-link,
+  .wechat-feed-card-link[data-wechat-focus] {
+    transform: none;
+    opacity: 1;
+    transition: none;
+  }
+
   .sg-river-layer,
   .sg-river-svg,
   .sg-river-path-shimmer,
+  .sg-river-deep,
+  .sg-river-deep-svg,
   .sg-call-orb,
   .sg-call-orb-core,
   .sg-founder-breath-glow {

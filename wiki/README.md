@@ -16,10 +16,12 @@
 - **`05-站点深度与模块设计草案.md`**：**纵向色彩隐喻（海面→海底）**、站点 IA、社交 / 采访 / 社群、Linear 式语言、**第六轮滚动动效**、落地顺序
 - **`06-实施计划与验收清单.md`**：**P0→P5 工序**、依赖顺序、每步验收标准、风险与回滚
 - **`07-动画编排与统筹.md`**：**全站动画单一统筹** — L0–L3 语义与模块映射、`HomeScrollChoreography` **注册顺序表**、Lenis / CSS 变量 / WebGL 分工、**微信展台 ST 例外**、新增动效检查清单
+- **`08-成熟网站路线图.md`**：**上线清单** — 基建 / 内容 / 气质 / 合规 / 工程；**执行顺序**与验收标准
 
 ## 更新日志（维护札记）
 
-- **2026-05-11（维护推送）**：**`wiki/07`** 入库；`README` 索引与阅读顺序；`01`/`02`/`04`/`05`/`06`/`00` 与 **`--depth-t` 排障 §9**、**文案约定**、**动画统筹** 交叉引用同步；代码侧含 **`formatSafeDepthProgress`**、触点/元数据/无障碍/微信标题等近期修订，随本提交推送远端。
+- **2026-05-26（V2.0 成熟化交付）**：全站视觉/editorial 升级 — **出水线 `#proof`**、片场四屏 YC 式全宽（`founder-wechat-column` / `founder-video-studio` / `github-playbook-block` / `visual-garage`）、**Blueprint 氛围**（`SgAmbientGrid` + 全页 deep river）、居中顶栏 **`site-header`**、独立 **`site-footer`** + Newsletter + 巨型字标 scroll reveal；动效增补 **`fit-closing-pin`** / **`footer-wordmark`** / **`hero-wordmark-stagger`** / **`magnet-hover`**；文案 **记忆点瘦身**（每区块单行要点）；内容同步 wx-09、徐凯撒人像与 B 站四期；`npm run lint` / `npm run build` 通过。
+- **2026-05-11（维护推送）**：**`wiki/07`** 入库；`README` 索引与阅读顺序；`01`/`02`/`04`/`05`/`06`/`00` 与 **`--depth-t` 排障 §9**、**文案约定**、**动画统筹** 交叉引用同步。
 - **2026-05-11（动画统筹）**：新增 **`wiki/07-动画编排与统筹.md`**（L0–L3 映射、`HomeScrollChoreography` 注册顺序、Lenis/CSS/WebGL、**`wechat-feed-scrub-sync`** 例外、`README` 阅读顺序与 `02`/`sg-motion-system`/`home-scroll-choreography` 交叉引用）。
 - **2026-05-11（文案）**：全站用户可见文案审查：`home-hero` **纪录→记录**；`metadata.description` 英文口号与片场 **统一为 `Surfing Wave, Build the Great.`**；触点导览 **映像→视频**；X 渠道 **`labelZh`** 与 **`labelEn` 对齐**；`wechat-official-feed` **Citrus** 拼写；`aria-label` 主导航 / 联络区中文；`FounderArticleActions` 复制 **aria** 与「复制链接」一致；`wiki/00` 增补 **「面向用户文案与术语」**。
 - **2026-05-11**：代码审查同步 wiki：`#social`↔`#founders` **海沟**（`data-social-founders-trench` / `SOCIAL_FOUNDERS_TRENCH_MIN_H`）；Founders **叠卡呼吸带**（`data-founder-breath` / `register-founder-breath` / `.sg-founder-breath-glow`）；Manifesto **12 列 + 浪前 / SURFERGARAGE** 与对比度修正；**移除**全页 SVG 噪点层；Connect **扁平渠道卡** + **`articles` 单列 `max-w-md` 左齐**；微信展台 **`mapWechatPinProgressToHorizontalScrub`**、**居中横滑 padding**、**`wechat-official-feed` 仅 `titleZh`**；`npm run lint` / `npm run build` 通过。

@@ -1,30 +1,18 @@
-import { gsap } from "@/components/motion/gsap-register";
-import { SG_CLIP, SG_REVEAL } from "@/lib/sg-motion-system";
+import { motionRevealToggle, type MotionMarkers } from "@/components/motion/sg-motion-primitives";
+import { SG_REVEAL, SG_SECTION, SG_SELECTORS, SG_ST_ID, SG_TRIGGER } from "@/lib/sg-motion-system";
 
-/** Founders 叠卡区上方栏目说明：入场 reveal，与叠卡 pin/scrub 分层，避免抢戏。 */
-export function registerFoundersIntro(markers: boolean): void {
-  const section = document.querySelector<HTMLElement>("#founders");
-  const intro = document.querySelector<HTMLElement>("[data-founders-intro]");
+export function registerFoundersIntro(markers: MotionMarkers): void {
+  const section = document.querySelector<HTMLElement>(SG_SECTION.founders);
+  const intro = document.querySelector<HTMLElement>(SG_SELECTORS.foundersIntro);
   if (!section || !intro) return;
 
-  gsap.fromTo(
+  motionRevealToggle(
     intro,
-    {
-      clipPath: SG_CLIP.revealFrom,
-      y: SG_REVEAL.yFrom,
-    },
-    {
-      clipPath: SG_CLIP.revealTo,
-      y: 0,
-      duration: SG_REVEAL.duration,
-      ease: SG_REVEAL.ease,
-      scrollTrigger: {
-        trigger: section,
-        start: "top 86%",
-        toggleActions: "play none none reverse",
-        markers,
-        id: "founders-intro",
-      },
-    },
+    SG_REVEAL.yFrom,
+    markers,
+    SG_ST_ID.foundersIntro,
+    section,
+    SG_TRIGGER.revealSection,
+    SG_REVEAL.duration,
   );
 }

@@ -82,7 +82,6 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener("resize", onResize);
       gsap.ticker.remove(ticker);
-      ScrollTrigger.getAll().forEach((t) => t.kill());
       lenisInstance.destroy();
       queueMicrotask(() => {
         setLenis(null);

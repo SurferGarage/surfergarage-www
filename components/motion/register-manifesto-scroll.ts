@@ -1,53 +1,35 @@
-import { gsap } from "@/components/motion/gsap-register";
-import { SG_SCRUB } from "@/lib/sg-motion-system";
+import { motionScrubFromTo, type MotionMarkers } from "@/components/motion/sg-motion-primitives";
+import { SG_SCRUB, SG_SECTION, SG_SELECTORS, SG_ST_ID, SG_TRIGGER } from "@/lib/sg-motion-system";
 
-/**
- * Manifesto 首屏：随首屏滚动推进的「景深」scrub，与 load 态 `data-hero-reveal` 互补（字标 scale + y%；正文区 wrapper 仅极轻 opacity，见 `06` 红线脚注）。
- */
-export function registerManifestoScroll(markers: boolean): void {
-  const root = document.querySelector<HTMLElement>("#manifesto");
-  const wordmark = document.querySelector<HTMLElement>("[data-hero-wordmark]");
-  const fade = document.querySelector<HTMLElement>("[data-manifesto-fade]");
+export function registerManifestoScroll(markers: MotionMarkers): void {
+  const root = document.querySelector<HTMLElement>(SG_SECTION.manifesto);
+  const wordmark = document.querySelector<HTMLElement>(SG_SELECTORS.heroWordmark);
+  const fade = document.querySelector<HTMLElement>(SG_SELECTORS.manifestoFade);
   if (!root) return;
 
   if (wordmark) {
-    gsap.fromTo(
+    motionScrubFromTo(
       wordmark,
       { scale: 1, y: 0, transformOrigin: "0% 0%" },
-      {
-        scale: 0.91,
-        yPercent: -5,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root,
-          start: "top top",
-          end: "bottom 44%",
-          scrub: SG_SCRUB.manifestoWordmark,
-          invalidateOnRefresh: true,
-          markers,
-          id: "manifesto-wordmark",
-        },
-      },
+      { scale: 0.91, yPercent: -5 },
+      markers,
+      SG_ST_ID.manifestoWordmark,
+      root,
+      SG_TRIGGER.manifestoWordmark,
+      SG_SCRUB.manifestoWordmark,
     );
   }
 
   if (fade) {
-    gsap.fromTo(
+    motionScrubFromTo(
       fade,
       { opacity: 1 },
-      {
-        opacity: 0.92,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root,
-          start: "top top",
-          end: "bottom 38%",
-          scrub: SG_SCRUB.manifestoFade,
-          invalidateOnRefresh: true,
-          markers,
-          id: "manifesto-fade-depth",
-        },
-      },
+      { opacity: 0.92 },
+      markers,
+      SG_ST_ID.manifestoFade,
+      root,
+      SG_TRIGGER.manifestoFade,
+      SG_SCRUB.manifestoFade,
     );
   }
 }

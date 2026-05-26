@@ -4,6 +4,10 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 
+import { getScrollDepthT, getWaveScrollVel } from "@/lib/sg-scroll-signals";
+import { shouldMountWaterVolume, useSgWebglTier } from "@/lib/sg-webgl-policy";
+import { useReducedMotion } from "@/lib/sg-reduced-motion";
+
 const VERT = /* glsl */ `
 varying vec2 vUv;
 void main() {
@@ -35,7 +39,7 @@ float noise(vec2 p) {
 float fbm(vec2 p) {
   float s = 0.0;
   float a = 0.52;
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 4; i++) {
     s += a * noise(p);
     p *= 2.08;
     a *= 0.5;
@@ -100,8 +104,10 @@ function FixedOrthoCamera() {
   return null;
 }
 
-function WaterVolumeQuad() {
+function WaterVolumeQuad({ active }: { active: boolean }) {
   const matRef = useRef<THREE.ShaderMaterial>(null);
+  const lastFrameAt = useRef(0);
+  const FRAME_INTERVAL_MS = 1000 / 24;
 
   const shader = useMemo(() => {
     return {
@@ -116,15 +122,16 @@ function WaterVolumeQuad() {
   }, []);
 
   useFrame((state) => {
+    if (!active) return;
+    const now = state.clock.elapsedTime * 1000;
+    if (now - lastFrameAt.current < FRAME_INTERVAL_MS) return;
+    lastFrameAt.current = now;
+
     const mat = matRef.current;
     if (!mat) return;
     mat.uniforms.uTime.value = state.clock.elapsedTime;
-    const root = document.documentElement;
-    const cs = getComputedStyle(root);
-    const d = Number.parseFloat(cs.getPropertyValue("--depth-t"));
-    const v = Number.parseFloat(cs.getPropertyValue("--wave-scroll-vel"));
-    mat.uniforms.uDepth.value = Number.isFinite(d) ? d : 0;
-    mat.uniforms.uVel.value = Number.isFinite(v) ? v : 0;
+    mat.uniforms.uDepth.value = getScrollDepthT();
+    mat.uniforms.uVel.value = getWaveScrollVel();
   });
 
   return (
@@ -143,38 +150,39 @@ function WaterVolumeQuad() {
   );
 }
 
-/**
- * 全屏水下体积感：焦散 + 丁达尔锥（GLSL），读 `--depth-t` / `--wave-scroll-vel`。
- * 叠在实色渐变之上，与 `UnderwaterLightStage` 的 CSS 光球互补。
- */
 export function WaterVolumeFx(): ReactNode {
-  const [reduced, setReduced] = useState<boolean | null>(null);
+  const reduced = useReducedMotion();
+  const tier = useSgWebglTier();
+  const [runLoop, setRunLoop] = useState(false);
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduced(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+    if (reduced !== false || tier !== "full") return;
 
-  if (reduced !== false) return null;
+    const apply = () => setRunLoop(!document.hidden);
+    apply();
+    document.addEventListener("visibilitychange", apply);
+    return () => document.removeEventListener("visibilitychange", apply);
+  }, [reduced, tier]);
+
+  if (reduced !== false || tier === null || !shouldMountWaterVolume(tier)) {
+    return null;
+  }
 
   return (
     <div className="water-volume-fx pointer-events-none absolute inset-0 z-0 mix-blend-screen opacity-[0.94]">
       <Canvas
         className="h-full w-full"
-        frameloop="always"
-        dpr={[1, 1.5]}
+        frameloop={runLoop ? "always" : "never"}
+        dpr={[1, 1.15]}
         gl={{
           alpha: true,
           antialias: false,
-          powerPreference: "high-performance",
+          powerPreference: "default",
           stencil: false,
         }}
       >
         <FixedOrthoCamera />
-        <WaterVolumeQuad />
+        <WaterVolumeQuad active={runLoop} />
       </Canvas>
     </div>
   );
