@@ -12,7 +12,13 @@ export function useAnchorNav(onAfterNav?: () => void) {
       if (!href.startsWith("#")) return;
       const id = href.slice(1);
       const target = document.getElementById(id);
-      if (!target) return;
+      if (!target) {
+        if (typeof window !== "undefined" && window.location.pathname !== "/") {
+          e.preventDefault();
+          window.location.assign(`/${href}`);
+        }
+        return;
+      }
       e.preventDefault();
 
       if (lenis) {

@@ -338,6 +338,7 @@ export function SiteHeader() {
                   key={item.href}
                   href={item.href}
                   onClick={(e) => handleAnchorClick(e, item.href)}
+                  tabIndex={open ? 0 : -1}
                   className={`flex items-center justify-between border-b border-[var(--hairline-soft)] py-4 font-[family-name:var(--font-zh)] text-[18px] font-medium leading-none tracking-[0.04em] transition-colors hover:text-[var(--foreground)] ${
                     isActive
                       ? "text-[var(--foreground)]"
