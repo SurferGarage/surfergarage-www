@@ -6,9 +6,8 @@ import { useState } from "react";
 
 /**
  * Founders Block A · 微信专栏 — YC 式 magazine spread。
- * - 左 ~46%：编辑部引言 + 文章 vol 选择列表（垂直堆叠大字 hover）
- * - 右 ~54%：当前 vol 全画幅封面图（贴 viewport 右边缘）
- * 整屏左右贴边、不留 SG_PAGE_SHELL_CLASS 的中央栅格 padding，制造 YC 那种"两边大画幅"的张力。
+ * 桌面：左 editorial + vol 列表，右大画幅封面。
+ * 移动：封面在上，列表限高可滚。
  */
 export function FounderWechatColumn() {
   const items = WECHAT_OFFICIAL_FEED;
@@ -21,9 +20,8 @@ export function FounderWechatColumn() {
       className="grid h-full w-full grid-cols-1 lg:grid-cols-12"
       data-founders-intro
     >
-      {/* 左：editorial + vol 列表（YC 式大字垂直堆叠） */}
-      <div className="relative flex flex-col gap-5 px-5 py-6 md:px-10 md:py-8 lg:col-span-6 lg:gap-7 lg:px-14 lg:py-10 xl:px-20">
-        {/* Editorial 引言 */}
+      {/* 左：editorial + vol 列表 */}
+      <div className="relative order-2 flex flex-col gap-5 px-5 py-6 md:px-10 md:py-8 lg:order-1 lg:col-span-6 lg:gap-7 lg:px-14 lg:py-10 xl:px-20">
         <div>
           <p className="editorial-eyebrow text-[var(--brand-teal)]">
             Editorial
@@ -34,11 +32,10 @@ export function FounderWechatColumn() {
           </p>
         </div>
 
-        {/* Vol 列表 — YC 式大字垂直堆叠，当前 active 高对比，其它淡灰 */}
         <ul
           role="listbox"
           aria-label="微信专栏文章列表"
-          className="flex min-h-0 flex-1 flex-col divide-y divide-[var(--hairline-soft)] overflow-y-auto"
+          className="flex max-h-[min(42svh,22rem)] min-h-0 flex-col divide-y divide-[var(--hairline-soft)] overflow-y-auto overscroll-y-contain lg:max-h-none lg:flex-1"
         >
           {items.map((item, i) => {
             const isActive = item.id === active.id;
@@ -49,7 +46,7 @@ export function FounderWechatColumn() {
                   role="option"
                   aria-selected={isActive}
                   onClick={() => setActiveId(item.id)}
-                  className="group flex w-full items-baseline gap-4 py-2.5 text-left transition-colors md:py-3"
+                  className="group flex min-h-11 w-full items-baseline gap-4 py-2.5 text-left transition-colors md:py-3"
                 >
                   <span
                     className={`editorial-mono-tabular w-12 shrink-0 text-[10.5px] uppercase tracking-[0.1em] ${
@@ -61,7 +58,7 @@ export function FounderWechatColumn() {
                     Vol.{String(i + 1).padStart(2, "0")}
                   </span>
                   <span
-                    className={`line-clamp-1 flex-1 font-[family-name:var(--font-zh)] leading-snug transition-[color,font-weight,opacity] ${
+                    className={`line-clamp-2 flex-1 font-[family-name:var(--font-zh)] leading-snug transition-[color,font-weight,opacity] lg:line-clamp-1 ${
                       isActive
                         ? "text-[clamp(1rem,1.5vw,1.2rem)] font-medium text-[var(--foreground)]"
                         : "text-[13px] font-light text-[var(--muted-soft)] group-hover:text-[var(--muted-strong)] md:text-[14px]"
@@ -81,20 +78,19 @@ export function FounderWechatColumn() {
             href={active.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-sm border border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_12%,transparent)] px-4 py-2.5 editorial-mono text-[10.5px] uppercase tracking-[0.18em] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,transparent)]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_12%,transparent)] px-4 py-2.5 editorial-mono text-[10.5px] uppercase tracking-[0.18em] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,transparent)]"
           >
             阅读全文
             <span aria-hidden className="text-[var(--brand-teal)]">↗</span>
           </a>
           <p className="editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
-            WeChat · 公众号专栏 · {items.length} 篇
+            WeChat · {items.length} 篇
           </p>
         </div>
       </div>
 
-      {/* 右：大画幅封面图 — 完整显示（object-contain），letterbox 用 paper 模糊背景填充 */}
-      <div className="relative flex min-h-[40svh] items-center justify-center overflow-hidden bg-[var(--paper-2)] lg:col-span-6 lg:min-h-0">
-        {/* 同图模糊背景（cover + blur）填满 letterbox 区，让 contain 时的空白也有色感而不显示死黑 */}
+      {/* 右：大画幅封面 — 移动优先展示 */}
+      <div className="relative order-1 flex min-h-[36svh] items-center justify-center overflow-hidden bg-[var(--paper-2)] lg:order-2 lg:col-span-6 lg:min-h-0">
         <div
           aria-hidden
           className="absolute inset-0 scale-110"
@@ -119,8 +115,7 @@ export function FounderWechatColumn() {
           />
         </div>
 
-        {/* 主图：完整显示（contain），不裁切下半部文字 */}
-        <div className="relative h-full w-full px-5 py-10 md:px-8 md:py-14 lg:px-12 lg:py-16 xl:px-16 xl:py-20">
+        <div className="relative h-full w-full px-5 py-8 md:px-8 md:py-14 lg:px-12 lg:py-16 xl:px-16 xl:py-20">
           <Image
             key={active.id}
             src={active.imageSrc}
@@ -132,7 +127,6 @@ export function FounderWechatColumn() {
           />
         </div>
 
-        {/* 顶部 vol 编号 overlay（绝对定位浮于图之上） */}
         <div className="pointer-events-none absolute left-5 top-5 flex items-baseline gap-3 md:left-8 md:top-8 lg:left-10 lg:top-10">
           <span className="editorial-mono text-[10.5px] uppercase tracking-[0.22em] text-[var(--foreground)]">
             Vol.{String(activeIndex + 1).padStart(2, "0")}
@@ -142,9 +136,8 @@ export function FounderWechatColumn() {
           </span>
         </div>
 
-        {/* 底部标题 — 浮于 letterbox 暗区上，不再压到图本身 */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-2 px-5 py-5 md:px-8 md:py-6 lg:px-10 lg:py-7">
-          <p className="editorial-serif text-[clamp(1.05rem,1.8vw,1.4rem)] leading-[1.2] text-[var(--foreground)]">
+          <p className="line-clamp-3 editorial-serif text-[clamp(1.05rem,1.8vw,1.4rem)] leading-[1.2] text-[var(--foreground)]">
             {active.titleZh}
           </p>
         </div>

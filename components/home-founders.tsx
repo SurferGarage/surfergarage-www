@@ -13,7 +13,7 @@ import { Fragment } from "react";
 
 /** 单屏 pin 容器 — 始终 100dvh − header，overflow-hidden 防止溢出 */
 const PANEL_CARD_BASE =
-  "relative flex w-full min-h-[72svh] min-w-0 flex-col overflow-hidden md:h-[calc(100dvh-4.5rem)] md:min-h-0";
+  "relative flex w-full min-h-0 min-w-0 flex-col overflow-hidden md:h-[calc(100dvh-4.5rem)]";
 
 /** 居中网格内（Playbook / Visual 用） — 标题区 + 内容 padding；顶部 padding 加大避免被 sticky header 切 */
 const PANEL_INNER_CENTERED =
@@ -43,7 +43,7 @@ function FullBleedPanel({
       {/* 顶部双行标题区：明显的 paper-2 暗背 + 大 pt 留白，确保滚到 pin 时清晰可见 */}
       <div className="shrink-0 border-b border-[var(--hairline)] bg-[var(--paper-2)] px-5 pb-5 pt-12 md:px-10 md:pb-6 md:pt-16 lg:px-14 lg:pb-7 lg:pt-20 xl:px-16">
         {/* Row 1：编号 + eyebrow + meta（单行可扫读） */}
-        <div className="flex items-baseline justify-between gap-4">
+        <div className="flex items-baseline justify-between gap-4 max-md:flex-col max-md:items-start max-md:gap-1">
           <div className="flex items-baseline gap-3">
             <span className="editorial-mono text-[10.5px] uppercase tracking-[0.22em] text-[var(--accent-amber)]">
               § {index}

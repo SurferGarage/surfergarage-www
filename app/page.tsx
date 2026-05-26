@@ -32,7 +32,8 @@ export default function Home() {
 
       <a
         href="#manifesto"
-        className="fixed left-4 top-4 z-[100] -translate-y-[160%] rounded-sm border border-[var(--hairline)] bg-[var(--background)] px-4 py-2 font-[family-name:var(--font-zh)] text-sm text-[var(--foreground)] shadow-lg transition-transform duration-200 focus:translate-y-0"
+        className="fixed left-4 z-[100] -translate-y-[160%] rounded-sm border border-[var(--hairline)] bg-[var(--background)] px-4 py-2 font-[family-name:var(--font-zh)] text-sm text-[var(--foreground)] shadow-lg transition-transform duration-200 focus:translate-y-0"
+        style={{ top: "max(1rem, env(safe-area-inset-top))" }}
       >
         跳到主要内容
       </a>

@@ -1,11 +1,11 @@
 "use client";
 
-import { useLenis } from "@/components/lenis-context";
 import { SITE_NAME } from "@/lib/site-metadata";
 import { SITE_PRIMARY_NAV } from "@/lib/site-nav";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import { useAnchorNav } from "@/lib/use-anchor-nav";
 import Image from "next/image";
-import { useCallback, useEffect, useId, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 /** 入口 CTA 主操作：与 #call 落点一致 */
 const HEADER_CTA_HREF = "#call";
@@ -124,37 +124,9 @@ export function SiteHeader() {
   const activeId = useActiveSection(sectionIds);
   const [open, setOpen] = useState(false);
   const drawerId = useId();
-  const lenis = useLenis();
-
+  const drawerRef = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
-
-  /** 拦截锚点点击 — 即时跳到 target（绕过 Lenis 平滑滚动） */
-  const handleAnchorClick = useCallback(
-    (e: MouseEvent<HTMLAnchorElement>, href: string) => {
-      if (!href.startsWith("#")) return;
-      const id = href.slice(1);
-      const target = document.getElementById(id);
-      if (!target) return;
-      e.preventDefault();
-
-      // Lenis 存在：immediate 跳转，禁用动画
-      if (lenis) {
-        lenis.scrollTo(target, { immediate: true, lock: true });
-      } else {
-        // reduced-motion / 无 Lenis：scroll-padding 已处理 sticky header 偏移
-        target.scrollIntoView({ behavior: "auto", block: "start" });
-      }
-
-      // 同步 URL hash，但不再次触发滚动
-      if (typeof window !== "undefined") {
-        window.history.replaceState(null, "", href);
-      }
-
-      // 移动 drawer 自动收起
-      setOpen(false);
-    },
-    [lenis],
-  );
+  const handleAnchorClick = useAnchorNav(close);
 
   useEffect(() => {
     if (!open) return;
@@ -164,6 +136,11 @@ export function SiteHeader() {
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKey);
+
+    const firstLink =
+      drawerRef.current?.querySelector<HTMLElement>("nav a[href]");
+    firstLink?.focus();
+
     return () => {
       document.body.style.overflow = prevOverflow;
       document.removeEventListener("keydown", onKey);
@@ -197,10 +174,10 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sg-header-depth sticky top-0 z-30 border-b border-[var(--hairline)] backdrop-blur-md">
+    <header className="sg-header-depth sticky top-0 z-30 border-b border-[var(--hairline)] backdrop-blur-md pt-[env(safe-area-inset-top)]">
       {/* —— Mobile（< md）—— logo 左、hamburger 右 */}
       <div
-        className={`flex items-center justify-between gap-4 py-3.5 md:hidden ${SG_PAGE_SHELL_CLASS}`}
+        className={`flex items-center justify-between gap-4 py-3 md:hidden ${SG_PAGE_SHELL_CLASS}`}
       >
         <a
           href="#manifesto"
@@ -227,7 +204,7 @@ export function SiteHeader() {
             href={HEADER_CTA_HREF}
             onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
             data-magnet
-            className="group inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-3 py-1.5 font-[family-name:var(--font-en)] text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--foreground)]"
+            className="group inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-3 py-2 font-[family-name:var(--font-en)] text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--foreground)]"
             aria-label="加入 SurferGarage 社群"
           >
             <span className="sg-magnet-target inline-flex items-center gap-1.5">
@@ -247,7 +224,7 @@ export function SiteHeader() {
             aria-expanded={open}
             aria-controls={drawerId}
             aria-label={open ? "关闭主导航" : "打开主导航"}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-sm border border-[var(--hairline)] bg-[rgba(15,17,22,0.55)]"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-sm border border-[var(--hairline)] bg-[rgba(15,17,22,0.55)]"
           >
             <HamburgerIcon open={open} />
           </button>
@@ -338,8 +315,9 @@ export function SiteHeader() {
       {/* Mobile drawer */}
       <div
         id={drawerId}
+        ref={drawerRef}
         aria-hidden={!open}
-        className={`fixed inset-x-0 top-[3.6rem] z-[39] md:hidden ${
+        className={`fixed inset-x-0 top-[calc(3.25rem+env(safe-area-inset-top))] z-[39] md:hidden ${
           open ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >

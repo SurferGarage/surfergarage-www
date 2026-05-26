@@ -17,7 +17,7 @@ export function HomeHero() {
   return (
     <section
       id="manifesto"
-      className="relative h-[100svh] min-h-[46rem] scroll-mt-[4.5rem] overflow-hidden pt-24 md:pt-28"
+      className="relative h-[100svh] max-md:min-h-0 md:min-h-[46rem] scroll-mt-[4.5rem] overflow-hidden pt-20 max-md:pt-[max(5rem,env(safe-area-inset-top))] md:pt-28"
       aria-labelledby="hero-title"
       data-hero-wave
       style={
@@ -71,7 +71,7 @@ export function HomeHero() {
                   浪前
                 </span>
                 <span
-                  className="wordmark-display block w-full overflow-hidden uppercase text-[clamp(2.4rem,6.2vw,7.25rem)] text-[var(--foreground)]"
+                  className="wordmark-display block w-full overflow-hidden uppercase text-[clamp(1.15rem,10.5vw,7.25rem)] text-[var(--foreground)] md:text-[clamp(2.4rem,6.2vw,7.25rem)]"
                   data-hero-letters
                 >
                   SURFERGARAGE
@@ -138,7 +138,7 @@ export function HomeHero() {
             <p className="editorial-eyebrow text-[var(--muted)]">
               Index
             </p>
-            <p className="mt-1.5 editorial-mono-tabular text-[10.5px] uppercase tracking-[0.16em] text-[var(--foreground)] md:text-[11.5px]">
+            <p className="mt-1.5 editorial-mono-tabular text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)] max-md:max-w-[46%] max-md:text-right max-md:leading-snug md:text-[11.5px]">
               {tickerText}
             </p>
           </div>

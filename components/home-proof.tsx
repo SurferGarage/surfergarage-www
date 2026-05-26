@@ -47,7 +47,7 @@ export function HomeProof() {
         </div>
 
         {/* 中行：3 个 inline stats（横条而非大卡片，避免堆叠） */}
-        <ul className="mt-10 grid grid-cols-3 divide-x divide-[var(--hairline)] border-y border-[var(--hairline)] md:mt-14">
+        <ul className="mt-10 grid grid-cols-1 gap-px divide-y divide-[var(--hairline)] border-y border-[var(--hairline)] sm:grid-cols-3 sm:divide-x sm:divide-y-0 md:mt-14">
           <li className="flex flex-col gap-2 px-4 py-5 md:px-6 md:py-7">
             <span className="editorial-mono text-[9.5px] uppercase tracking-[0.18em] text-[var(--muted)]">
               Articles

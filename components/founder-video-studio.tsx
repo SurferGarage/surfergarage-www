@@ -348,7 +348,7 @@ export function FounderVideoStudio() {
                 href={bilibiliWatchUrl(activeEpisode.bvid)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="absolute right-3 top-3 z-10 inline-flex items-center gap-2 rounded-sm border border-[var(--hairline-strong)] bg-[rgba(11,12,16,0.78)] px-3 py-1.5 editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)] opacity-0 backdrop-blur-md transition-opacity duration-200 hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,rgba(11,12,16,0.78))] group-hover/player:opacity-100 focus-visible:opacity-100"
+                className="absolute right-3 top-3 z-10 inline-flex items-center gap-2 rounded-sm border border-[var(--hairline-strong)] bg-[rgba(11,12,16,0.78)] px-3 py-1.5 editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)] opacity-100 backdrop-blur-md transition-opacity duration-200 hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,rgba(11,12,16,0.78))] md:opacity-0 md:group-hover/player:opacity-100 focus-visible:opacity-100"
                 aria-label="在 B 站打开当前集"
               >
                 <span>在 B 站打开</span>

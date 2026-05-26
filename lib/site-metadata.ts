@@ -9,7 +9,8 @@ export const SITE_DESCRIPTION =
   "我们寻找那些在时代浪潮中搏浪的先行者。Surfing Founders 人物访谈以非共识的视角，记录叛逆与创造，让你的故事被世界听见。Surfing Wave, Build the Great.";
 export const SITE_TAGLINE = "Surfing Wave, Build the Great.";
 
-const OG_IMAGE = "/brand-sg-logo.png";
+const OG_IMAGE = "/opengraph-image";
+const FAVICON = "/brand-sg-logo.png";
 
 export function buildSiteMetadata(): Metadata {
   const siteBase = new URL(`${getSiteUrl()}/`);
@@ -43,8 +44,9 @@ export function buildSiteMetadata(): Metadata {
       images: [
         {
           url: OG_IMAGE,
+          width: 1200,
+          height: 630,
           alt: SITE_NAME,
-          type: "image/png",
         },
       ],
     },
@@ -55,8 +57,8 @@ export function buildSiteMetadata(): Metadata {
       images: [OG_IMAGE],
     },
     icons: {
-      icon: OG_IMAGE,
-      apple: OG_IMAGE,
+      icon: FAVICON,
+      apple: FAVICON,
     },
     robots: {
       index: true,
@@ -70,5 +72,6 @@ export function buildSiteViewport(): Viewport {
   return {
     themeColor: "#0b0c10",
     colorScheme: "dark",
+    viewportFit: "cover",
   };
 }

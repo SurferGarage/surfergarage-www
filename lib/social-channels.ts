@@ -160,3 +160,8 @@ export const SOCIAL_CONNECT_SECTIONS: readonly {
 export const SOCIAL_CHANNELS: SocialChannel[] = SOCIAL_CONNECT_SECTIONS.flatMap(
   (s) => [...s.channels],
 );
+
+/** 渠道是否已有可点击外链（排除 `#` 占位） */
+export function isSocialChannelLive(href: string): boolean {
+  return /^https?:\/\//i.test(href);
+}

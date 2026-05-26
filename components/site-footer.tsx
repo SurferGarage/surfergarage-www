@@ -1,4 +1,5 @@
 import { FooterNewsletter } from "@/components/footer-newsletter";
+import { SiteAnchorLink } from "@/components/site-anchor-link";
 import { SITE_TAGLINE } from "@/lib/site-metadata";
 import {
   FOOTER_CONTACT_LINKS,
@@ -44,6 +45,14 @@ function FooterAnchor({
   );
 }
 
+function FooterHashLink({ href, label }: { href: string; label: string }) {
+  return (
+    <SiteAnchorLink href={href} className={footerLink}>
+      {label}
+    </SiteAnchorLink>
+  );
+}
+
 function FooterColumnHeading({ children }: { children: React.ReactNode }) {
   return <p className="editorial-eyebrow text-[var(--muted)]">{children}</p>;
 }
@@ -74,9 +83,7 @@ export function SiteFooter() {
             <ul className="mt-4 flex flex-col gap-2.5">
               {SITE_PRIMARY_NAV.map((item) => (
                 <li key={item.href}>
-                  <a href={item.href} className={footerLink}>
-                    {item.labelZh}
-                  </a>
+                  <FooterHashLink href={item.href} label={item.labelZh} />
                 </li>
               ))}
             </ul>
@@ -156,6 +163,9 @@ export function SiteFooter() {
               <span className="font-[family-name:var(--font-zh)] text-[13px] text-[var(--muted-soft)]">
                 rss · coming
               </span>
+              <a href="/privacy" className={footerLink}>
+                隐私政策
+              </a>
             </div>
           </div>
         </div>

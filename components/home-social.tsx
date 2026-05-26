@@ -1,5 +1,6 @@
 import {
   SOCIAL_CONNECT_SECTIONS,
+  isSocialChannelLive,
   type SocialChannel,
   type SocialChannelKind,
 } from "@/lib/social-channels";
@@ -141,12 +142,12 @@ function SocialChannelCard({
 
       {/* 段 3 — CTA + 短说明 */}
       <div
-        className={`flex items-center justify-between border-t border-[var(--hairline-soft)] ${
+        className={`flex min-w-0 items-center justify-between gap-3 border-t border-[var(--hairline-soft)] ${
           isHero ? "mt-7 pt-4" : "mt-5 pt-3"
         }`}
       >
         <span
-          className={`font-[family-name:var(--font-zh)] leading-relaxed text-[var(--muted)] ${
+          className={`min-w-0 font-[family-name:var(--font-zh)] leading-relaxed text-[var(--muted)] ${
             isHero ? "text-[12.5px] md:text-[13px]" : "text-[11.5px] md:text-[12px]"
           }`}
         >
@@ -213,7 +214,7 @@ function OpenSourceHero({ ch }: { ch: SocialChannel }) {
         </div>
 
         <div>
-          <p className="font-[family-name:var(--font-en)] text-[clamp(2.2rem,4.2vw,3rem)] font-medium leading-[0.96] tracking-[-0.03em] text-[var(--foreground)]">
+          <p className="font-[family-name:var(--font-en)] text-[clamp(1.5rem,7vw,3rem)] font-medium leading-[0.96] tracking-[-0.03em] text-[var(--foreground)] break-all">
             github.com/SurferGarage
           </p>
           <p className="mt-3 font-[family-name:var(--font-zh)] text-[14px] tracking-[0.04em] text-[var(--brand-teal)] md:text-[15px]">
@@ -357,10 +358,12 @@ export function HomeSocial() {
               // 视频区按 BENTO_ORDER 重排
               const ordered =
                 sec.id === "video"
-                  ? [...sec.channels].sort(
-                      (a, b) =>
-                        (BENTO_ORDER[a.id] ?? 99) - (BENTO_ORDER[b.id] ?? 99),
-                    )
+                  ? [...sec.channels]
+                      .filter((ch) => isSocialChannelLive(ch.href))
+                      .sort(
+                        (a, b) =>
+                          (BENTO_ORDER[a.id] ?? 99) - (BENTO_ORDER[b.id] ?? 99),
+                      )
                   : sec.channels;
 
               return (
@@ -524,12 +527,12 @@ function BentoChannelCard({
       </div>
 
       <div
-        className={`flex items-center justify-between border-t border-[var(--hairline-soft)] ${
+        className={`flex min-w-0 items-center justify-between gap-3 border-t border-[var(--hairline-soft)] ${
           isHero ? "mt-7 pt-4" : "mt-5 pt-3"
         }`}
       >
         <span
-          className={`font-[family-name:var(--font-zh)] leading-relaxed text-[var(--muted)] ${
+          className={`min-w-0 font-[family-name:var(--font-zh)] leading-relaxed text-[var(--muted)] ${
             isHero ? "text-[12.5px] md:text-[13px]" : "text-[11.5px] md:text-[12px]"
           }`}
         >

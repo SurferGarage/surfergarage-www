@@ -230,7 +230,7 @@
 
 html {
   /* 与 sticky 顶栏 + section scroll-mt 对齐，Lenis 锚点不挡标题 */
-  scroll-padding-top: 4.5rem;
+  scroll-padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
   scrollbar-gutter: stable;
   /* 与主列同色温：橡皮筋/露边时不跳回纯黑；橡皮筋范围内仍偏 paper */
   background: color-mix(

@@ -9,9 +9,9 @@ export const FOUNDERS_BRIDGE_SECTION_PT = "pt-10 md:pt-14";
 
 export const FOUNDERS_EDITORIAL_MB = "mb-36 md:mb-52";
 
-/** 两屏叠卡之间的呼吸带：至少约半屏～近一屏高（与 `home-founders` 内 `data-founder-breath` 同步）。 */
+/** 两屏叠卡之间的呼吸带：桌面约半屏；移动缩短避免纵向过长 */
 export const FOUNDER_BREATH_MIN_H =
-  "min-h-[min(52svh,34rem)] md:min-h-[min(58vh,40rem)] lg:min-h-[min(62vh,46rem)]";
+  "min-h-[5rem] md:min-h-[min(58vh,40rem)] lg:min-h-[min(62vh,46rem)]";
 
 /** 浪前片场（#founders）与触点（#social）之间海沟高度：与叠卡呼吸带同量级 */
 export const SOCIAL_FOUNDERS_TRENCH_MIN_H = FOUNDER_BREATH_MIN_H;

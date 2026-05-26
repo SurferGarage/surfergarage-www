@@ -48,7 +48,7 @@ export function HomeCall() {
   return (
     <section
       id="call"
-      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] py-28 md:py-44 relative overflow-hidden"
+      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] py-20 md:py-44 relative overflow-hidden"
       aria-labelledby="call-heading"
     >
       <div
@@ -204,7 +204,7 @@ export function HomeFit() {
     >
       <div
         data-fit-card
-        className="flex items-center overflow-hidden py-28 md:h-[calc(100dvh-4.5rem)] md:py-0"
+        className="flex items-center overflow-hidden py-16 md:h-[calc(100dvh-4.5rem)] md:py-0"
       >
         <div className={`${SG_PAGE_SHELL_CLASS} w-full`}>
           <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-14">
