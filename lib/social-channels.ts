@@ -70,9 +70,9 @@ const videoChannels: SocialChannel[] = [
     href: "https://space.bilibili.com/3546759022250564",
     descriptionZh: "",
     followerLabel: undefined,
-    latest: "Vol.04 · 财富方法论：如何从零赚到第一桶金，再到财富自由",
+    latest: "第二期 · 真正的冒险，是勇于对别人负责 | 对话 Seede.AI 杨沐锦",
     coverSrc:
-      "https://i0.hdslb.com/bfs/archive/ec00470cc4ae1e7dc62d30e393a854cca852d7df.jpg",
+      "https://i2.hdslb.com/bfs/archive/f65e5ecb934a65d39df7a61c39be0821d35a5525.jpg",
   },
   {
     id: "twitter",

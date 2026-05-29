@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,35 +9,26 @@ import "lenis/dist/lenis.css";
 
 import { LenisContext } from "@/components/lenis-context";
 import { WaveScrollVelocityBridge } from "@/components/wave-scroll-velocity-bridge";
+import {
+  forceScrollTop,
+  refreshScrollTriggersHoldTop,
+} from "@/lib/scroll-top-lock";
+import { readReducedMotion } from "@/lib/sg-reduced-motion";
+import { teardownScrollMotion } from "@/lib/sg-scroll-teardown";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
-  const [reduced, setReduced] = useState<boolean | null>(null);
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduced(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  useEffect(() => {
-    if (reduced === null) return;
-
-    if (reduced) {
-      queueMicrotask(() => {
-        setLenis(null);
-      });
-      return;
-    }
+    if (readReducedMotion()) return;
 
     if ("scrollRestoration" in history) {
       history.scrollRestoration = "manual";
     }
-    window.scrollTo(0, 0);
+    forceScrollTop(null);
 
     const lenisInstance = new Lenis({
       autoRaf: false,
@@ -45,9 +36,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       wheelMultiplier: 0.85,
     });
 
-    queueMicrotask(() => {
-      setLenis(lenisInstance);
-    });
+    lenisRef.current = lenisInstance;
 
     let stRaf = 0;
     lenisInstance.on("scroll", () => {
@@ -77,7 +66,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
     const onResize = () => {
       lenisInstance.resize();
-      ScrollTrigger.refresh();
+      refreshScrollTriggersHoldTop(lenisInstance);
     };
     window.addEventListener("resize", onResize);
 
@@ -87,18 +76,36 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     gsap.ticker.add(ticker);
     gsap.ticker.lagSmoothing(0);
 
-    lenisInstance.scrollTo(0, { immediate: true });
+    forceScrollTop(lenisInstance);
+
+    queueMicrotask(() => {
+      setLenis(lenisInstance);
+    });
 
     return () => {
       if (stRaf) cancelAnimationFrame(stRaf);
       window.removeEventListener("resize", onResize);
       gsap.ticker.remove(ticker);
+      teardownScrollMotion();
       lenisInstance.destroy();
+      lenisRef.current = null;
       queueMicrotask(() => {
         setLenis(null);
       });
     };
-  }, [reduced]);
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => {
+      if (!mq.matches) return;
+      lenisRef.current?.destroy();
+      lenisRef.current = null;
+      setLenis(null);
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   return (
     <LenisContext.Provider value={lenis}>

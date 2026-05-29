@@ -1,6 +1,7 @@
 /**
  * 浪前视频播客 · 季数据（单一事实源）。
  * 每季约 6 位嘉宾，每位 4 期中短视频；B 站 `bvid` 用于 `BilibiliEmbedPlayer`。
+ * 封面图落盘 `public/video-covers/{episode.id}.jpg`（与 `coverPic` 同步维护）。
  */
 
 export const BILIBILI_SPACE_URL =
@@ -19,6 +20,13 @@ export type SurfingFoundersEpisode = {
   volLabel: string;
   role: VideoEpisodeRole;
   publishedAt?: string;
+  /** 本地封面 `public/video-covers/{id}.jpg`（由 B 站 pic 同步，勿用外链） */
+  coverPic: string;
+  /**
+   * 左栏封面锚点：`center` 与 Vol.01 一致（16:9 完整 `contain`）。
+   * `bottom` 仅在画框比图更高时把图贴底（仍不裁切）。
+   */
+  coverFocus?: "bottom" | "center";
 };
 
 export type SurfingFoundersGuest = {
@@ -32,8 +40,6 @@ export type SurfingFoundersGuest = {
   episodes: readonly SurfingFoundersEpisode[];
   /** 未上线席位：无 episodes */
   comingSoon?: boolean;
-  /** 嘉宾人像（杂志人物专访风格大画幅）；缺省时左栏 fallback 到 origin episode cover */
-  portraitSrc?: string;
 };
 
 export type SurfingFoundersSeason = {
@@ -53,6 +59,8 @@ const XU_KAISER_EPISODES: readonly SurfingFoundersEpisode[] = [
     titleZh: "20 岁辍学创业，我选择了中国最不赚钱的行业 | 对话许凯撒",
     role: "origin",
     publishedAt: "2026-05-15",
+    coverPic: "/video-covers/xu-vol-01.jpg",
+    coverFocus: "center",
   },
   {
     id: "xu-vol-02",
@@ -63,6 +71,8 @@ const XU_KAISER_EPISODES: readonly SurfingFoundersEpisode[] = [
     titleZh: "1 亿美金估值背后：为什么 99% 的创业者不懂规模效应？| 对话许凯撒",
     role: "spotlight",
     publishedAt: "2026-05-18",
+    coverPic: "/video-covers/xu-vol-02.jpg",
+    coverFocus: "center",
   },
   {
     id: "xu-vol-03",
@@ -73,6 +83,8 @@ const XU_KAISER_EPISODES: readonly SurfingFoundersEpisode[] = [
     titleZh: "被校园霸凌的不幸，却促使我认知觉醒 | 对话许凯撒",
     role: "method",
     publishedAt: "2026-05-22",
+    coverPic: "/video-covers/xu-vol-03.jpg",
+    coverFocus: "center",
   },
   {
     id: "xu-vol-04",
@@ -83,6 +95,30 @@ const XU_KAISER_EPISODES: readonly SurfingFoundersEpisode[] = [
     titleZh: "财富方法论：如何从零赚到第一桶金，再到财富自由 | 对话许凯撒",
     role: "finale",
     publishedAt: "2026-05-25",
+    coverPic: "/video-covers/xu-vol-04.jpg",
+    coverFocus: "center",
+  },
+] as const;
+
+/** 左栏封面锚点：未标注时与 Vol.01 一致 */
+export function episodeCoverFocus(
+  episode: SurfingFoundersEpisode,
+): "bottom" | "center" {
+  return episode.coverFocus ?? "center";
+}
+
+const MUJI_EPISODES: readonly SurfingFoundersEpisode[] = [
+  {
+    id: "muji-vol-01",
+    bvid: "BV1XjVY6mEzy",
+    aid: 116657771124536,
+    cid: 38700846843,
+    volLabel: "Vol.01",
+    titleZh: "真正的冒险，是勇于对别人负责 | 对话 Seede.AI 杨沐锦",
+    role: "origin",
+    publishedAt: "2026-05-29",
+    coverPic: "/video-covers/muji-vol-01.jpg",
+    coverFocus: "center",
   },
 ] as const;
 
@@ -96,7 +132,6 @@ export const SURFING_FOUNDERS_SEASON_01: SurfingFoundersSeason = {
       id: "xu-kaiser",
       nameZh: "许凯撒",
       nameEn: "Xu Kaisar",
-      portraitSrc: "/founders/xu-kaisar.png",
       duringCaptionZh:
         "00 后连续创业者；福布斯亚太菁英 100。做过中国最不赚钱的行业，也经历过一年零收入的纯研究阶段，最终在结构性机会上下注获胜。",
       nowCaptionZh:
@@ -104,13 +139,14 @@ export const SURFING_FOUNDERS_SEASON_01: SurfingFoundersSeason = {
       episodes: XU_KAISER_EPISODES,
     },
     {
-      id: "guest-slot-02",
-      nameZh: "嘉宾 02",
-      nameEn: "Founder 02",
-      duringCaptionZh: "第一季席位 · 录制排期中。",
-      nowCaptionZh: "上线后将在此呈现四期短视频目录。",
-      episodes: [],
-      comingSoon: true,
+      id: "yang-muji",
+      nameZh: "杨沐锦",
+      nameEn: "Muji",
+      duringCaptionZh:
+        "Seede.AI 联合创始人。南开毕业后经奥美、Founder Park，亲历一代中国早期创业者；0 营销投入，3 个月内做到 10 万用户。",
+      nowCaptionZh:
+        "浪前视频播客第二期：AI Native 增长、营销与「活人感」——初创团队如何把品味与执行力叠在一起。",
+      episodes: MUJI_EPISODES,
     },
     {
       id: "guest-slot-03",

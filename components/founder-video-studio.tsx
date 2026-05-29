@@ -2,6 +2,8 @@
 
 import { BilibiliEmbedPlayer } from "@/components/bilibili-embed-player";
 import { BilibiliEpisodeCover } from "@/components/bilibili-episode-cover";
+import Image from "next/image";
+import { SgScrollRail } from "@/components/sg-scroll-rail";
 import {
   bilibiliWatchUrl,
   buildBilibiliPlayerSrc,
@@ -12,6 +14,7 @@ import {
   getDefaultEpisode,
   getOriginEpisode,
   SURFING_FOUNDERS_SEASON_01,
+  episodeCoverFocus,
   type SurfingFoundersEpisode,
   type SurfingFoundersGuest,
 } from "@/lib/surfing-founders-video-season";
@@ -19,7 +22,6 @@ import {
   useFounderPanelPrefetch,
   useFounderPanelVisible,
 } from "@/lib/use-founder-panel-visible";
-import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -28,10 +30,21 @@ import {
   useState,
   type MutableRefObject,
   type RefObject,
-  type WheelEvent as ReactWheelEvent,
 } from "react";
 
 const ROSTER_SCROLL_EDGE = 10;
+
+/** 列布局由 globals `.sg-video-studio-col` 控制（移动 flex / 桌面 subgrid），勿加 Tailwind `flex` 以免盖掉 grid */
+const STUDIO_COL = "sg-video-studio-col h-full min-h-0";
+const STUDIO_BAND_TOP =
+  "sg-video-studio-band-top shrink-0 border-b border-[var(--hairline)] px-6 pb-4 pt-5 lg:px-7 lg:pt-6";
+const STUDIO_BAND_BOTTOM =
+  "sg-video-studio-band-bottom shrink-0 border-t border-[var(--hairline)] px-6 py-4 lg:px-7";
+const STUDIO_STAGE = "sg-video-studio-stage relative min-h-0";
+const STAGE_INNER = "sg-video-studio-stage-inner";
+
+const bandEyebrow =
+  "editorial-eyebrow font-[family-name:var(--font-zh)] text-[11px] text-[var(--muted)] md:text-[12px]";
 
 function useScrollEdgeHints(
   scrollRef: RefObject<HTMLElement | null>,
@@ -67,7 +80,6 @@ function useScrollEdgeHints(
   return hints;
 }
 
-/** 嘉宾名单 — 栏内水平垂直居中，大行距 */
 function GuestRoster({
   guests,
   activeId,
@@ -83,7 +95,7 @@ function GuestRoster({
     <ul
       role="listbox"
       aria-label="本季嘉宾"
-      className="flex w-full max-w-[14rem] flex-col items-center gap-6 md:max-w-[16rem] md:gap-8 lg:gap-9"
+      className="flex w-full flex-col gap-1"
     >
       {guests.map((g) => {
         const isActive = g.id === activeId;
@@ -100,17 +112,17 @@ function GuestRoster({
               aria-selected={isActive}
               disabled={!live && !isActive}
               onClick={() => live && onSelect(g.id)}
-              className={`group flex w-full flex-col items-center justify-center py-1 text-center transition-[color,opacity,transform] duration-300 md:py-1.5 ${
-                !live && !isActive ? "cursor-not-allowed opacity-50" : ""
-              } ${live && !isActive ? "hover:opacity-90" : ""}`}
+              className={`sg-video-roster-option group relative flex w-full items-center justify-center rounded-sm px-4 py-3 text-center transition-[color,background-color,opacity] duration-300 md:py-3.5 ${
+                !live && !isActive ? "cursor-not-allowed opacity-45" : ""
+              } ${live && !isActive ? "hover:bg-[color-mix(in_oklch,var(--paper-3)_50%,transparent)]" : ""}`}
             >
               <span
-                className={`font-[family-name:var(--font-zh)] leading-snug transition-[font-size,font-weight,color] duration-300 ${
+                className={`font-[family-name:var(--font-zh)] leading-snug transition-[font-size,color] duration-300 ${
                   isActive
-                    ? "editorial-serif text-[clamp(1.65rem,3vw,2.35rem)] text-[var(--foreground)]"
+                    ? "editorial-serif text-[clamp(1.45rem,2.4vw,2rem)] text-[var(--foreground)]"
                     : live
-                      ? "text-[clamp(1.1rem,1.85vw,1.45rem)] font-normal text-[var(--muted-soft)] group-hover:text-[var(--muted-strong)]"
-                      : "text-[clamp(1rem,1.6vw,1.25rem)] font-light tracking-[0.04em] text-[var(--muted-soft)]"
+                      ? "text-[clamp(1rem,1.65vw,1.3rem)] text-[var(--muted-soft)] group-hover:text-[var(--muted-strong)]"
+                      : "text-[clamp(0.95rem,1.5vw,1.15rem)] font-light tracking-[0.06em] text-[var(--muted-soft)]"
                 }`}
               >
                 {g.comingSoon ? "待公布" : g.nameZh}
@@ -123,7 +135,6 @@ function GuestRoster({
   );
 }
 
-/** 单集 chip — 横向排列 */
 function EpisodeChip({
   episode,
   active,
@@ -138,14 +149,14 @@ function EpisodeChip({
       type="button"
       onClick={onSelect}
       aria-current={active ? "true" : undefined}
-      className={`flex shrink-0 flex-col items-start gap-1 rounded-sm border px-3 py-2 text-left transition-[border-color,background-color,color] duration-200 ${
+      className={`flex w-full flex-col items-start gap-0.5 rounded-sm border px-3 py-2.5 text-left transition-[border-color,background-color,color] duration-200 ${
         active
-          ? "border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)]"
-          : "border-[var(--hairline)] bg-[rgba(15,17,22,0.55)] hover:border-[var(--hairline-strong)]"
+          ? "border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_12%,transparent)]"
+          : "border-[var(--hairline)] bg-[color-mix(in_oklch,var(--paper-3)_40%,transparent)] hover:border-[var(--hairline-strong)]"
       }`}
     >
       <span
-        className={`editorial-mono-tabular text-[12px] md:text-[13px] ${
+        className={`editorial-mono-tabular text-[11px] md:text-[12px] ${
           active ? "text-[var(--brand-teal)]" : "text-[var(--muted)]"
         }`}
       >
@@ -156,11 +167,8 @@ function EpisodeChip({
 }
 
 /**
- * Founders Block B · 视频播客 — YC 式三栏全宽 breakout：
- * - 左 ~32%：origin episode 大封面（全高，贴 viewport 左边缘）
- * - 中 ~24%：嘉宾大字垂直名单（YC 风格，active 高对比）
- * - 右 ~44%：full-width player + 当前 episode meta + 4 期 chip strip
- * 三栏统一贴 viewport 边缘，不留中央 1680 max-width 限制。
+ * 视频播客 · 三栏展台（顶/主/底对齐）：
+ * 左封面 · 中嘉宾 · 右播放器，统一 gutter 与 band 高度。
  */
 export function FounderVideoStudio() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -188,6 +196,8 @@ export function FounderVideoStudio() {
   }, [guest, episodeId, defaultEp]);
 
   const originEpisode = getOriginEpisode(guest);
+  const coverEpisode = activeEpisode ?? originEpisode;
+  const coverFocus = coverEpisode ? episodeCoverFocus(coverEpisode) : "center";
 
   const selectGuest = useCallback(
     (id: string) => {
@@ -209,23 +219,38 @@ export function FounderVideoStudio() {
     `${guest.id}:${season.guests.length}`,
   );
 
-  const handleRosterWheel = useCallback((e: ReactWheelEvent<HTMLElement>) => {
+  useEffect(() => {
     const el = rosterScrollRef.current;
     if (!el) return;
 
-    const { scrollTop, scrollHeight, clientHeight } = el;
-    if (scrollHeight <= clientHeight + 1) return;
+    const wrap = el.closest<HTMLElement>(".sg-guest-roster-scroll-wrap");
+    const targets = wrap ? [el, wrap] : [el];
 
-    const delta = e.deltaY;
-    const atTop = scrollTop <= 0;
-    const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    const onWheel = (e: WheelEvent) => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      if (scrollHeight <= clientHeight + 1) return;
 
-    if ((delta < 0 && atTop) || (delta > 0 && atBottom)) return;
+      const delta = e.deltaY;
+      const atTop = scrollTop <= 0;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
 
-    e.preventDefault();
-    e.stopPropagation();
-    el.scrollBy({ top: delta, behavior: "auto" });
-  }, []);
+      if ((delta < 0 && atTop) || (delta > 0 && atBottom)) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      el.scrollBy({ top: delta, behavior: "auto" });
+    };
+
+    const opts: AddEventListenerOptions = { passive: false, capture: true };
+    for (const node of targets) {
+      node.addEventListener("wheel", onWheel, opts);
+    }
+    return () => {
+      for (const node of targets) {
+        node.removeEventListener("wheel", onWheel, opts);
+      }
+    };
+  }, [season.guests.length]);
 
   useEffect(() => {
     const btn = rosterOptionRefs.current.get(guest.id);
@@ -256,111 +281,121 @@ export function FounderVideoStudio() {
   return (
     <div
       ref={rootRef}
-      className="grid h-full w-full grid-cols-1 lg:grid-cols-12"
+      className="sg-video-studio grid h-full min-h-0 w-full grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.72fr)_minmax(0,1.23fr)]"
       data-surfing-founders-video
       aria-label="浪前视频播客"
     >
-      {/* 左：嘉宾大画幅（有 portraitSrc 时显示人像；否则 origin episode cover；都没有时 motif 占位） */}
-      <div className="relative min-h-[34svh] overflow-hidden bg-[var(--paper-2)] lg:col-span-4 lg:min-h-0">
-        {guest.portraitSrc ? (
-          /* —— 杂志人物专访 —— 彩色人像 + paper 暗背 letterbox + vignette 软边 */
-          <div className="flex h-full w-full flex-col">
-            {/* 人像主体：60-70% 容器宽，居中，aspect-[3/4] portrait；保留原色，仅轻微 tune */}
-            <div className="relative flex flex-1 items-center justify-center px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10">
+      {/* —— 左 · 封面 —— */}
+      <div
+        className={`${STUDIO_COL} bg-[var(--paper-1)] lg:border-r lg:border-[var(--hairline)]`}
+      >
+        <header className={STUDIO_BAND_TOP}>
+          <p className={bandEyebrow}>出版集</p>
+          <p className="editorial-mono-tabular text-[13px] text-[var(--brand-teal)] md:text-[14px]">
+            {coverEpisode?.volLabel ?? "—"}
+          </p>
+        </header>
+
+        <div className={`${STUDIO_STAGE} min-h-[28svh] lg:min-h-0`}>
+          <div className={STAGE_INNER}>
+            {coverEpisode ? (
               <div
-                className="relative aspect-[3/4] w-full max-w-[260px] sm:max-w-[300px] md:max-w-[320px] lg:max-w-[300px] xl:max-w-[340px]"
-                style={{
-                  /* 边缘 vignette mask：人像本身边缘向 paper-2 自然 fade，没有色块覆盖，保留人脸彩色 */
-                  WebkitMaskImage:
-                    "radial-gradient(ellipse 80% 90% at 50% 44%, #000 55%, transparent 100%)",
-                  maskImage:
-                    "radial-gradient(ellipse 80% 90% at 50% 44%, #000 55%, transparent 100%)",
-                }}
+                className="sg-video-media-frame sg-video-studio-cover-frame"
+                data-cover-focus={coverFocus}
               >
                 <Image
-                  key={guest.id}
-                  src={guest.portraitSrc}
-                  alt={`${guest.nameZh} · ${guest.nameEn}`}
+                  key={coverEpisode.id}
+                  src={coverEpisode.coverPic}
+                  alt={`${guest.nameEn} · ${coverEpisode.titleZh}`}
                   fill
                   priority
-                  sizes="(max-width: 1024px) 320px, 340px"
-                  className="object-cover object-[center_top] saturate-[0.94] contrast-[1.04] brightness-[0.97]"
+                  sizes="(max-width: 1024px) 100vw, 36vw"
+                  className="object-contain"
+                />
+              </div>
+            ) : (
+              <div className="flex min-h-[16rem] flex-1 items-center justify-center rounded-sm border border-dashed border-[var(--hairline)] bg-[color-mix(in_oklch,var(--paper-3)_35%,transparent)]">
+                <p className="font-[family-name:var(--font-zh)] text-sm text-[var(--muted)]">
+                  席位待公布
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <footer className={STUDIO_BAND_BOTTOM}>
+          <p className="editorial-serif text-[clamp(1.35rem,2.2vw,1.85rem)] leading-[1.05] text-[var(--foreground)]">
+            {guest.nameZh}
+          </p>
+          <p className="mt-1 font-[family-name:var(--font-en)] text-[12px] tracking-[0.08em] text-[var(--muted)] uppercase">
+            {guest.nameEn}
+          </p>
+        </footer>
+      </div>
+
+      {/* —— 中 · 嘉宾 —— */}
+      <div
+        className={`${STUDIO_COL} bg-[var(--paper-1)] lg:border-r lg:border-[var(--hairline)]`}
+      >
+        <header className={STUDIO_BAND_TOP}>
+          <p className={bandEyebrow}>工作台嘉宾</p>
+          <p className="editorial-mono-tabular text-[13px] text-[var(--foreground)] md:text-[14px]">
+            {String(liveGuests.length).padStart(2, "0")} / {String(season.guests.length).padStart(2, "0")}
+          </p>
+        </header>
+
+        <div
+          className={`${STUDIO_STAGE} sg-guest-roster-scroll-wrap relative min-h-[18rem] lg:min-h-0`}
+          data-can-scroll-top={rosterScrollHints.top ? "" : undefined}
+          data-can-scroll-bottom={rosterScrollHints.bottom ? "" : undefined}
+          data-lenis-prevent
+        >
+          <div className={`${STAGE_INNER} sg-video-studio-stage-inner--roster`}>
+          <div className="sg-scroll-rail-host relative mx-auto h-full min-h-0 w-full max-w-[15.5rem] lg:max-w-none">
+            <div
+              ref={rosterScrollRef}
+              tabIndex={0}
+              role="region"
+              aria-label="本季嘉宾名单，滚轮可滚动"
+              className="sg-guest-roster-scroll sg-scroll-rail-viewport h-full max-h-[min(40svh,22rem)] min-h-0 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--paper-1)] lg:max-h-none"
+            >
+              <div className="py-4 lg:py-5">
+                <GuestRoster
+                  guests={season.guests}
+                  activeId={guest.id}
+                  onSelect={selectGuest}
+                  optionRefs={rosterOptionRefs}
                 />
               </div>
             </div>
-
-            <div className="px-5 pb-6 md:px-8 md:pb-8 lg:px-9 lg:pb-9">
-              <p className="editorial-serif text-[clamp(1.75rem,3.2vw,2.5rem)] leading-[1.02] text-[var(--foreground)]">
-                {guest.nameZh}
-              </p>
-            </div>
-          </div>
-        ) : originEpisode ? (
-          /* —— Fallback：B 站 origin episode cover —— */
-          <button
-            type="button"
-            onClick={() => setEpisodeId(originEpisode.id)}
-            aria-label={`播放 ${guest.nameZh} 的开场集`}
-            className="group block h-full w-full text-left"
-          >
-            <BilibiliEpisodeCover
-              bvid={originEpisode.bvid}
-              alt={`${guest.nameEn} · ${originEpisode.titleZh}`}
-              className="absolute inset-0"
+            <SgScrollRail
+              scrollRef={rosterScrollRef}
+              measureKey={`${guest.id}:${season.guests.length}`}
             />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,rgba(0,0,0,0.55)_100%)]" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 py-6 md:px-8 md:py-7 lg:px-9 lg:py-8">
-              <p className="editorial-serif text-[clamp(1.5rem,3vw,2.2rem)] leading-[1.02] text-[rgba(255,255,255,0.96)] [text-shadow:0_2px_8px_rgba(0,0,0,0.55)]">
-                {guest.nameZh}
-              </p>
-            </div>
-          </button>
-        ) : (
-          /* —— 待公布席位：motif 占位 —— */
-          <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(60%_40%_at_30%_30%,rgba(39,215,199,0.18),transparent_60%),linear-gradient(180deg,rgba(15,17,22,0.85),rgba(11,12,16,1))]">
-            <p className="font-[family-name:var(--font-zh)] text-sm text-[var(--muted)]">
-              席位待公布
-            </p>
           </div>
-        )}
-      </div>
-
-      {/* 中：嘉宾名单 — 栏内居中，滚轮独立滚动 */}
-      <div className="flex min-h-[28svh] flex-col border-t border-b border-[var(--hairline)] lg:col-span-3 lg:min-h-0 lg:border-t-0 lg:border-b-0 lg:border-x">
-        <div
-          className="sg-guest-roster-scroll-wrap relative flex min-h-0 flex-1 flex-col"
-          data-can-scroll-top={rosterScrollHints.top ? "" : undefined}
-          data-can-scroll-bottom={rosterScrollHints.bottom ? "" : undefined}
-          data-lenis-prevent-wheel
-          onWheel={handleRosterWheel}
-        >
-          <div
-            ref={rosterScrollRef}
-            className="sg-guest-roster-scroll min-h-0 flex-1 overflow-y-auto overscroll-y-contain"
-            onWheel={handleRosterWheel}
-          >
-            <div className="flex min-h-full flex-col items-center justify-center px-5 py-10 md:px-8 md:py-12 lg:px-6 lg:py-14 xl:px-8">
-              <GuestRoster
-                guests={season.guests}
-                activeId={guest.id}
-                onSelect={selectGuest}
-                optionRefs={rosterOptionRefs}
-              />
-            </div>
           </div>
         </div>
+
+        <footer className={STUDIO_BAND_BOTTOM}>
+          <p className="font-[family-name:var(--font-zh)] text-[12px] text-[var(--muted)] md:text-[13px]">
+            {season.seasonLabel} · 嘉宾浏览名单
+          </p>
+        </footer>
       </div>
 
-      {/* 右：player + episode meta + 4 期 chip */}
-      <div className="flex flex-col gap-4 bg-[var(--paper-1)] px-5 py-6 md:px-8 md:py-8 lg:col-span-5 lg:px-9 lg:py-10 xl:px-12">
-        <p className="line-clamp-2 editorial-serif text-[clamp(1.2rem,1.9vw,1.65rem)] leading-[1.18] text-[var(--foreground)]">
-          {activeEpisode?.titleZh ?? guest.nameZh}
-        </p>
+      {/* —— 右 · 播放 —— */}
+      <div className={`${STUDIO_COL} bg-[var(--paper-1)]`}>
+        <header className={STUDIO_BAND_TOP}>
+          <p className={bandEyebrow}>正在播放</p>
+          <p className="line-clamp-2 font-[family-name:var(--font-zh)] text-[clamp(0.95rem,1.55vw,1.2rem)] font-medium leading-snug text-[var(--foreground)]">
+            {activeEpisode?.titleZh ?? guest.nameZh}
+          </p>
+        </header>
 
-        {/* 大画幅播放器 — group 容器，hover 显示「在 B 站打开」遮罩兜底 */}
-        <div className="min-h-0 flex-1">
+        <div className={STUDIO_STAGE}>
+          <div className={`${STAGE_INNER} justify-center`}>
           {activeEpisode?.bvid ? (
-            <div className="group/player relative">
+            <div className="sg-video-media-frame sg-video-player-frame group/player relative w-full shrink-0 overflow-hidden">
               {shouldMountPlayer ? (
                 <BilibiliEmbedPlayer
                   bvid={activeEpisode.bvid}
@@ -371,9 +406,10 @@ export function FounderVideoStudio() {
                   aspectClassName="aspect-video"
                 />
               ) : (
-                <div className="relative aspect-video w-full overflow-hidden rounded-md border border-[var(--hairline)] bg-[rgba(15,17,22,0.55)]">
+                <div className="relative aspect-video w-full">
                   <BilibiliEpisodeCover
                     bvid={activeEpisode.bvid}
+                    coverSrc={activeEpisode.coverPic}
                     alt={playerTitle}
                     className="absolute inset-0"
                   />
@@ -381,30 +417,31 @@ export function FounderVideoStudio() {
               )}
             </div>
           ) : (
-            <div className="flex aspect-video w-full items-center justify-center rounded-md border border-dashed border-[var(--hairline)] bg-[rgba(15,17,22,0.45)]">
+            <div className="flex aspect-video w-full items-center justify-center rounded-sm border border-dashed border-[var(--hairline)] bg-[color-mix(in_oklch,var(--paper-3)_35%,transparent)]">
               <p className="font-[family-name:var(--font-zh)] text-sm text-[var(--muted)]">
                 待上线
               </p>
             </div>
           )}
+          </div>
         </div>
 
-        {activeEpisode ? (
-          <a
-            href={bilibiliWatchUrl(activeEpisode.bvid)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-fit font-[family-name:var(--font-zh)] text-[15px] text-[var(--brand-teal)] underline decoration-[var(--brand-teal)]/35 underline-offset-[5px] transition-colors hover:text-[var(--foreground)] md:text-[16px]"
-          >
-            在 B 站打开 ↗
-          </a>
-        ) : null}
+        <footer className={`${STUDIO_BAND_BOTTOM} gap-3`}>
+          {activeEpisode ? (
+            <a
+              href={bilibiliWatchUrl(activeEpisode.bvid)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-fit font-[family-name:var(--font-zh)] text-[14px] text-[var(--brand-teal)] underline decoration-[var(--brand-teal)]/35 underline-offset-[5px] transition-colors hover:text-[var(--foreground)] md:text-[15px]"
+            >
+              在 B 站打开 ↗
+            </a>
+          ) : null}
 
-        {guest.episodes.length > 0 ? (
-          <div className="flex flex-col gap-3">
-            <ul className="flex w-full gap-2 overflow-x-auto pb-1 md:gap-2.5">
+          {guest.episodes.length > 0 ? (
+            <ul className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4">
               {guest.episodes.map((ep) => (
-                <li key={ep.id} className="shrink-0">
+                <li key={ep.id}>
                   <EpisodeChip
                     episode={ep}
                     active={ep.id === activeEpisode?.id}
@@ -413,17 +450,17 @@ export function FounderVideoStudio() {
                 </li>
               ))}
             </ul>
-          </div>
-        ) : null}
+          ) : null}
 
-        <a
-          href={BILIBILI_SPACE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-auto inline-flex w-fit font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)] transition-colors hover:text-[var(--brand-teal)] md:text-[15px]"
-        >
-          B 站空间 ↗
-        </a>
+          <a
+            href={BILIBILI_SPACE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-fit font-[family-name:var(--font-zh)] text-[13px] text-[var(--muted-strong)] transition-colors hover:text-[var(--brand-teal)] md:text-[14px]"
+          >
+            B 站空间 ↗
+          </a>
+        </footer>
       </div>
     </div>
   );

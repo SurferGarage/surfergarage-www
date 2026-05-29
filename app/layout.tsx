@@ -4,9 +4,10 @@ import {
   IBM_Plex_Sans,
   Instrument_Serif,
   Noto_Sans_SC,
+  Noto_Serif_SC,
 } from "next/font/google";
 import "./globals.css";
-import { HeroWaveCanvas } from "@/components/hero-wave-canvas";
+import { HeroWaveCanvasLazy } from "@/components/sg-lazy-hero-wave";
 import { SgPerformanceGuards } from "@/components/sg-performance-guards";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { buildSiteMetadata, buildSiteViewport } from "@/lib/site-metadata";
@@ -43,6 +44,14 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
+/** VIS 中文编辑衬线（Source Han Serif SC 的 Web 替代） */
+const notoSerifSC = Noto_Serif_SC({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-serif-zh",
+  display: "swap",
+});
+
 export const metadata: Metadata = buildSiteMetadata();
 export const viewport: Viewport = buildSiteViewport();
 
@@ -57,9 +66,14 @@ export default function RootLayout({
     <html
       lang="zh-CN"
       suppressHydrationWarning
-      className={`${ibm.variable} ${notoSansSC.variable} ${ibmMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${ibm.variable} ${notoSansSC.variable} ${ibmMono.variable} ${instrumentSerif.variable} ${notoSerifSC.variable} h-full antialiased`}
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if("scrollRestoration"in history)history.scrollRestoration="manual";window.scrollTo(0,0);document.documentElement.scrollTop=0;}catch(e){}})();`,
+          }}
+        />
         <link
           rel="preconnect"
           href="https://player.bilibili.com"
@@ -78,7 +92,7 @@ export default function RootLayout({
         ))}
         <SmoothScroll>
           <SgPerformanceGuards />
-          <HeroWaveCanvas hostSelector="[data-hero-wave]" variant="global" />
+          <HeroWaveCanvasLazy hostSelector="[data-hero-wave]" variant="global" />
           <div className="relative z-[1] min-h-full" data-scroll-depth-root>
             {children}
           </div>

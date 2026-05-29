@@ -125,7 +125,7 @@ export async function fetchBilibiliVideoMeta(
       credentials: "omit",
       cache: "force-cache",
     });
-    if (!res.ok) return cacheMeta(id, EMPTY_META);
+    if (!res.ok) return EMPTY_META;
 
     const payload = (await res.json()) as {
       aid?: number;
@@ -143,7 +143,7 @@ export async function fetchBilibiliVideoMeta(
     };
 
     if (typeof payload.code === "number") {
-      if (payload.code !== 0 || !payload.data) return cacheMeta(id, EMPTY_META);
+      if (payload.code !== 0 || !payload.data) return EMPTY_META;
       const cid = payload.data.cid ?? payload.data.pages?.[0]?.cid;
       return cacheMeta(id, {
         aid: payload.data.aid,
@@ -160,6 +160,6 @@ export async function fetchBilibiliVideoMeta(
       pic: payload.pic,
     });
   } catch {
-    return cacheMeta(id, EMPTY_META);
+    return EMPTY_META;
   }
 }

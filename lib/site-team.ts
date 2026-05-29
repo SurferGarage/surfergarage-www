@@ -32,13 +32,4 @@ export const SURFER_GARAGE_TEAM: readonly SurferGarageTeamMember[] = [
       "从 AI 到去中心化网络，负责数字基础设施，把狂野的想法编译成可触碰的未来。",
     portraitSrc: "/team/franklin.jpg",
   },
-  {
-    id: "wutian",
-    nameZh: "张津硕",
-    nameEn: "Wutian",
-    roleZh: "主编",
-    bioZh:
-      "不做时代的评判者，只做忠实的翻译官——把个体微光汇聚成可被听见的变革叙事。",
-    portraitSrc: "/team/wutian.jpg",
-  },
 ] as const;

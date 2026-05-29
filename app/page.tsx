@@ -7,7 +7,7 @@ import { HomeHero } from "@/components/home-hero";
 import { HomeScrollChoreography } from "@/components/home-scroll-choreography";
 import { SgAmbientGrid } from "@/components/sg-ambient-grid";
 import { UnderwaterLightStage } from "@/components/underwater-light-stage";
-import { WaterVolumeFx } from "@/components/water-volume-fx";
+import { WaterVolumeFxLazy } from "@/components/sg-lazy-water-volume";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SOCIAL_FOUNDERS_TRENCH_MIN_H } from "@/lib/founders-scroll-rhythm";
@@ -33,7 +33,7 @@ export default function Home() {
 
       {/* 水下氛围层：依然全屏，靠 --ambient-mode 在 hero 之后自动 fade */}
       <div className="pointer-events-none absolute inset-0 z-[2]">
-        <WaterVolumeFx />
+        <WaterVolumeFxLazy />
         <UnderwaterLightStage />
       </div>
 

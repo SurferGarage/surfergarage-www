@@ -9,7 +9,6 @@ import {
   registerHomeScrollMotion,
 } from "@/components/motion/sg-home-registry";
 import { useLayoutEffect } from "react";
-import { ScrollTrigger } from "@/components/motion/gsap-register";
 import { SG_MEDIA_MD_MAX, SG_MEDIA_MD_MIN } from "@/lib/sg-breakpoints";
 import {
   finishMotionInit,
@@ -19,6 +18,13 @@ import {
   applyReducedMotionStatic,
   readReducedMotion,
 } from "@/lib/sg-reduced-motion";
+import {
+  forceScrollTop,
+  lockViewportDuringMotionInit,
+  refreshScrollTriggersHoldTop,
+  unlockViewportAfterMotionInit,
+} from "@/lib/scroll-top-lock";
+import { teardownScrollMotion } from "@/lib/sg-scroll-teardown";
 import gsap from "gsap";
 
 const ST_MARKERS =
@@ -27,7 +33,7 @@ const ST_MARKERS =
 
 /**
  * 首页滚动编排唯一 React 挂载点。
- * 须在 Lenis + scrollerProxy 就绪后再注册 ST，避免刷新时二次 layout 与怪动画。
+ * 须在 Lenis + scrollerProxy 就绪后再注册 ST；refresh 后钉回顶部，避免刷新回弹。
  */
 export function HomeScrollChoreography() {
   const lenis = useLenis();
@@ -40,6 +46,7 @@ export function HomeScrollChoreography() {
     }
 
     primeHeroMotionState();
+    forceScrollTop(lenis);
 
     if (lenis === null) {
       return () => {
@@ -48,6 +55,8 @@ export function HomeScrollChoreography() {
     }
 
     const refs = collectHomeMotionDomRefs();
+
+    lockViewportDuringMotionInit();
 
     const ctx = gsap.context(() => {
       registerHomeScrollMotion(ST_MARKERS, refs);
@@ -58,13 +67,20 @@ export function HomeScrollChoreography() {
       registerHomeMobileMotion(ST_MARKERS);
     });
     mm.add(SG_MEDIA_MD_MIN, () => {
-      registerHomeDesktopMotion(ST_MARKERS, refs);
+      return registerHomeDesktopMotion(ST_MARKERS, refs);
     });
 
+    let refreshCancelled = false;
     let refreshRaf = 0;
     refreshRaf = requestAnimationFrame(() => {
-      ScrollTrigger.refresh();
-      finishMotionInit();
+      if (refreshCancelled) return;
+      refreshScrollTriggersHoldTop(lenis);
+      refreshRaf = requestAnimationFrame(() => {
+        if (refreshCancelled) return;
+        unlockViewportAfterMotionInit(lenis);
+        forceScrollTop(lenis);
+        finishMotionInit();
+      });
     });
 
     let resizeT: ReturnType<typeof setTimeout> | undefined;
@@ -72,24 +88,30 @@ export function HomeScrollChoreography() {
       if (resizeT) clearTimeout(resizeT);
       resizeT = setTimeout(() => {
         resizeT = undefined;
-        ScrollTrigger.refresh();
+        refreshScrollTriggersHoldTop(lenis);
       }, 200);
     };
     window.addEventListener("resize", onResize);
 
     let fontsCancelled = false;
     void document.fonts?.ready?.then(() => {
-      if (!fontsCancelled) ScrollTrigger.refresh();
+      if (fontsCancelled) return;
+      const nearTop = (lenis?.scroll ?? window.scrollY) < 120;
+      if (!nearTop) return;
+      refreshScrollTriggersHoldTop(lenis);
     });
 
     return () => {
       fontsCancelled = true;
+      refreshCancelled = true;
       if (refreshRaf) cancelAnimationFrame(refreshRaf);
       window.removeEventListener("resize", onResize);
       if (resizeT) clearTimeout(resizeT);
+      unlockViewportAfterMotionInit(lenis);
       document.documentElement.classList.remove("sg-motion-ready");
       mm.revert();
       ctx.revert();
+      teardownScrollMotion();
     };
   }, [lenis]);
 

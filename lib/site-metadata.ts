@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { SG_BRAND } from "@/lib/sg-brand";
 import { getSiteUrl } from "@/lib/site-url";
 
 export const SITE_NAME = "浪前 Surfer Garage";
@@ -7,7 +8,7 @@ export const SITE_TITLE =
   "浪前 Surfer Garage | 构建属于年轻人的创新媒体与社区";
 export const SITE_DESCRIPTION =
   "我们寻找那些在时代浪潮中搏浪的先行者。Surfing Founders 人物访谈以非共识的视角，记录叛逆与创造，让你的故事被世界听见。Surfing Wave, Build the Great.";
-export const SITE_TAGLINE = "Surfing Wave, Build the Great.";
+export const SITE_TAGLINE = SG_BRAND.taglineEn;
 
 const OG_IMAGE = "/opengraph-image";
 const FAVICON = "/brand-sg-logo.png";
@@ -70,7 +71,7 @@ export function buildSiteMetadata(): Metadata {
 /** Next 16: themeColor / colorScheme 须挪到独立 viewport 导出 */
 export function buildSiteViewport(): Viewport {
   return {
-    themeColor: "#0b0c10",
+    themeColor: SG_BRAND.paper0,
     colorScheme: "dark",
     viewportFit: "cover",
   };

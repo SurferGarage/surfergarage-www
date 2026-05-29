@@ -1,5 +1,6 @@
 "use client";
 
+import { SgScrollRail } from "@/components/sg-scroll-rail";
 import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
 import { SG_INLINE_LINK_CLASS } from "@/lib/sg-layout";
 import { useReducedMotion } from "@/lib/sg-reduced-motion";
@@ -225,6 +226,9 @@ export function FounderWechatColumn() {
     } else if (e.key === "End") {
       e.preventDefault();
       selectVol(items[items.length - 1]!.id);
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openActiveArticle();
     }
   };
 
@@ -239,21 +243,24 @@ export function FounderWechatColumn() {
       {/* 左栏 */}
       <div className="sg-wechat-vol-panel relative order-2 flex flex-col gap-4 px-5 py-6 md:px-10 md:py-8 lg:order-1 lg:col-span-6 lg:gap-5 lg:px-14 lg:py-10 xl:px-20">
         <div
-          className="sg-wechat-vol-scroll-wrap relative flex min-h-0 flex-1 flex-col"
+          className="sg-wechat-vol-scroll-wrap relative w-full"
           data-can-scroll-top={scrollHints.top ? "" : undefined}
           data-can-scroll-bottom={scrollHints.bottom ? "" : undefined}
           onWheel={handleListWheel}
         >
-          <ul
-            ref={listRef}
-            role="listbox"
-            aria-label="微信专栏文章列表"
-            aria-activedescendant={`wechat-vol-option-${activeId}`}
-            tabIndex={0}
-            onKeyDown={onListKeyDown}
-            onWheel={handleListWheel}
-            className="sg-wechat-vol-scroll flex min-h-0 max-h-[min(38svh,20rem)] flex-1 flex-col gap-0.5 overflow-y-auto overscroll-y-contain py-1 pr-1.5 lg:max-h-[min(32svh,17.5rem)] xl:max-h-[min(36svh,19rem)]"
+          <div
+            className="sg-scroll-rail-host sg-wechat-vol-viewport-box relative w-full max-h-[min(38svh,20rem)] lg:max-h-[min(32svh,17.5rem)] xl:max-h-[min(36svh,19rem)]"
           >
+            <ul
+              ref={listRef}
+              role="listbox"
+              aria-label="微信专栏文章列表"
+              aria-activedescendant={`wechat-vol-option-${activeId}`}
+              tabIndex={0}
+              onKeyDown={onListKeyDown}
+              onWheel={handleListWheel}
+              className="sg-wechat-vol-scroll sg-wechat-vol-listbox sg-scroll-rail-viewport flex max-h-[inherit] flex-col gap-0.5 overflow-y-auto overscroll-y-contain py-1 pr-2.5 outline-none"
+            >
             {items.map((item, i) => {
               const isActive = item.id === active.id;
               return (
@@ -267,7 +274,14 @@ export function FounderWechatColumn() {
                     type="button"
                     role="option"
                     aria-selected={isActive}
-                    onClick={() => selectVol(item.id)}
+                    tabIndex={-1}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                    }}
+                    onClick={() => {
+                      selectVol(item.id);
+                      listRef.current?.focus({ preventScroll: true });
+                    }}
                     className={`sg-wechat-vol-option group flex min-h-12 w-full items-baseline gap-4 rounded-sm py-3 pl-3 pr-2 text-left transition-[background-color,color,transform] duration-300 ease-out md:min-h-[3.25rem] md:py-3.5 ${
                       isActive
                         ? "bg-[color-mix(in_oklch,var(--brand-teal)_14%,transparent)]"
@@ -297,7 +311,12 @@ export function FounderWechatColumn() {
                 </li>
               );
             })}
-          </ul>
+            </ul>
+            <SgScrollRail
+              scrollRef={listRef}
+              measureKey={`${items.length}:${activeId}`}
+            />
+          </div>
         </div>
 
         <div className="mt-auto shrink-0 border-t border-[var(--hairline)] pt-5">

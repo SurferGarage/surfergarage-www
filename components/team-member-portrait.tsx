@@ -27,15 +27,15 @@ export function TeamMemberPortrait({
 
   return (
     <div
-      className={`relative aspect-[3/4] w-full overflow-hidden rounded-sm bg-[var(--paper-2)] ${className}`}
+      className={`relative aspect-square w-full overflow-hidden rounded-sm bg-[var(--paper-2)] ${className}`}
     >
       {showImage ? (
         <Image
           src={portraitSrc!}
           alt=""
           fill
-          sizes="(max-width: 768px) 42vw, 18vw"
-          className="object-cover object-[center_top] saturate-[0.94] contrast-[1.03]"
+          sizes="(max-width: 768px) 72vw, 22rem"
+          className="object-contain object-center saturate-[0.96] contrast-[1.02]"
           onError={onError}
         />
       ) : (
@@ -45,10 +45,6 @@ export function TeamMemberPortrait({
           </span>
         </div>
       )}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(11,12,16,0.35)_100%)]"
-      />
     </div>
   );
 }

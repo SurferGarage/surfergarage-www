@@ -87,12 +87,12 @@ export function registerHomeMobileMotion(markers: MotionMarkers): void {
   registerFitReveal(markers);
 }
 
-/** `gsap.matchMedia(md+)` 内：L3 */
+/** `gsap.matchMedia(md+)` 内：L3；须 return cleanup 供 `mm.revert()` 释放指针监听 */
 export function registerHomeDesktopMotion(
   markers: MotionMarkers,
   refs: DesktopPinsRefs,
-): void {
+): () => void {
   registerDesktopPins(markers, refs);
   registerFitClosingPin(markers);
-  registerMagnetHover();
+  return registerMagnetHover();
 }

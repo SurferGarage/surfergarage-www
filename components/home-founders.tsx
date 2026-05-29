@@ -4,14 +4,13 @@ import { GithubPlaybookBlock } from "@/components/github-playbook-block";
 import { SgModuleShell } from "@/components/sg-module-shell";
 import { VisualGarage } from "@/components/visual-garage";
 import { FOUNDER_STACK_MODULES } from "@/lib/founder-panels";
+import { SgVisSectionHeader } from "@/components/sg-vis-section-header";
+import { visPillForFounderKind, type SgVisPillId } from "@/lib/sg-vis";
 import {
   FOUNDER_BREATH_MIN_H,
   FOUNDERS_BRIDGE_SECTION_PT,
 } from "@/lib/founders-scroll-rhythm";
-import {
-  SG_PAGE_SHELL_CLASS,
-  SG_SECTION_TITLE_CLASS,
-} from "@/lib/sg-layout";
+import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import { Fragment } from "react";
 
 /** 单屏 pin 容器 — 始终 100dvh − header，overflow-hidden 防止溢出 */
@@ -24,15 +23,19 @@ const PANEL_INNER_CENTERED =
 
 function FullBleedPanel({
   titleZh,
+  pill,
+  titleEn,
   children,
 }: {
   titleZh: string;
+  pill: SgVisPillId;
+  titleEn?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="flex h-full w-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-[var(--hairline)] px-5 pb-5 pt-12 md:px-10 md:pb-6 md:pt-16 lg:px-14 lg:pt-20 xl:px-16">
-        <h2 className={SG_SECTION_TITLE_CLASS}>{titleZh}</h2>
+      <div className="shrink-0 border-b border-[var(--hairline)] px-5 pb-6 pt-12 md:px-10 md:pb-7 md:pt-16 lg:px-14 lg:pt-20 xl:px-16">
+        <SgVisSectionHeader titleZh={titleZh} pill={pill} titleEn={titleEn} />
       </div>
       <div className="min-h-0 flex-1 bg-[var(--paper-1)]" data-founders-intro>
         {children}
@@ -67,20 +70,32 @@ export function HomeFounders() {
               >
                 <div data-founder-card className={PANEL_CARD_BASE}>
                   {m.kind === "wechat_column" ? (
-                    <FullBleedPanel titleZh={m.titleZh}>
+                    <FullBleedPanel
+                      titleZh={m.titleZh}
+                      pill={visPillForFounderKind(m.kind)}
+                      titleEn="SURFING FOUNDERS"
+                    >
                       <FounderWechatColumn />
                     </FullBleedPanel>
                   ) : null}
 
                   {m.kind === "video_studio" ? (
-                    <FullBleedPanel titleZh={m.titleZh}>
+                    <FullBleedPanel
+                      titleZh={m.titleZh}
+                      pill={visPillForFounderKind(m.kind)}
+                      titleEn="VIDEO PODCAST"
+                    >
                       <FounderVideoStudio />
                     </FullBleedPanel>
                   ) : null}
 
                   {m.kind === "github_repo" && m.githubRepo ? (
                     <div className={`${SG_PAGE_SHELL_CLASS} ${PANEL_INNER_CENTERED}`}>
-                      <SgModuleShell titleZh={m.titleZh} />
+                      <SgModuleShell
+                        titleZh={m.titleZh}
+                        visPill={visPillForFounderKind(m.kind)}
+                        titleEn="STARTUP PLAYBOOK"
+                      />
                       <div className="min-h-0 flex-1" data-founders-intro>
                         <GithubPlaybookBlock config={m.githubRepo} />
                       </div>
@@ -89,7 +104,11 @@ export function HomeFounders() {
 
                   {m.kind === "brand_visual" ? (
                     <div className={`${SG_PAGE_SHELL_CLASS} ${PANEL_INNER_CENTERED}`}>
-                      <SgModuleShell titleZh={m.titleZh} />
+                      <SgModuleShell
+                        titleZh={m.titleZh}
+                        visPill={visPillForFounderKind(m.kind)}
+                        titleEn="BRAND KIT"
+                      />
                       <div className="min-h-0 flex-1" data-founders-intro>
                         <VisualGarage />
                       </div>

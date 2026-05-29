@@ -16,10 +16,14 @@ Official website for SurferGarage, built with a performance-first and readabilit
 
 ```bash
 npm install
+cp .env.local.example .env.local   # 默认 WEBGL=off
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3000` (or the port shown in the terminal).
+
+**省内存**：长期开发可用 `npm run dev:preview`（构建后 `next start`），避免 Turbopack 常驻占用。  
+**品牌 VIS**：`design/brand/surfer-garage-identity-system.pdf` · 实现对照 `wiki/视觉系统.md`（勿在 IDE 直接打开 PDF）。
 
 ## Quality Commands
 

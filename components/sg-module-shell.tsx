@@ -1,10 +1,14 @@
-import { SG_EDITORIAL_CLASS, SG_SECTION_TITLE_CLASS } from "@/lib/sg-layout";
+import { SgVisSectionHeader } from "@/components/sg-vis-section-header";
+import { SG_EDITORIAL_CLASS } from "@/lib/sg-layout";
+import type { SgVisPillId } from "@/lib/sg-vis";
 import type { ReactNode } from "react";
 
 type SgModuleShellProps = {
   titleZh: string;
   leadZh?: string;
   pullquote?: string;
+  visPill?: SgVisPillId;
+  titleEn?: string;
   children?: ReactNode;
 };
 
@@ -13,13 +17,23 @@ export function SgModuleShell({
   titleZh,
   leadZh,
   pullquote,
+  visPill,
+  titleEn,
   children,
 }: SgModuleShellProps) {
   return (
     <div className={SG_EDITORIAL_CLASS}>
-      <h2 className={SG_SECTION_TITLE_CLASS}>{titleZh}</h2>
+      {visPill ? (
+        <SgVisSectionHeader
+          titleZh={titleZh}
+          pill={visPill}
+          titleEn={titleEn}
+        />
+      ) : (
+        <h2 className="sg-section-title">{titleZh}</h2>
+      )}
       {pullquote ? (
-        <p className="mt-6 border-l-2 border-[var(--brand-teal)]/45 pl-5 editorial-serif-italic text-[clamp(1.05rem,2vw,1.3rem)] leading-snug text-[var(--muted-strong)]">
+        <p className="mt-6 border-l-2 border-[var(--brand-teal)]/45 pl-5 editorial-serif-zh italic text-[clamp(1.05rem,2vw,1.3rem)] leading-snug text-[var(--muted-strong)]">
           {pullquote}
         </p>
       ) : null}

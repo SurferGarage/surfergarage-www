@@ -1,3 +1,4 @@
+import { SgVisInsightBar } from "@/components/sg-vis-insight-bar";
 import { SG_BODY_ZH_CLASS, SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import type { CSSProperties } from "react";
 
@@ -53,6 +54,10 @@ export function HomeHero() {
                 </span>
               </div>
             </h1>
+
+            <div className="mt-6 max-w-[min(100%,28rem)] md:mt-8" data-hero-reveal>
+              <SgVisInsightBar />
+            </div>
 
             <div className="mt-10 max-w-[42rem] md:mt-12" data-hero-reveal>
               <p className="font-[family-name:var(--font-zh)] text-[clamp(1.25rem,2.5vw,1.9rem)] font-medium leading-[1.35] tracking-tight text-[var(--foreground)]">

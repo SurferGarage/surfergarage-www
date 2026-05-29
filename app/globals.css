@@ -7,7 +7,7 @@
   --background: #0b0c10;
   --foreground: #f3f4f6;
   --foreground-strong: #ffffff;
-  --muted: #8b93a8;
+  --muted: var(--brand-cool-grey);
   --muted-strong: #d1d5db;
   --muted-soft: #5d6478;
   --hairline: rgba(139, 147, 168, 0.22);
@@ -23,11 +23,13 @@
   --paper-3: #1e2128;
   --paper-4: #2a2e37;
 
-  /* ========== 品牌色板（Hero 水下场） ========== */
-  --brand-primary: #0009e2;
-  --brand-navy: #060644;
-  --brand-teal: #27d7c7;
+  /* ========== 品牌色板（VIS · Electric Blue / Deep Navy / Cyan） ========== */
+  --brand-primary: #0009e2; /* Electric Blue */
+  --brand-navy: #060644; /* Deep Navy */
+  --brand-teal: #27d7c7; /* Cyan accent */
   --brand-teal-soft: rgba(39, 215, 199, 0.55);
+  --brand-light-grey: #e8eaed; /* Light Grey · 浅底模块 */
+  --brand-cool-grey: #8b93a8; /* Cool Grey · 次级文案（≈ --muted） */
   --accent-amber: #e6b964;
   --accent-amber-soft: rgba(230, 185, 100, 0.55);
 
@@ -272,6 +274,7 @@
   --font-sans: var(--font-zh), var(--font-en), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
   --font-serif: var(--font-serif), "Source Serif Pro", Georgia, serif;
+  --font-serif-zh: var(--font-serif-zh), "Noto Serif SC", "Source Han Serif SC", serif;
 }
 
 html {
@@ -358,6 +361,124 @@ body {
   letter-spacing: -0.005em;
 }
 
+/* VIS §04：中文编辑衬线（短引文 / 副标题） */
+.editorial-serif-zh {
+  font-family: var(--font-serif-zh), var(--font-serif), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+ * VIS §05 Extended Graphic Design
+ * ============================================================ */
+
+.sg-vis-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-family: var(--font-en), Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.sg-vis-pill--media {
+  background: var(--brand-primary);
+  color: var(--foreground-strong);
+}
+
+.sg-vis-pill--youth {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid color-mix(in oklch, var(--brand-primary) 55%, var(--hairline));
+}
+
+.sg-vis-pill--insight {
+  background: var(--brand-teal);
+  color: var(--brand-navy);
+}
+
+.sg-vis-pill--live {
+  background: var(--brand-navy);
+  color: var(--foreground-strong);
+  border: 1px solid color-mix(in oklch, var(--brand-teal) 35%, transparent);
+}
+
+/* Signal line · 均衡器条 */
+.sg-vis-signal-strip {
+  --sg-signal-h: 100%;
+  height: var(--sg-signal-h);
+  min-width: 4rem;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--brand-navy) 85%, transparent) 0 2px,
+      transparent 2px 5px
+    ),
+    linear-gradient(
+      90deg,
+      var(--brand-navy) 0%,
+      var(--brand-primary) 42%,
+      var(--brand-teal) 100%
+    );
+  mask-image: repeating-linear-gradient(
+    90deg,
+    #000 0 3px,
+    transparent 3px 6px
+  );
+  -webkit-mask-image: repeating-linear-gradient(
+    90deg,
+    #000 0 3px,
+    transparent 3px 6px
+  );
+  opacity: 0.72;
+}
+
+.sg-vis-wave-rule {
+  color: var(--brand-teal);
+  opacity: 0.65;
+}
+
+/* Frame/Label · 斜切信息条 */
+.sg-vis-insight-bar {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.85rem 0.45rem 0.65rem;
+  background: color-mix(in oklch, var(--paper-3) 72%, transparent);
+  border: 1px solid var(--hairline);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+}
+
+.sg-vis-insight-bar-slash {
+  font-family: var(--font-en), Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--brand-teal);
+}
+
+.sg-vis-insight-bar-text {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--muted-strong);
+  white-space: nowrap;
+}
+
+.sg-vis-insight-bar-node {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--brand-teal);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--brand-teal) 28%, transparent);
+}
+
 /* Manifesto 巨型英文骨牌：全大写、高字重、负字距（中文用独立 class，勿混用本类） */
 /* 统一区块标题（与 sg-layout SG_SECTION_TITLE_CLASS 一致） */
 .sg-section-title {
@@ -391,7 +512,7 @@ body {
 }
 
 .wordmark-display {
-  font-family: var(--font-en), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-en), Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
   line-height: 0.9;
   letter-spacing: -0.04em;
@@ -416,7 +537,17 @@ html:not(.sg-motion-ready) [data-hero-reveal] {
   transform: translate3d(0, 22px, 0);
 }
 
+/* 编排 / ST refresh 完成前禁止视口滚动，避免刷新时「先滑下去再弹回」 */
+html:not(.sg-motion-ready),
+html[data-sg-scroll-lock] {
+  overflow: hidden;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html:not(.sg-motion-ready) {
+    overflow: auto;
+  }
+
   html:not(.sg-motion-ready) [data-hero-letters],
   html:not(.sg-motion-ready) [data-hero-reveal] {
     opacity: 1;
@@ -687,47 +818,111 @@ html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
   background: rgba(200, 210, 230, 0.55);
 }
 
-/* 微信专栏 · 左栏 Vol 列表 */
-.sg-wechat-vol-panel:focus-within .sg-wechat-vol-scroll,
-.sg-wechat-vol-panel:hover .sg-wechat-vol-scroll {
-  scrollbar-color: rgba(200, 210, 230, 0.62) rgba(11, 12, 16, 0.5);
+/* 自定义滚动轨（微信 Vol 列表 · 视频嘉宾名单） */
+.sg-scroll-rail-host {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
 }
 
+.sg-scroll-rail-viewport {
+  display: block;
+  width: 100%;
+  max-height: inherit;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.sg-scroll-rail-viewport::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.sg-scroll-rail {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: 2px;
+  width: 10px;
+  display: flex;
+  justify-content: center;
+  opacity: 0.18;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.sg-scroll-rail-host:hover .sg-scroll-rail {
+  opacity: 0.92;
+}
+
+/* 键盘在 listbox 上时勿把滚动轨拉满亮（易与 focus 框叠成「右侧竖条」） */
+.sg-scroll-rail-host:focus-within:not(:has(.sg-wechat-vol-listbox:focus)) .sg-scroll-rail {
+  opacity: 0.92;
+}
+
+.sg-scroll-rail-track {
+  position: relative;
+  width: 3px;
+  flex: 1;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--hairline) 45%, transparent);
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+  pointer-events: auto;
+}
+
+.sg-scroll-rail-host:hover .sg-scroll-rail-track,
+.sg-wechat-vol-viewport-box:not(:has(.sg-wechat-vol-listbox:focus))
+  .sg-scroll-rail-host:focus-within
+  .sg-scroll-rail-track {
+  width: 4px;
+  background: color-mix(in oklch, var(--muted-soft) 30%, transparent);
+}
+
+.sg-scroll-rail-thumb {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  min-height: 18px;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--muted-strong) 62%, transparent);
+  pointer-events: none;
+  transition:
+    top 0.12s ease-out,
+    height 0.12s ease-out,
+    background 0.2s ease;
+}
+
+.sg-scroll-rail-host:hover .sg-scroll-rail-thumb,
+.sg-scroll-rail-host:focus-within:not(:has(.sg-wechat-vol-listbox:focus))
+  .sg-scroll-rail-thumb {
+  background: color-mix(in oklch, var(--brand-teal) 64%, transparent);
+}
+
+.sg-wechat-vol-viewport-box:has(.sg-wechat-vol-listbox:focus) .sg-scroll-rail-thumb {
+  background: color-mix(in oklch, var(--muted-strong) 62%, transparent);
+}
+
+/* 微信专栏 · 左栏 Vol 列表 */
 .sg-wechat-vol-scroll {
   scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(139, 147, 168, 0.42) rgba(11, 12, 16, 0.35);
-}
-.sg-wechat-vol-scroll::-webkit-scrollbar {
-  width: 7px;
-}
-.sg-wechat-vol-scroll::-webkit-scrollbar-track {
-  margin-block: 4px;
-  background: rgba(11, 12, 16, 0.5);
-  border-radius: 9999px;
-}
-.sg-wechat-vol-scroll::-webkit-scrollbar-thumb {
-  border-radius: 9999px;
-  background: rgba(139, 147, 168, 0.45);
-  transition: background 0.25s ease;
-}
-.sg-wechat-vol-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(39, 215, 199, 0.55);
 }
 
-.sg-wechat-vol-scroll-wrap::before,
-.sg-wechat-vol-scroll-wrap::after {
+.sg-wechat-vol-viewport-box::before,
+.sg-wechat-vol-viewport-box::after {
   content: "";
   position: absolute;
   left: 0;
-  right: 10px;
+  right: 14px;
   z-index: 2;
   height: 2.25rem;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.35s ease;
 }
-.sg-wechat-vol-scroll-wrap::before {
+.sg-wechat-vol-viewport-box::before {
   top: 0;
   background: linear-gradient(
     180deg,
@@ -735,7 +930,7 @@ html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
     transparent 100%
   );
 }
-.sg-wechat-vol-scroll-wrap::after {
+.sg-wechat-vol-viewport-box::after {
   bottom: 0;
   background: linear-gradient(
     0deg,
@@ -743,41 +938,151 @@ html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
     transparent 100%
   );
 }
-.sg-wechat-vol-scroll-wrap[data-can-scroll-top]::before {
+.sg-wechat-vol-scroll-wrap[data-can-scroll-top] .sg-wechat-vol-viewport-box::before {
   opacity: 1;
 }
-.sg-wechat-vol-scroll-wrap[data-can-scroll-bottom]::after {
+.sg-wechat-vol-scroll-wrap[data-can-scroll-bottom] .sg-wechat-vol-viewport-box::after {
   opacity: 1;
+}
+
+/* 视频播客 · 三栏顶/主/底行对齐（subgrid）+ 封面裁切 */
+.sg-video-studio {
+  --sg-video-band-min: 5.5rem;
+  --sg-video-band-bottom-min: 5rem;
+  --sg-video-stage-pad: 1.25rem;
+  /* 左封面 / 右播放器共用：与 paper-1 融在一起，避免「灰栏套黑盒」 */
+  --sg-video-media-bg: color-mix(in oklch, var(--paper-0) 42%, var(--paper-1));
+  --sg-video-media-letterbox: var(--paper-1);
+}
+
+/* 封面 + 播放器统一画框（与右栏 B 站区域一致） */
+.sg-video-media-frame {
+  overflow: hidden;
+  border-radius: 2px;
+  border: 1px solid color-mix(in oklch, var(--hairline) 72%, transparent);
+  background: var(--sg-video-media-bg);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.34);
+}
+
+.sg-video-studio-col {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .sg-video-studio {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .sg-video-studio-col {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+  }
+}
+
+.sg-video-studio-band-top {
+  display: flex;
+  min-height: var(--sg-video-band-min);
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.sg-video-studio-band-bottom {
+  display: flex;
+  min-height: var(--sg-video-band-bottom-min);
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sg-video-studio-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.sg-video-studio-stage-inner {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+  flex-direction: column;
+  padding: var(--sg-video-stage-pad);
+}
+
+@media (min-width: 1024px) {
+  .sg-video-studio-stage-inner {
+    padding: 1.5rem;
+  }
+}
+
+.sg-video-studio-cover-frame.sg-video-media-frame {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  /* contain 留白与栏底同色，不露出第二层高对比黑条 */
+  background: var(--sg-video-media-letterbox);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+}
+
+.sg-video-player-frame.sg-video-media-frame {
+  background: var(--sg-video-media-bg);
+}
+
+/* 与 Vol.01 一致：完整显示 16:9 封面，不放大裁切 */
+.sg-video-studio-cover-frame img {
+  object-fit: contain;
+  object-position: center center;
+}
+
+/* 画框高于图片时贴底（仍 contain，不裁 logo） */
+.sg-video-studio-cover-frame[data-cover-focus="bottom"] img {
+  object-position: center bottom;
+}
+
+.sg-video-studio-stage-inner--roster {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .sg-video-studio-stage-inner--roster {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+/* 播放器额外样式见 .sg-video-media-frame */
+
+.sg-video-roster-option[aria-selected="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2px;
+  height: 1.35em;
+  transform: translateY(-50%);
+  border-radius: 1px;
+  background: var(--brand-teal);
+  box-shadow: 0 0 12px color-mix(in oklch, var(--brand-teal) 55%, transparent);
+}
+
+.sg-video-roster-option[aria-selected="true"] {
+  background: color-mix(in oklch, var(--brand-teal) 9%, transparent);
 }
 
 /* 视频播客 · 嘉宾名单滚轮区 */
 .sg-guest-roster-scroll {
   scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(139, 147, 168, 0.42) rgba(11, 12, 16, 0.35);
 }
-.sg-guest-roster-scroll-wrap:focus-within .sg-guest-roster-scroll,
-.sg-guest-roster-scroll-wrap:hover .sg-guest-roster-scroll {
-  scrollbar-color: rgba(200, 210, 230, 0.62) rgba(11, 12, 16, 0.5);
-}
-.sg-guest-roster-scroll::-webkit-scrollbar {
-  width: 6px;
-}
-.sg-guest-roster-scroll::-webkit-scrollbar-track {
-  margin-block: 6px;
-  background: rgba(11, 12, 16, 0.45);
-  border-radius: 9999px;
-}
-.sg-guest-roster-scroll::-webkit-scrollbar-thumb {
-  border-radius: 9999px;
-  background: rgba(139, 147, 168, 0.45);
-}
+
 .sg-guest-roster-scroll-wrap::before,
 .sg-guest-roster-scroll-wrap::after {
   content: "";
   position: absolute;
   left: 0;
-  right: 8px;
+  right: 14px;
   z-index: 2;
   height: 2.5rem;
   pointer-events: none;
@@ -788,7 +1093,7 @@ html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
   top: 0;
   background: linear-gradient(
     180deg,
-    color-mix(in oklch, var(--paper-1) 96%, transparent) 0%,
+    color-mix(in oklch, var(--paper-1) 98%, transparent) 0%,
     transparent 100%
   );
 }
@@ -796,7 +1101,7 @@ html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
   bottom: 0;
   background: linear-gradient(
     0deg,
-    color-mix(in oklch, var(--paper-1) 96%, transparent) 0%,
+    color-mix(in oklch, var(--paper-1) 98%, transparent) 0%,
     transparent 100%
   );
 }
@@ -805,9 +1110,27 @@ html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
   opacity: 1;
 }
 
+/* listbox：焦点在 ul，aria-selected 驱动高亮；选项不可单独 Tab 聚焦 */
+.sg-wechat-vol-listbox:focus {
+  outline: none;
+}
+
+.sg-wechat-vol-listbox:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--brand-teal) 22%, transparent);
+}
+
 .sg-wechat-vol-option {
   position: relative;
+  outline: none;
 }
+
+.sg-wechat-vol-option:focus,
+.sg-wechat-vol-option:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 .sg-wechat-vol-option::before {
   content: "";
   position: absolute;
@@ -874,12 +1197,17 @@ html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sg-wechat-vol-scroll {
+  .sg-scroll-rail-viewport,
+  .sg-wechat-vol-scroll,
+  .sg-guest-roster-scroll {
     scroll-behavior: auto;
   }
+  .sg-scroll-rail-thumb {
+    transition: none;
+  }
   .sg-wechat-vol-option::before,
-  .sg-wechat-vol-scroll-wrap::before,
-  .sg-wechat-vol-scroll-wrap::after {
+  .sg-wechat-vol-viewport-box::before,
+  .sg-wechat-vol-viewport-box::after {
     transition: none;
   }
   .sg-wechat-cover-title-in,

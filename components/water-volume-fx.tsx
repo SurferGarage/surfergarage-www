@@ -135,9 +135,11 @@ function WaterVolumeQuad({ active }: { active: boolean }) {
     mat.uniforms.uVel.value = getWaveScrollVel();
   });
 
+  const geo = useMemo(() => new THREE.PlaneGeometry(2, 2), []);
+  useEffect(() => () => geo.dispose(), [geo]);
+
   return (
-    <mesh position={[0, 0, 0]} renderOrder={-2}>
-      <planeGeometry args={[2, 2]} />
+    <mesh position={[0, 0, 0]} renderOrder={-2} geometry={geo}>
       <shaderMaterial
         ref={matRef}
         attach="material"
@@ -179,20 +181,22 @@ export function WaterVolumeFx(): ReactNode {
 
   return (
     <div className="water-volume-fx pointer-events-none absolute inset-0 z-0 mix-blend-screen">
-      <Canvas
-        className="h-full w-full"
-        frameloop={runLoop ? "always" : "never"}
-        dpr={[1, 1.15]}
-        gl={{
-          alpha: true,
-          antialias: false,
-          powerPreference: "default",
-          stencil: false,
-        }}
-      >
-        <FixedOrthoCamera />
-        <WaterVolumeQuad active={runLoop} />
-      </Canvas>
+      {runLoop ? (
+        <Canvas
+          className="h-full w-full"
+          frameloop="always"
+          dpr={[1, 1.15]}
+          gl={{
+            alpha: true,
+            antialias: false,
+            powerPreference: "default",
+            stencil: false,
+          }}
+        >
+          <FixedOrthoCamera />
+          <WaterVolumeQuad active />
+        </Canvas>
+      ) : null}
     </div>
   );
 }

@@ -95,6 +95,8 @@ function CyberSeaSurface({ gridSeg }: { gridSeg: number }) {
   );
   const lastFrameAt = useRef(0);
 
+  useEffect(() => () => geo.dispose(), [geo]);
+
   const base = useMemo(
     () => ({
       b: new THREE.Color("#050814"),
@@ -210,32 +212,34 @@ function HeroWaveCanvasActive({
 
   return (
     <div className={shellClass} aria-hidden>
-      <Canvas
-        camera={{ far: 140, fov: 50, near: 0.06, position: [0, 3.12, 7.6] }}
-        dpr={dpr}
-        frameloop={runLoop ? "always" : "never"}
-        gl={{
-          alpha: true,
-          antialias: false,
-          depth: true,
-          powerPreference: "default",
-          stencil: false,
-        }}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <CameraRig />
-        <CyberSeaSurface gridSeg={gridSeg} />
-        {useBloom ? (
-          <EffectComposer>
-            <Bloom
-              intensity={HERO_BLOOM_INTENSITY}
-              luminanceSmoothing={HERO_BLOOM_SMOOTHING}
-              luminanceThreshold={HERO_BLOOM_THRESHOLD}
-              mipmapBlur
-            />
-          </EffectComposer>
-        ) : null}
-      </Canvas>
+      {runLoop ? (
+        <Canvas
+          camera={{ far: 140, fov: 50, near: 0.06, position: [0, 3.12, 7.6] }}
+          dpr={dpr}
+          frameloop="always"
+          gl={{
+            alpha: true,
+            antialias: false,
+            depth: true,
+            powerPreference: "default",
+            stencil: false,
+          }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <CameraRig />
+          <CyberSeaSurface gridSeg={gridSeg} />
+          {useBloom ? (
+            <EffectComposer>
+              <Bloom
+                intensity={HERO_BLOOM_INTENSITY}
+                luminanceSmoothing={HERO_BLOOM_SMOOTHING}
+                luminanceThreshold={HERO_BLOOM_THRESHOLD}
+                mipmapBlur
+              />
+            </EffectComposer>
+          ) : null}
+        </Canvas>
+      ) : null}
     </div>
   );
 }

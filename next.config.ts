@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: turbopackRoot,
   },
+  experimental: {
+    optimizePackageImports: [
+      "three",
+      "@react-three/fiber",
+      "@react-three/drei",
+      "@react-three/postprocessing",
+    ],
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.hdslb.com" },

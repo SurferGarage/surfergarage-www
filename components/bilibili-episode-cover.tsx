@@ -7,26 +7,43 @@ import { useEffect, useState } from "react";
 type BilibiliEpisodeCoverProps = {
   bvid: string;
   alt: string;
+  /** 本地 `/video-covers/…` 或 B 站 pic URL */
+  coverSrc?: string;
   className?: string;
+  priority?: boolean;
 };
 
-/** B 站公开 API 封面（失败时渐变占位，不阻塞播放器） */
+function isLocalCover(src: string): boolean {
+  return src.startsWith("/");
+}
+
+/** 稿件封面：本地图同步渲染；外链仅作 API 回退 */
 export function BilibiliEpisodeCover({
   bvid,
   alt,
+  coverSrc,
   className = "",
+  priority = false,
 }: BilibiliEpisodeCoverProps) {
-  const [pic, setPic] = useState<string | null>(null);
+  const localSrc =
+    coverSrc && isLocalCover(coverSrc) ? coverSrc : null;
+  const [remotePic, setRemotePic] = useState<string | null>(
+    coverSrc && !isLocalCover(coverSrc) ? coverSrc : null,
+  );
 
   useEffect(() => {
+    if (localSrc || (coverSrc && isLocalCover(coverSrc))) return;
+
     let cancelled = false;
     void fetchBilibiliVideoMeta(bvid).then((meta) => {
-      if (!cancelled && meta.pic) setPic(meta.pic);
+      if (!cancelled && meta.pic) setRemotePic(meta.pic);
     });
     return () => {
       cancelled = true;
     };
-  }, [bvid]);
+  }, [bvid, coverSrc, localSrc]);
+
+  const pic = localSrc ?? remotePic;
 
   return (
     <div
@@ -37,9 +54,10 @@ export function BilibiliEpisodeCover({
           src={pic}
           alt={alt}
           fill
+          priority={priority || Boolean(localSrc)}
           className="object-cover"
-          sizes="(max-width: 1024px) 100vw, 280px"
-          unoptimized
+          sizes="(max-width: 1024px) 100vw, 33vw"
+          unoptimized={!localSrc}
         />
       ) : null}
       <div

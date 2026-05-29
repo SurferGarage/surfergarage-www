@@ -1,10 +1,12 @@
 # SurferGarage Wiki
 
-三篇文档 + 本索引。改代码：**架构** 定位文件 → **动效** / **排障** 按需。
+四篇文档 + 本索引。改代码：**架构** 定位文件 → **规则** 理清分支 → **动效** / **排障** 按需。
 
 | 文档 | 何时读 |
 |------|--------|
 | **[架构.md](./架构.md)** | 目录、路由、片场/联络/触点、B 站、WebGL 分级 |
+| **[规则.md](./规则.md)** | 启动时序、降级/WebGL/滚动/ST/内容过滤/工程门禁（**总决策表**） |
+| **[视觉系统.md](./视觉系统.md)** | 品牌 VIS → CSS/字体/WebGL（对照 `design/brand/*.pdf`） |
 | **[动效.md](./动效.md)** | GSAP 注册顺序、变量、性能守卫 |
 | **[排障.md](./排障.md)** | 报错、发布检查、上线缺口 |
 
@@ -13,7 +15,7 @@
 1. 先流畅与可读，再加特效。  
 2. 禁止正文滚动改 `opacity`。  
 3. 尊重 `prefers-reduced-motion`。  
-4. 新增 ST 前确认不与 `SmoothScroll` 全局 `kill` 冲突。
+4. 新增 ST 须经 `sg-home-registry`；勿在 `SmoothScroll` 里散建（清理靠 `context.revert`）。
 
 **技术栈**：Next 16 · React 19 · Tailwind 4 · Lenis + GSAP · WebGL 默认关。
 

@@ -38,11 +38,13 @@ function CallBlock({
   id,
   eyebrow,
   title,
+  titleLocale = "zh",
   children,
 }: {
   id: string;
   eyebrow: string;
   title?: string;
+  titleLocale?: "zh" | "en";
   children: ReactNode;
 }) {
   return (
@@ -58,7 +60,11 @@ function CallBlock({
           {title ? (
             <h3
               id={`${id}-heading`}
-              className="mt-3 font-[family-name:var(--font-zh)] text-[clamp(1.35rem,2.2vw,1.75rem)] font-medium leading-snug text-[var(--foreground)]"
+              className={
+                titleLocale === "en"
+                  ? "mt-3 font-[family-name:var(--font-en)] text-[clamp(1.5rem,2.4vw,1.9rem)] font-medium leading-none tracking-[0.04em] text-[var(--foreground)]"
+                  : "mt-3 font-[family-name:var(--font-zh)] text-[clamp(1.35rem,2.2vw,1.75rem)] font-medium leading-snug text-[var(--foreground)]"
+              }
             >
               {title}
             </h3>
@@ -120,9 +126,14 @@ export function HomeCall() {
 
         <div className="mt-10 md:mt-14">
           {/* —— 1. 核心成员 —— */}
-          <CallBlock id="call-team" eyebrow="核心成员" title="谁在浪前">
+          <CallBlock
+            id="call-team"
+            eyebrow="核心成员"
+            title="Founders"
+            titleLocale="en"
+          >
             <ul
-              className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
+              className="grid max-w-3xl grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8"
               data-call-item
             >
               {SURFER_GARAGE_TEAM.map((member) => (
