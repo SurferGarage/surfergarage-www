@@ -1,22 +1,20 @@
 # SurferGarage Wiki
 
-工程文档只保留 **3 篇 + 本索引**。改代码时：**先查「架构」定位文件，再查「动效」或「排障」**。
+三篇文档 + 本索引。改代码：**架构** 定位文件 → **动效** / **排障** 按需。
 
 | 文档 | 何时读 |
 |------|--------|
-| **[架构.md](./架构.md)** | 目录结构、首页模块、改嘉宾/B站/联络/导航、Lenis 与 ScrollTrigger 约定 |
-| **[动效.md](./动效.md)** | 加/改 GSAP、调 scrub、WebGL 开关、性能降级 |
-| **[排障.md](./排障.md)** | 报错、构建失败、发布前检查、上线缺口 |
+| **[架构.md](./架构.md)** | 目录、路由、片场/联络/触点、B 站、WebGL 分级 |
+| **[动效.md](./动效.md)** | GSAP 注册顺序、变量、性能守卫 |
+| **[排障.md](./排障.md)** | 报错、发布检查、上线缺口 |
 
-## 维护原则（必守）
+## 维护原则
 
-1. 先保流畅与可读，再加特效强度。
-2. **禁止**对正文滚动 scrub `opacity` / `autoAlpha`（会「抽白」）。
-3. 所有动效尊重 `prefers-reduced-motion`。
-4. 新增 ScrollTrigger 前确认与 `SmoothScroll` 卸载时的全局 `kill` 不冲突（见架构篇）。
+1. 先流畅与可读，再加特效。  
+2. 禁止正文滚动改 `opacity`。  
+3. 尊重 `prefers-reduced-motion`。  
+4. 新增 ST 前确认不与 `SmoothScroll` 全局 `kill` 冲突。
 
-## 技术栈（一句话）
+**技术栈**：Next 16 · React 19 · Tailwind 4 · Lenis + GSAP · WebGL 默认关。
 
-Next.js 16 · React 19 · Tailwind 4 · Lenis + GSAP · Hero/首页可选 WebGL（`NEXT_PUBLIC_SG_WEBGL`）。
-
-历史变更以 **Git 提交记录** 为准，不在 wiki 堆叠更新日志。
+**最后对齐代码**：2026-05-29（`experiment/shader-field`）。历史变更查 Git，不在 wiki 堆日志。
