@@ -31,7 +31,7 @@ export type HomeMotionRefs = HeroChoreographyRefs & {
 
 export type HomeMotionDomRefs = HomeMotionRefs & DesktopPinsRefs;
 
-/** 编排表（与 `wiki/07` §4 一致，供文档与调试对照） */
+/** 编排表（与 `wiki/动效.md` 一致，供文档与调试对照） */
 export const SG_HOME_MOTION_PIPELINE = [
   { layer: SG_LAYER.L0, id: "global-depth-t", fn: "registerGlobalDepthScrub" },
   { layer: SG_LAYER.L1, id: "manifesto-*", fn: "registerManifestoScroll" },

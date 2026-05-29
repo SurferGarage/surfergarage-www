@@ -48,6 +48,6 @@ Operational and architecture docs are in `wiki/`.
 
 Recommended start:
 
-1. `wiki/00-项目总览.md`
-2. `wiki/03-性能与自动降级策略.md`
-3. `wiki/04-维护与排障手册.md`
+1. `wiki/README.md`
+2. `wiki/架构.md`
+3. `wiki/排障.md`（发布或报错时）

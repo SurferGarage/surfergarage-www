@@ -11,7 +11,7 @@
  *
  * **编排顺序**：`components/motion/sg-home-registry.ts` → `registerHomeScrollMotion` / `registerHomeDesktopMotion`
  * **原语实现**：`components/motion/sg-motion-primitives.ts`
- * **运行时装载**：`wiki/07-动画编排与统筹.md`
+ * **运行时装载**：`wiki/动效.md`
  */
 
 export const SG_LAYER = {

@@ -24,6 +24,6 @@ Please include:
 
 For architecture, performance, and troubleshooting context, read:
 
-- `wiki/00-项目总览.md`
-- `wiki/03-性能与自动降级策略.md`
-- `wiki/04-维护与排障手册.md`
+- `wiki/README.md`
+- `wiki/架构.md`
+- `wiki/排障.md`

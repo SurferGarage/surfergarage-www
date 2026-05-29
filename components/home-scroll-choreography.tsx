@@ -22,7 +22,7 @@ const ST_MARKERS =
 
 /**
  * 首页滚动编排唯一 React 挂载点。
- * 注册顺序与分层见 `sg-home-registry.ts` / `wiki/07-动画编排与统筹.md`。
+ * 注册顺序与分层见 `sg-home-registry.ts` / `wiki/动效.md`。
  */
 export function HomeScrollChoreography() {
   const reduced = useReducedMotion();
