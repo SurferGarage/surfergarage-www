@@ -17,9 +17,11 @@
 - **`06-实施计划与验收清单.md`**：**P0→P5 工序**、依赖顺序、每步验收标准、风险与回滚
 - **`07-动画编排与统筹.md`**：**全站动画单一统筹** — L0–L3 语义与模块映射、`HomeScrollChoreography` **注册顺序表**、Lenis / CSS 变量 / WebGL 分工、**微信展台 ST 例外**、新增动效检查清单
 - **`08-成熟网站路线图.md`**：**上线清单** — 基建 / 内容 / 气质 / 合规 / 工程；**执行顺序**与验收标准
+- **`09-目录结构与文件地图.md`**：**仓库目录树**、`app`/`components`/`lib`/`public` 职责、改内容速查、已删除遗留文件清单
 
 ## 更新日志（维护札记）
 
+- **2026-05-29（目录整理）**：新增 **`wiki/09-目录结构与文件地图.md`**；删除未引用组件 `founder-studio-stage`、`surfing-founders-video-stage` 与 Create Next App 模板 SVG；`01` 同步四屏片场与 B 站播放器实现名。
 - **2026-05-26（V2.0 成熟化交付）**：全站视觉/editorial 升级 — **出水线 `#proof`**、片场四屏 YC 式全宽（`founder-wechat-column` / `founder-video-studio` / `github-playbook-block` / `visual-garage`）、**Blueprint 氛围**（`SgAmbientGrid` + 全页 deep river）、居中顶栏 **`site-header`**、独立 **`site-footer`** + Newsletter + 巨型字标 scroll reveal；动效增补 **`fit-closing-pin`** / **`footer-wordmark`** / **`hero-wordmark-stagger`** / **`magnet-hover`**；文案 **记忆点瘦身**（每区块单行要点）；内容同步 wx-09、徐凯撒人像与 B 站四期；`npm run lint` / `npm run build` 通过。
 - **2026-05-26（移动 + 上线基建）**：**移动端适配**（Hero clamp、Founders 节奏、微信列表限高、Header safe-area/44px 触控、Proof 单列、Call/Fit 间距）；**动态 OG**（`opengraph-image`）、**隐私政策**（`/privacy`）、全站 **`useAnchorNav`**、GitHub Actions **CI**；Bento 过滤未上线 X/YouTube；`sitemap` 含 privacy。
 - **2026-05-29（背景连贯 + Hydration）**：**双轨 depth**（`sg-main-depth-paper` / `submerge` 118vh）、Hero **`#manifesto::after`** 与 Proof 叠层；移除 bridge/wash 黑带方案；**`<html suppressHydrationWarning>`**、**`hero-rec-clock`**、构建日固定 dev 占位；**`wiki/04` §11–§12**。
@@ -37,7 +39,7 @@
 1. **读 `05-站点深度与模块设计草案.md`**（扩展信息架构与新模块，与 Vision 互补）
 2. **读 `06-实施计划与验收清单.md`**（**落地执行与验收** — 写代码前对齐本文件）
 3. 再读 `00-项目总览.md`（健康度快照）
-4. 再读 `01-架构与模块说明.md`（Lenis / ST 约定）
+4. 再读 `01-架构与模块说明.md`（Lenis / ST 约定）；改文件前可扫 **`09-目录结构与文件地图.md`**
 5. **动效统筹**：读 **`07-动画编排与统筹.md`**（改 `register-*` / 调 scrub / 加 ST 前）
 6. 然后读 `03-性能与自动降级策略.md`
 7. 最后按任务查阅 `02`（观感）与 `04`（排障）
