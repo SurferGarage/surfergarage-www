@@ -5,8 +5,8 @@ import { useEffect, useState, type RefObject } from "react";
 /** 叠卡顶屏时约 ≥8% 可见即挂载播放器（原 15% 偏晚） */
 const PANEL_VISIBLE_RATIO = 0.08;
 
-/** 面板顶边进入视口下方约半屏时开始预热（DNS + prefetch） */
-const PANEL_PREFETCH_ROOT_MARGIN = "0px 0px 50vh 0px";
+/** 视口下方额外预热带：约为半屏高度（用 px 测量，IO 的 rootMargin 不支持 vh） */
+const PANEL_PREFETCH_VIEWPORT_RATIO = 0.5;
 
 function measurePanelVisible(target: Element): boolean {
   const rect = target.getBoundingClientRect();
@@ -24,6 +24,14 @@ function measurePanelVisible(target: Element): boolean {
   const targetArea = Math.max(rect.width * rect.height, 1);
   const ratio = visibleArea / targetArea;
   return ratio >= PANEL_VISIBLE_RATIO && visibleArea > 0;
+}
+
+/** 面板顶边进入「视口 + 半屏预热带」时返回 true */
+function measurePanelPrefetch(target: Element): boolean {
+  const rect = target.getBoundingClientRect();
+  const viewH = window.innerHeight || 1;
+  const prefetchBand = viewH * PANEL_PREFETCH_VIEWPORT_RATIO;
+  return rect.top < viewH + prefetchBand && rect.bottom > 0;
 }
 
 /**
@@ -85,17 +93,16 @@ export function useFounderPanelPrefetch(
     const panel = stage.closest<HTMLElement>("[data-founder-panel]");
     const target = panel ?? stage;
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry) return;
-        setPrefetch(entry.isIntersecting);
-      },
-      { root: null, rootMargin: PANEL_PREFETCH_ROOT_MARGIN, threshold: 0 },
-    );
+    const sync = () => setPrefetch(measurePanelPrefetch(target));
 
-    io.observe(target);
-    return () => io.disconnect();
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+
+    return () => {
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+    };
   }, [containerRef]);
 
   return prefetch;
