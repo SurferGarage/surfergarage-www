@@ -34,6 +34,11 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+
     const lenisInstance = new Lenis({
       autoRaf: false,
       lerp: 0.085,
@@ -82,7 +87,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     gsap.ticker.add(ticker);
     gsap.ticker.lagSmoothing(0);
 
-    ScrollTrigger.refresh();
+    lenisInstance.scrollTo(0, { immediate: true });
 
     return () => {
       if (stRaf) cancelAnimationFrame(stRaf);

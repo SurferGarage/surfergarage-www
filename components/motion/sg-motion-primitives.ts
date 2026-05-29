@@ -84,18 +84,24 @@ export function motionGlobalDepthScrub(
   });
 }
 
-/** L1：首屏 load 入场（无 ScrollTrigger） */
+/** L1：首屏 load 入场（无 ScrollTrigger）；先 set 再 to，避免 `from` 首帧闪动 */
 export function motionLoadStagger(
   selector: string,
   opts?: { y?: number; delay?: number },
 ): void {
-  gsap.from(selector, {
-    y: opts?.y ?? SG_LOAD.heroRevealY,
+  const targets = gsap.utils.toArray<HTMLElement>(selector);
+  if (!targets.length) return;
+
+  const y = opts?.y ?? SG_LOAD.heroRevealY;
+  gsap.set(targets, { y, force3D: true });
+  gsap.to(targets, {
+    y: 0,
     duration: SG_LOAD.heroRevealDuration,
     stagger: SG_LOAD.heroRevealStagger,
     ease: SG_LOAD.ease,
     delay: opts?.delay ?? SG_LOAD.heroRevealDelay,
     force3D: true,
+    clearProps: "y",
   });
 }
 

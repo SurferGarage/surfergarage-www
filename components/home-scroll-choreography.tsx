@@ -1,6 +1,7 @@
 "use client";
 
 import "@/components/motion/gsap-register";
+import { useLenis } from "@/components/lenis-context";
 import {
   collectHomeMotionDomRefs,
   registerHomeDesktopMotion,
@@ -11,8 +12,12 @@ import { useLayoutEffect } from "react";
 import { ScrollTrigger } from "@/components/motion/gsap-register";
 import { SG_MEDIA_MD_MAX, SG_MEDIA_MD_MIN } from "@/lib/sg-breakpoints";
 import {
+  finishMotionInit,
+  primeHeroMotionState,
+} from "@/lib/sg-motion-init";
+import {
   applyReducedMotionStatic,
-  useReducedMotion,
+  readReducedMotion,
 } from "@/lib/sg-reduced-motion";
 import gsap from "gsap";
 
@@ -22,16 +27,24 @@ const ST_MARKERS =
 
 /**
  * 首页滚动编排唯一 React 挂载点。
- * 注册顺序与分层见 `sg-home-registry.ts` / `wiki/动效.md`。
+ * 须在 Lenis + scrollerProxy 就绪后再注册 ST，避免刷新时二次 layout 与怪动画。
  */
 export function HomeScrollChoreography() {
-  const reduced = useReducedMotion();
+  const lenis = useLenis();
 
   useLayoutEffect(() => {
-    if (reduced === null) return;
+    const reduced = readReducedMotion();
 
     if (reduced) {
       return applyReducedMotionStatic();
+    }
+
+    primeHeroMotionState();
+
+    if (lenis === null) {
+      return () => {
+        document.documentElement.classList.remove("sg-motion-ready");
+      };
     }
 
     const refs = collectHomeMotionDomRefs();
@@ -48,7 +61,11 @@ export function HomeScrollChoreography() {
       registerHomeDesktopMotion(ST_MARKERS, refs);
     });
 
-    ScrollTrigger.refresh();
+    let refreshRaf = 0;
+    refreshRaf = requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+      finishMotionInit();
+    });
 
     let resizeT: ReturnType<typeof setTimeout> | undefined;
     const onResize = () => {
@@ -67,12 +84,14 @@ export function HomeScrollChoreography() {
 
     return () => {
       fontsCancelled = true;
+      if (refreshRaf) cancelAnimationFrame(refreshRaf);
       window.removeEventListener("resize", onResize);
       if (resizeT) clearTimeout(resizeT);
+      document.documentElement.classList.remove("sg-motion-ready");
       mm.revert();
       ctx.revert();
     };
-  }, [reduced]);
+  }, [lenis]);
 
   return null;
 }

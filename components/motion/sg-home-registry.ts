@@ -73,7 +73,7 @@ export function registerHomeScrollMotion(
   registerGlobalDepthScrub(markers);
   registerManifestoScroll(markers);
   registerHeroWordmarkStagger();
-  registerHeroChoreography(markers, refs);
+  registerHeroChoreography(markers, refs); // load stagger 与字标 stagger 已解耦（字标不在 data-hero-reveal 父级上）
   registerFoundersIntro(markers);
   registerFounderBreath(markers);
   registerGithubRepoCards(markers);

@@ -19,10 +19,18 @@ export function registerHeroWordmarkStagger(): void {
     host.setAttribute("aria-label", host.textContent ?? "");
   }
 
+  const needsSplit = host.dataset.wordmarkLettersSplit !== "1";
+  if (needsSplit) {
+    gsap.set(host, { opacity: 0 });
+  }
+
   const letters = splitWordmarkToLetters(host);
   if (!letters.length) return;
 
   gsap.set(letters, { yPercent: 100, opacity: 0, force3D: true });
+  if (needsSplit) {
+    gsap.set(host, { opacity: 1 });
+  }
 
   gsap.to(letters, {
     yPercent: 0,

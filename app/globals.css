@@ -407,6 +407,23 @@ body {
   will-change: transform, opacity;
 }
 
+/* Hero 首帧：GSAP 注册完成前避免刷新闪字 / 双动画 */
+html:not(.sg-motion-ready) [data-hero-letters]:not([data-wordmark-letters-split="1"]) {
+  opacity: 0;
+}
+
+html:not(.sg-motion-ready) [data-hero-reveal] {
+  transform: translate3d(0, 22px, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.sg-motion-ready) [data-hero-letters],
+  html:not(.sg-motion-ready) [data-hero-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes sg-river-drift {
   0% {
     transform: translate3d(0, 0, 0) scale(1);

@@ -34,12 +34,15 @@ export function HomeHero() {
           data-manifesto-right
         >
           <div data-manifesto-fade>
-            <h1 id="hero-title" className="text-left" data-hero-reveal>
+            <h1 id="hero-title" className="text-left">
               <div
                 className="flex max-w-[min(100%,92rem)] flex-col items-start gap-4 md:gap-5"
                 data-hero-wordmark
               >
-                <span className="font-[family-name:var(--font-zh)] text-[14px] font-light tracking-[0.12em] text-[var(--muted-strong)] md:text-[15px]">
+                <span
+                  className="font-[family-name:var(--font-zh)] text-[14px] font-light tracking-[0.12em] text-[var(--muted-strong)] md:text-[15px]"
+                  data-hero-reveal
+                >
                   浪前
                 </span>
                 <span
