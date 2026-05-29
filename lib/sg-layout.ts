@@ -9,6 +9,21 @@
 /** Sticky 顶栏高度（与 `scroll-mt` / `scroll-padding-top` 一致） */
 export const SG_HEADER_SCROLL_MT = "scroll-mt-[4.5rem]";
 
+/** 区块纵向节奏 */
+export const SG_SECTION_PY_CLASS = "py-20 md:py-28 lg:py-32";
+
+/** 统一 section 大标题（中文专用，避免 serif + 紧行高裁切） */
+export const SG_SECTION_TITLE_CLASS =
+  "font-[family-name:var(--font-zh)] text-[clamp(1.85rem,3.8vw,2.85rem)] font-medium leading-[1.28] tracking-tight text-[var(--foreground)]";
+
+/** 中文正文 */
+export const SG_BODY_ZH_CLASS =
+  "font-[family-name:var(--font-zh)] text-[16px] leading-[1.72] text-[var(--muted-strong)] md:text-[17px] md:leading-[1.68]";
+
+/** 行内行动链接 */
+export const SG_INLINE_LINK_CLASS =
+  "font-[family-name:var(--font-zh)] text-[15px] text-[var(--brand-teal)] underline decoration-[var(--brand-teal)]/30 underline-offset-[5px] transition-[color,decoration-color] hover:text-[var(--foreground)] hover:decoration-[var(--foreground)]/35 md:text-[16px]";
+
 /** 页级容器（宣言、片场、触点外壳） */
 export const SG_PAGE_SHELL_CLASS =
   "mx-auto w-full max-w-[1680px] px-5 md:px-10 lg:px-12 xl:px-16";

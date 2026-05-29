@@ -42,13 +42,10 @@ export function GithubRepoCard({ config, className = "" }: GithubRepoCardProps) 
               <GitHubMark />
             </span>
             <div className="min-w-0">
-              <p className="font-[family-name:var(--font-en)] text-[13px] font-semibold tracking-tight text-[var(--foreground)] md:text-sm">
+              <p className="font-[family-name:var(--font-en)] text-[14px] font-semibold tracking-tight text-[var(--foreground)] md:text-[15px]">
                 <span className="text-[var(--muted-strong)]">{owner}</span>
                 <span className="mx-1 text-[var(--hairline)]">/</span>
                 <span>{repo}</span>
-              </p>
-              <p className="mt-1.5 font-[family-name:var(--font-en)] text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">
-                Public · Repository
               </p>
             </div>
           </div>
@@ -56,15 +53,15 @@ export function GithubRepoCard({ config, className = "" }: GithubRepoCardProps) 
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="pointer-events-auto shrink-0 rounded-sm border border-[var(--hairline)] px-2.5 py-1.5 font-[family-name:var(--font-en)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--muted-strong)] transition-colors hover:border-[var(--brand-teal)]/45 hover:text-[var(--brand-teal)]"
+            className="pointer-events-auto shrink-0 rounded-sm border border-[var(--hairline)] px-3 py-1.5 font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)] transition-colors hover:border-[var(--brand-teal)]/45 hover:text-[var(--brand-teal)]"
           >
-            Open ↗
+            打开 ↗
           </a>
         </div>
       </div>
 
       <div className="relative px-4 py-4 md:px-5 md:py-5">
-        <p className="font-[family-name:var(--font-zh)] text-sm leading-relaxed text-[var(--muted-strong)] md:text-[15px]">
+        <p className="font-[family-name:var(--font-zh)] text-[15px] leading-relaxed text-[var(--muted-strong)] md:text-[16px]">
           {description}
         </p>
 

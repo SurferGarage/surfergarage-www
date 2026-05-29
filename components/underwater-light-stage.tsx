@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { useLenis } from "@/components/lenis-context";
+import { isSgAtmospherePaused } from "@/components/sg-performance-guards";
 import { getScrollDepthT, getWaveScrollVel } from "@/lib/sg-scroll-signals";
 
 function clamp(n: number, a: number, b: number): number {
@@ -72,6 +73,8 @@ export function UnderwaterLightStage(): ReactNode {
     lastScrollRef.current = readScroll();
 
     const tick = (): void => {
+      if (isSgAtmospherePaused()) return;
+
       const scroll = readScroll();
       const max = maxScroll();
       const p = clamp(scroll / max, 0, 1);
@@ -89,9 +92,9 @@ export function UnderwaterLightStage(): ReactNode {
 
       const vel = getWaveScrollVel();
 
-      const wander = Math.sin(scroll * 0.0018) * 0.055;
-      const baseX = 0.5 + wander + impulseRef.current + (vel - 0.5) * 0.06;
-      root.style.setProperty("--uwl-orb-x", clamp(baseX, 0.34, 0.66).toFixed(4));
+      const wander = Math.sin(scroll * 0.0018) * 0.04;
+      const baseX = 0.36 + wander + impulseRef.current + (vel - 0.5) * 0.05;
+      root.style.setProperty("--uwl-orb-x", clamp(baseX, 0.26, 0.5).toFixed(4));
 
       const colorT = depthOk ? clamp(dtRaw, 0, 1) : p;
       setOrbColors(root, colorT);
@@ -142,7 +145,7 @@ export function UnderwaterLightStage(): ReactNode {
       <div className="uwl-surface" />
       <div className="uwl-aperture" />
       <div className="uwl-godrays">
-        {[-22, -14, -7, 0, 7, 14, 22].map((deg) => (
+        {[-28, -18, -9, 2, 12, 22, 32].map((deg) => (
           <span
             key={deg}
             className="uwl-ray"

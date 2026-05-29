@@ -1,0 +1,16 @@
+﻿# 降低 Cursor 索引 / 上下文占用（不影响构建与运行）
+node_modules/
+.next/
+out/
+build/
+coverage/
+.vercel/
+.husky/_/
+
+# 大体积静态资源
+public/wechat-feed/
+public/video/
+*.mp4
+*.mov
+
+.snapshots/

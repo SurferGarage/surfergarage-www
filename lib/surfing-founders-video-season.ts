@@ -11,6 +11,9 @@ export type VideoEpisodeRole = "origin" | "spotlight" | "method" | "finale";
 export type SurfingFoundersEpisode = {
   id: string;
   bvid: string;
+  /** B 站 aid / cid — 站外播放器必需，与 bvid 同步维护 */
+  aid: number;
+  cid: number;
   titleZh: string;
   /** 列表短标，如 Vol.01 */
   volLabel: string;
@@ -44,6 +47,8 @@ const XU_KAISER_EPISODES: readonly SurfingFoundersEpisode[] = [
   {
     id: "xu-vol-01",
     bvid: "BV18a5e6JEM4",
+    aid: 116578146327901,
+    cid: 38348589287,
     volLabel: "Vol.01",
     titleZh: "20 岁辍学创业，我选择了中国最不赚钱的行业 | 对话许凯撒",
     role: "origin",
@@ -52,6 +57,8 @@ const XU_KAISER_EPISODES: readonly SurfingFoundersEpisode[] = [
   {
     id: "xu-vol-02",
     bvid: "BV1MSLA6hE8V",
+    aid: 116596014125396,
+    cid: 38428869815,
     volLabel: "Vol.02",
     titleZh: "1 亿美金估值背后：为什么 99% 的创业者不懂规模效应？| 对话许凯撒",
     role: "spotlight",
@@ -60,6 +67,8 @@ const XU_KAISER_EPISODES: readonly SurfingFoundersEpisode[] = [
   {
     id: "xu-vol-03",
     bvid: "BV1LdGb6rEeS",
+    aid: 116618579481789,
+    cid: 38533073326,
     volLabel: "Vol.03",
     titleZh: "被校园霸凌的不幸，却促使我认知觉醒 | 对话许凯撒",
     role: "method",
@@ -68,6 +77,8 @@ const XU_KAISER_EPISODES: readonly SurfingFoundersEpisode[] = [
   {
     id: "xu-vol-04",
     bvid: "BV1A6Gb6QExD",
+    aid: 116619082733148,
+    cid: 38536283800,
     volLabel: "Vol.04",
     titleZh: "财富方法论：如何从零赚到第一桶金，再到财富自由 | 对话许凯撒",
     role: "finale",

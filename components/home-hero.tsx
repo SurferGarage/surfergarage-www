@@ -1,29 +1,18 @@
-import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
-import { formatHeroTicker, getSiteStats } from "@/lib/site-stats";
+import { SG_BODY_ZH_CLASS, SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import type { CSSProperties } from "react";
 
-/** 影院化 Hero：左下时间码、右下数据 ticker、底部 scroll cue、字标字符级 stagger（由 register-hero-wordmark-stagger 接管） */
+/** Hero：字标 + 主张，桌面垂直居中、移动底对齐 */
 export function HomeHero() {
-  const stats = getSiteStats();
-  const tickerText = formatHeroTicker(stats);
-
-  const now = new Date();
-  const recYear = now.getUTCFullYear();
-  const recMonth = String(now.getUTCMonth() + 1).padStart(2, "0");
-  const seasonCode = `${stats.season.toUpperCase().replace(/\s+/g, "")} · VOL ${String(
-    stats.episodes,
-  ).padStart(2, "0")}`;
-
   return (
     <section
       id="manifesto"
-      className="relative h-[100svh] max-md:min-h-0 md:min-h-[46rem] scroll-mt-[4.5rem] overflow-hidden pt-20 max-md:pt-[max(5rem,env(safe-area-inset-top))] md:pt-28"
+      className="relative flex h-[100svh] max-md:min-h-0 flex-col md:min-h-[46rem] scroll-mt-[4.5rem] overflow-x-clip overflow-y-visible pt-[max(5rem,calc(4.5rem+env(safe-area-inset-top)))] md:pt-28"
       aria-labelledby="hero-title"
       data-hero-wave
       style={
         {
           "--wave-distortion": 1,
-          "--wave-opacity": 0.86,
+          "--wave-opacity": 0.72,
           "--hero-cam-x": 0,
           "--hero-cam-y": 3.12,
           "--hero-cam-z": 7.6,
@@ -33,45 +22,28 @@ export function HomeHero() {
         } as CSSProperties
       }
     >
-      {/* 主体网格 */}
+      <div aria-hidden className="sg-hero-vignette pointer-events-none absolute inset-0 z-[1]" />
+      <div aria-hidden className="sg-hero-scan pointer-events-none absolute inset-0 z-[2]" />
+
       <div
-        className={`relative z-[3] grid w-full grid-cols-12 gap-x-4 pb-16 md:gap-x-6 md:pb-20 ${SG_PAGE_SHELL_CLASS} [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_12px_48px_rgba(0,0,0,0.35)]`}
+        className={`relative z-[3] flex flex-1 flex-col justify-end pb-28 md:justify-center md:pb-32 ${SG_PAGE_SHELL_CLASS} [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_12px_48px_rgba(0,0,0,0.35)]`}
       >
         <div
-          className="col-span-12 mb-8 md:col-span-2 md:col-start-1 md:mb-0 md:self-start"
+          className="max-w-[min(100%,54rem)]"
           data-manifesto-pin
-        >
-          <div data-hero-reveal>
-            <div className="flex items-center gap-2">
-              <span
-                aria-hidden
-                className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-teal)]"
-              />
-              <p className="editorial-eyebrow text-[var(--foreground)]">
-                § 01 — 宣言
-              </p>
-            </div>
-            <p className="mt-3 editorial-eyebrow text-[var(--muted)]">
-              浪前 · 记录与建造
-            </p>
-          </div>
-        </div>
-
-        <div
-          className="col-span-12 space-y-14 md:col-span-9 md:col-start-3 md:space-y-20 lg:col-span-8 lg:col-start-3"
           data-manifesto-right
         >
           <div data-manifesto-fade>
             <h1 id="hero-title" className="text-left" data-hero-reveal>
               <div
-                className="flex max-w-[min(100%,92rem)] flex-col items-start"
+                className="flex max-w-[min(100%,92rem)] flex-col items-start gap-4 md:gap-5"
                 data-hero-wordmark
               >
-                <span className="mb-2 font-[family-name:var(--font-zh)] text-[13px] font-light leading-none tracking-[0.14em] text-[#A1A1AA] md:mb-2.5 md:text-[15px] md:tracking-[0.18em]">
+                <span className="font-[family-name:var(--font-zh)] text-[14px] font-light tracking-[0.12em] text-[var(--muted-strong)] md:text-[15px]">
                   浪前
                 </span>
                 <span
-                  className="wordmark-display block w-full overflow-hidden uppercase text-[clamp(1.15rem,10.5vw,7.25rem)] text-[var(--foreground)] md:text-[clamp(2.4rem,6.2vw,7.25rem)]"
+                  className="wordmark-display block w-full overflow-hidden uppercase text-[clamp(1.35rem,10vw,7rem)] text-[var(--foreground)] md:text-[clamp(2.5rem,6vw,7rem)]"
                   data-hero-letters
                 >
                   SURFERGARAGE
@@ -79,69 +51,28 @@ export function HomeHero() {
               </div>
             </h1>
 
-            <div className="mt-7 max-w-[48rem] md:mt-9" data-hero-reveal>
-              <p className="font-[family-name:var(--font-zh)] text-[clamp(1.125rem,2.2vw,1.75rem)] font-medium leading-snug tracking-tight text-[var(--foreground)]">
+            <div className="mt-10 max-w-[42rem] md:mt-12" data-hero-reveal>
+              <p className="font-[family-name:var(--font-zh)] text-[clamp(1.25rem,2.5vw,1.9rem)] font-medium leading-[1.35] tracking-tight text-[var(--foreground)]">
                 在非共识里造船，而不是在共识里讲故事。
               </p>
             </div>
           </div>
 
-          <div>
-            <p
-              className="max-w-[48rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px] md:leading-[1.72]"
-              data-hero-scrub
-            >
-              只收可核对样本：动作、代价、复盘。
-            </p>
-          </div>
+          <p
+            className={`mt-8 max-w-[34rem] md:mt-10 ${SG_BODY_ZH_CLASS}`}
+            data-hero-scrub
+          >
+            只收可核对样本：动作、代价、复盘。
+          </p>
         </div>
       </div>
 
-      {/* ---- 影院级角标层 ---- */}
       <div
         aria-hidden
-        className={`pointer-events-none absolute inset-x-0 bottom-6 z-[3] md:bottom-8 ${SG_PAGE_SHELL_CLASS}`}
+        className={`pointer-events-none absolute inset-x-0 bottom-8 z-[3] flex justify-center md:bottom-10 ${SG_PAGE_SHELL_CLASS}`}
       >
-        <div className="flex items-end justify-between gap-6">
-          {/* 左下：录制时间码 */}
-          <div
-            data-hero-reveal
-            className="flex items-end gap-3 text-[var(--muted-strong)] [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]"
-          >
-            <span className="mt-0.5 h-2 w-2 shrink-0 animate-pulse rounded-full bg-[var(--brand-teal)]" />
-            <div className="leading-none">
-              <p className="editorial-mono text-[10px] uppercase tracking-[0.22em] text-[var(--muted)]">
-                REC · Live
-              </p>
-              <p className="mt-1.5 editorial-mono-tabular text-[11px] uppercase tracking-[0.12em] text-[var(--foreground)] md:text-[12px]">
-                REC · {recYear}.{recMonth}
-              </p>
-              <p className="mt-1 editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
-                {seasonCode}
-              </p>
-            </div>
-          </div>
-
-          {/* 中：呼吸 scroll cue（仅桌面，避免与移动端 ticker 挤） */}
-          <div className="hidden flex-col items-center gap-2 text-[var(--muted)] md:flex">
-            <span aria-hidden className="sg-scroll-cue-line" />
-            <p className="editorial-eyebrow text-[10px]">
-              Scroll
-            </p>
-          </div>
-
-          {/* 右下：站点数据 ticker */}
-          <div
-            data-hero-reveal
-            className="text-right text-[var(--muted-strong)] [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]"
-          >
-            <p className="editorial-eyebrow text-[var(--muted)]">
-              Index
-            </p>
-            <p className="mt-1.5 editorial-mono-tabular text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)] max-md:max-w-[46%] max-md:text-right max-md:leading-snug md:text-[11.5px]">
-              {tickerText}
-            </p>
-          </div>
+        <div data-hero-reveal className="flex flex-col items-center gap-2.5">
+          <span className="sg-scroll-cue-line" />
         </div>
       </div>
     </section>

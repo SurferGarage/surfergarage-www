@@ -7,8 +7,9 @@
 
 export const SG_SITE_VERSION = "2.0";
 
+/** 构建时注入；本地 dev 用固定占位，避免模块求值时刻 SSR/CSR 不一致 */
 const BUILD_TIME =
-  process.env.NEXT_PUBLIC_BUILD_TIME ?? new Date().toISOString();
+  process.env.NEXT_PUBLIC_BUILD_TIME ?? "2026-05-01T00:00:00.000Z";
 
 export const SG_BUILD_DATE_ISO = BUILD_TIME;
 

@@ -174,7 +174,7 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sg-header-depth sticky top-0 z-30 border-b border-[var(--hairline)] backdrop-blur-md pt-[env(safe-area-inset-top)]">
+    <header className="sg-header-depth sticky top-0 z-30 border-b border-[color-mix(in_oklch,var(--hairline)_85%,transparent)] bg-[color-mix(in_oklch,var(--paper-1)_88%,transparent)] backdrop-blur-md pt-[env(safe-area-inset-top)]">
       {/* —— Mobile（< md）—— logo 左、hamburger 右 */}
       <div
         className={`flex items-center justify-between gap-4 py-3 md:hidden ${SG_PAGE_SHELL_CLASS}`}
@@ -182,8 +182,8 @@ export function SiteHeader() {
         <a
           href="#manifesto"
           onClick={(e) => handleAnchorClick(e, "#manifesto")}
-          className="flex items-center gap-3 rounded-sm font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--foreground)]"
-          aria-label={`${SITE_NAME}，返回宣言`}
+          className="flex items-center gap-3 rounded-sm font-[family-name:var(--font-zh)] text-[15px] font-medium text-[var(--foreground)]"
+          aria-label={`${SITE_NAME}，返回首页`}
         >
           <Image
             src="/brand-sg-logo.png"
@@ -193,10 +193,7 @@ export function SiteHeader() {
             className="h-9 w-9 shrink-0 object-contain"
             priority
           />
-          <span className="hidden items-baseline gap-1.5 sm:flex">
-            <span>Surfer</span>
-            <span>Garage</span>
-          </span>
+          <span className="hidden sm:inline">浪前</span>
         </a>
 
         <div className="flex items-center gap-2">
@@ -204,11 +201,11 @@ export function SiteHeader() {
             href={HEADER_CTA_HREF}
             onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
             data-magnet
-            className="group inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-3 py-2 font-[family-name:var(--font-en)] text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--foreground)]"
-            aria-label="加入 SurferGarage 社群"
+            className="group inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-3 py-2 font-[family-name:var(--font-zh)] text-[14px] font-medium text-[var(--foreground)]"
+            aria-label="加入车库"
           >
             <span className="sg-magnet-target inline-flex items-center gap-1.5">
-              <span>Join</span>
+              <span>加入</span>
               <span
                 aria-hidden
                 className="text-[var(--brand-teal)]"
@@ -240,7 +237,7 @@ export function SiteHeader() {
       >
         {/* 左 nav — flex-end，整体向中心靠拢 */}
         <nav
-          className="flex items-center justify-end gap-7 font-[family-name:var(--font-zh)] text-[13px] font-medium tracking-[0.12em] lg:gap-9"
+          className="flex items-center justify-end gap-8 font-[family-name:var(--font-zh)] text-[15px] font-medium lg:gap-10 lg:text-[16px]"
           aria-label="主导航 · 左"
         >
           {leftNavItems.map((item) => (
@@ -256,8 +253,8 @@ export function SiteHeader() {
         <a
           href="#manifesto"
           onClick={(e) => handleAnchorClick(e, "#manifesto")}
-          className="group flex shrink-0 items-center gap-3 rounded-sm px-4 font-[family-name:var(--font-en)] text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--foreground)] transition-opacity hover:opacity-90"
-          aria-label={`${SITE_NAME}，返回宣言`}
+          className="group flex shrink-0 items-center gap-3 rounded-sm px-4 font-[family-name:var(--font-zh)] text-[15px] font-medium text-[var(--foreground)] transition-opacity hover:opacity-90"
+          aria-label={`${SITE_NAME}，返回首页`}
         >
           <Image
             src="/brand-sg-logo.png"
@@ -267,16 +264,13 @@ export function SiteHeader() {
             className="h-9 w-9 shrink-0 object-contain"
             priority
           />
-          <span className="flex items-baseline gap-1.5">
-            <span>Surfer</span>
-            <span>Garage</span>
-          </span>
+          <span>浪前</span>
         </a>
 
         {/* 右 nav + CTA — flex-start，整体向中心靠拢 */}
         <div className="flex items-center justify-start gap-7 lg:gap-9">
           <nav
-            className="flex items-center gap-7 font-[family-name:var(--font-zh)] text-[13px] font-medium tracking-[0.12em] lg:gap-9"
+            className="flex items-center gap-8 font-[family-name:var(--font-zh)] text-[15px] font-medium lg:gap-10 lg:text-[16px]"
             aria-label="主导航 · 右"
           >
             {rightNavItems.map((item) => (
@@ -293,11 +287,11 @@ export function SiteHeader() {
             href={HEADER_CTA_HREF}
             onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
             data-magnet
-            className="group ml-3 inline-flex shrink-0 items-center gap-2 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-4 py-2 font-[family-name:var(--font-en)] text-[10.5px] font-medium uppercase tracking-[0.18em] text-[var(--foreground)] transition-[background-color,border-color] duration-200 hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_18%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/55"
-            aria-label="加入 SurferGarage 社群"
+            className="group ml-3 inline-flex shrink-0 items-center gap-2 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-4 py-2 font-[family-name:var(--font-zh)] text-[14px] font-medium text-[var(--foreground)] transition-[background-color,border-color] duration-200 hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_18%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/55"
+            aria-label="加入车库"
           >
             <span className="sg-magnet-target inline-flex items-center gap-2">
-              <span>Join the Garage</span>
+              <span>加入车库</span>
               <span
                 aria-hidden
                 className="font-[family-name:var(--font-en)] text-[var(--brand-teal)] transition-transform duration-200 group-hover:translate-x-0.5"
@@ -330,7 +324,7 @@ export function SiteHeader() {
             className={`${SG_PAGE_SHELL_CLASS} flex flex-col gap-1 py-6`}
             aria-label="移动主导航"
           >
-            {SITE_PRIMARY_NAV.map((item, i) => {
+            {SITE_PRIMARY_NAV.map((item) => {
               const id = item.href.replace(/^#/, "");
               const isActive = activeId === id;
               return (
@@ -339,18 +333,13 @@ export function SiteHeader() {
                   href={item.href}
                   onClick={(e) => handleAnchorClick(e, item.href)}
                   tabIndex={open ? 0 : -1}
-                  className={`flex items-center justify-between border-b border-[var(--hairline-soft)] py-4 font-[family-name:var(--font-zh)] text-[18px] font-medium leading-none tracking-[0.04em] transition-colors hover:text-[var(--foreground)] ${
+                  className={`flex items-center justify-between border-b border-[var(--hairline-soft)] py-4 font-[family-name:var(--font-zh)] text-[19px] font-medium leading-none transition-colors hover:text-[var(--foreground)] ${
                     isActive
                       ? "text-[var(--foreground)]"
                       : "text-[var(--muted-strong)]"
                   }`}
                 >
-                  <span className="flex items-baseline gap-3">
-                    <span className="editorial-mono text-[10px] text-[var(--muted)]">
-                      §{String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span>{item.labelZh}</span>
-                  </span>
+                  <span>{item.labelZh}</span>
                   <span aria-hidden className="text-[var(--muted)]">
                     {isActive ? "·" : "→"}
                   </span>

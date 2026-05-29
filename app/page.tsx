@@ -15,8 +15,15 @@ import { SOCIAL_FOUNDERS_TRENCH_MIN_H } from "@/lib/founders-scroll-rhythm";
 export default function Home() {
   return (
     <div className="relative isolate flex min-h-full min-w-0 flex-col overflow-x-clip">
-      {/* 主列纵向渐变（hero 水下 → 出水线 → editorial paper） */}
-      <div className="pointer-events-none absolute inset-0 z-0 sg-main-depth" aria-hidden />
+      {/* 主列底色：paper 常驻 + 水下叠层（--ambient-mode 与滚动 depth-t 同步淡出） */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 sg-main-depth-paper"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 z-0 sg-main-depth-submerge"
+        aria-hidden
+      />
 
       {/* Blueprint Magazine: 全站固定点阵 + grain（仅出水线后显形） */}
       <SgAmbientGrid />

@@ -13,7 +13,10 @@ export function normalizeBvid(raw: string): string | null {
 }
 
 export type BilibiliPlayerOptions = {
+  /** 多 P 集数，从 1 起；有 `cid` 时 player 忽略此参数 */
   page?: number;
+  aid?: number;
+  cid?: number;
   autoplay?: boolean;
   danmaku?: boolean;
   highQuality?: boolean;
@@ -21,7 +24,7 @@ export type BilibiliPlayerOptions = {
   muted?: boolean;
 };
 
-/** 生成官方内嵌播放器 URL（仅 `bvid` 即可，无需 aid/cid） */
+/** 生成官方站外播放器 URL（`aid`+`cid`+`bvid` 组合最稳） */
 export function buildBilibiliPlayerSrc(
   bvid: string,
   options: BilibiliPlayerOptions = {},
@@ -31,6 +34,8 @@ export function buildBilibiliPlayerSrc(
 
   const {
     page = 1,
+    aid,
+    cid,
     autoplay = false,
     danmaku = false,
     highQuality = true,
@@ -38,16 +43,46 @@ export function buildBilibiliPlayerSrc(
   } = options;
 
   const params = new URLSearchParams({
+    isOutside: "1",
     bvid: id,
-    page: String(page),
+    p: String(page),
     high_quality: highQuality ? "1" : "0",
     danmaku: danmaku ? "1" : "0",
     autoplay: autoplay ? "1" : "0",
-    as_wide: "1",
     muted: muted ? "1" : "0",
   });
 
+  if (typeof aid === "number" && aid > 0) {
+    params.set("aid", String(aid));
+  }
+  if (typeof cid === "number" && cid > 0) {
+    params.set("cid", String(cid));
+  }
+
   return `https://player.bilibili.com/player.html?${params.toString()}`;
+}
+
+const prefetchedPlayerDocs = new Set<string>();
+
+/** 浏览器空闲时预取播放器文档（同一 URL 只 prefetch 一次） */
+export function prefetchBilibiliPlayerDocument(src: string | null): void {
+  if (!src || typeof document === "undefined") return;
+  if (prefetchedPlayerDocs.has(src)) return;
+  prefetchedPlayerDocs.add(src);
+
+  const run = () => {
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.as = "document";
+    link.href = src;
+    document.head.appendChild(link);
+  };
+
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(run, { timeout: 2000 });
+  } else {
+    setTimeout(run, 0);
+  }
 }
 
 export function bilibiliWatchUrl(bvid: string): string {
@@ -56,6 +91,8 @@ export function bilibiliWatchUrl(bvid: string): string {
 }
 
 export type BilibiliVideoMeta = {
+  aid?: number;
+  cid?: number;
   title?: string;
   pic?: string;
 };
@@ -79,19 +116,48 @@ export async function fetchBilibiliVideoMeta(
   if (cached !== undefined) return cached;
 
   try {
-    const res = await fetch(
-      `https://api.bilibili.com/x/web-interface/view?bvid=${encodeURIComponent(id)}`,
-      { credentials: "omit", cache: "force-cache" },
-    );
+    const endpoint =
+      typeof window === "undefined"
+        ? `https://api.bilibili.com/x/web-interface/view?bvid=${encodeURIComponent(id)}`
+        : `/api/bilibili/view?bvid=${encodeURIComponent(id)}`;
+
+    const res = await fetch(endpoint, {
+      credentials: "omit",
+      cache: "force-cache",
+    });
     if (!res.ok) return cacheMeta(id, EMPTY_META);
-    const json = (await res.json()) as {
+
+    const payload = (await res.json()) as {
+      aid?: number;
+      cid?: number;
+      title?: string;
+      pic?: string;
       code?: number;
-      data?: { title?: string; pic?: string };
+      data?: {
+        aid?: number;
+        cid?: number;
+        title?: string;
+        pic?: string;
+        pages?: { cid?: number }[];
+      };
     };
-    if (json.code !== 0 || !json.data) return cacheMeta(id, EMPTY_META);
+
+    if (typeof payload.code === "number") {
+      if (payload.code !== 0 || !payload.data) return cacheMeta(id, EMPTY_META);
+      const cid = payload.data.cid ?? payload.data.pages?.[0]?.cid;
+      return cacheMeta(id, {
+        aid: payload.data.aid,
+        cid,
+        title: payload.data.title,
+        pic: payload.data.pic?.replace(/^http:/, "https:"),
+      });
+    }
+
     return cacheMeta(id, {
-      title: json.data.title,
-      pic: json.data.pic?.replace(/^http:/, "https:"),
+      aid: payload.aid,
+      cid: payload.cid,
+      title: payload.title,
+      pic: payload.pic,
     });
   } catch {
     return cacheMeta(id, EMPTY_META);

@@ -241,6 +241,8 @@ export function SurfingFoundersVideoStage() {
               <BilibiliEmbedPlayer
                 key={`${guest.id}-${activeEpisode.bvid}`}
                 bvid={activeEpisode.bvid}
+                aid={activeEpisode.aid}
+                cid={activeEpisode.cid}
                 title={playerTitle}
                 mode="eager"
                 aspectClassName="aspect-video"

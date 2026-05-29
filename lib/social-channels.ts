@@ -32,6 +32,8 @@ export type SocialChannel = {
   followerLabel?: string;
   /** 最近一条更新摘要：标题或一句话 */
   latest?: string;
+  /** 卡片预览图（视频封面等） */
+  coverSrc?: string;
 };
 
 const wechatArticle: SocialChannel = {
@@ -39,10 +41,10 @@ const wechatArticle: SocialChannel = {
   kind: "article",
   mark: "wechat",
   labelEn: "WeChat",
-  labelZh: "公众号专栏",
+  labelZh: "微信公众号",
   href: "#founders",
-  descriptionZh: "微信长文 · 片场选篇",
-  followerLabel: "持续更新",
+  descriptionZh: "",
+  followerLabel: undefined,
   latest:
     "从小玩硝糖火箭的少年，现在想把世界永存进树脂里 · 对话「稀树科技」曹瑞翔",
 };
@@ -53,31 +55,33 @@ const videoChannels: SocialChannel[] = [
     kind: "video",
     mark: "xiaohongshu",
     labelEn: "Xiaohongshu",
-    labelZh: "小红书 · 视频",
+    labelZh: "小红书",
     href: "https://www.xiaohongshu.com/user/profile/66c1db2d000000001d030d6e?xsec_token=ABSe1GVdniK6h9xUrt52iMEnugcyIWsAnbWnCKOfgbgxA%3D&xsec_source=pc_search",
-    descriptionZh: "短视频 · 图文",
-    followerLabel: "—",
-    latest: "按平台节奏更新",
+    descriptionZh: "创始人对谈 · 短视频切片",
+    followerLabel: undefined,
+    latest: "创始人对谈 · 短视频切片同步更新",
   },
   {
     id: "bilibili",
     kind: "video",
     mark: "bilibili",
     labelEn: "Bilibili",
-    labelZh: "哔哩哔哩 · 视频",
+    labelZh: "哔哩哔哩",
     href: "https://space.bilibili.com/3546759022250564",
-    descriptionZh: "S01 播客 · 片场连映",
-    followerLabel: "Season 01",
+    descriptionZh: "",
+    followerLabel: undefined,
     latest: "Vol.04 · 财富方法论：如何从零赚到第一桶金，再到财富自由",
+    coverSrc:
+      "https://i0.hdslb.com/bfs/archive/ec00470cc4ae1e7dc62d30e393a854cca852d7df.jpg",
   },
   {
     id: "twitter",
     kind: "video",
     mark: "twitter",
     labelEn: "X (Twitter)",
-    labelZh: "X（Twitter）· 视频",
+    labelZh: "X",
     href: "#",
-    descriptionZh: "筹备中",
+    descriptionZh: "",
     followerLabel: "Coming soon",
     latest: "英文版筹备中",
   },
@@ -88,7 +92,7 @@ const videoChannels: SocialChannel[] = [
     labelEn: "YouTube",
     labelZh: "YouTube · 视频",
     href: "#",
-    descriptionZh: "筹备中",
+    descriptionZh: "",
     followerLabel: "Coming soon",
     latest: "海外频道筹备中",
   },
@@ -120,38 +124,22 @@ const githubOrg: SocialChannel = {
 /** Connect 首页：按产品逻辑分三块（与 `home-social` 一致）。 */
 export const SOCIAL_CONNECT_SECTIONS: readonly {
   id: string;
-  index: string;
-  eyebrowEn: string;
   titleZh: string;
-  titleEn: string;
-  leadZh: string;
   channels: readonly SocialChannel[];
 }[] = [
   {
     id: "articles",
-    index: "01",
-    eyebrowEn: "Articles",
     titleZh: "文章",
-    titleEn: "Long-form",
-    leadZh: "",
     channels: [wechatArticle],
   },
   {
     id: "video",
-    index: "02",
-    eyebrowEn: "Video & audio",
     titleZh: "视频与播客",
-    titleEn: "Motion & spoken",
-    leadZh: "",
     channels: videoChannels,
   },
   {
     id: "open-source",
-    index: "03",
-    eyebrowEn: "Open source",
-    titleZh: "GitHub 仓库",
-    titleEn: "Repositories",
-    leadZh: "",
+    titleZh: "GitHub",
     channels: [githubOrg],
   },
 ];

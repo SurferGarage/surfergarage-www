@@ -38,12 +38,12 @@ export function FooterNewsletter() {
     <form onSubmit={submit} className="flex w-full flex-col gap-2.5" noValidate>
       <label
         htmlFor={fieldId}
-        className="editorial-eyebrow text-[var(--muted)]"
+        className="font-[family-name:var(--font-zh)] text-[15px] font-medium text-[var(--foreground)] md:text-[16px]"
       >
-        Newsletter · 新一期通知
+        新一期通知
       </label>
 
-      <div className="mt-1 flex w-full gap-2">
+      <div className="mt-3 flex w-full gap-2">
         <input
           id={fieldId}
           type="email"
@@ -55,20 +55,20 @@ export function FooterNewsletter() {
             if (status !== "idle") setStatus("idle");
           }}
           aria-invalid={status === "invalid"}
-          className="w-0 min-w-0 flex-1 rounded-sm border border-[var(--hairline)] bg-[var(--paper-1)] px-3 py-2.5 font-[family-name:var(--font-en)] text-[13px] text-[var(--foreground)] placeholder:text-[var(--muted-soft)] transition-colors focus:border-[var(--brand-teal)]/55 focus:bg-[var(--paper-2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/45"
+          className="w-0 min-w-0 flex-1 rounded-sm border border-[var(--hairline)] bg-[var(--paper-1)] px-3 py-3 font-[family-name:var(--font-en)] text-[14px] text-[var(--foreground)] placeholder:text-[var(--muted-soft)] transition-colors focus:border-[var(--brand-teal)]/55 focus:bg-[var(--paper-2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/45 md:text-[15px]"
         />
         <button
           type="submit"
-          className="shrink-0 rounded-sm border border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_12%,transparent)] px-3.5 py-2.5 editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,transparent)]"
+          className="shrink-0 rounded-sm border border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_12%,transparent)] px-4 py-3 font-[family-name:var(--font-zh)] text-[14px] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,transparent)] md:text-[15px]"
         >
-          订阅 ↗
+          订阅
         </button>
       </div>
 
       <p
         role="status"
         aria-live="polite"
-        className="editorial-mono min-h-[14px] text-[10px] uppercase tracking-[0.16em]"
+        className="min-h-[1.25rem] font-[family-name:var(--font-zh)] text-[14px] md:text-[15px]"
       >
         {status === "submitted" ? (
           <span className="text-[var(--brand-teal)]">
@@ -78,11 +78,7 @@ export function FooterNewsletter() {
           <span className="text-[var(--accent-amber)]">
             请输入有效邮箱
           </span>
-        ) : (
-          <span className="text-[var(--muted-soft)]">
-            无垃圾邮件
-          </span>
-        )}
+        ) : null}
       </p>
     </form>
   );

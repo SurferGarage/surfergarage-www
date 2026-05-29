@@ -42,32 +42,53 @@
   --depth-t: 0;
   /* 供全站背景/光河/顶栏统一读取，避免各处重复 clamp */
   --sg-dt: clamp(0, var(--depth-t, 0), 1);
-  /* 「出水线」：从 hero（dt≈0.04）渐进到 editorial paper（dt≈0.22）；超过即 1。
-   * 由各组件作为 opacity 衰减门控，让水下氛围只在 hero 强存在。 */
-  --surface-mode: clamp(0, calc((var(--sg-dt) - 0.04) / 0.18), 1);
+  /* 「出水线」：与 `--depth-t` 同步，横跨 Hero 底 + Proof 顶（约 5%→37% 页高），避免 Hero 内就切到 paper */
+  --surface-mode: clamp(0, calc((var(--sg-dt) - 0.05) / 0.32), 1);
   /* 反向：1 = 水下，0 = 编辑区 */
   --ambient-mode: calc(1 - var(--surface-mode));
   /* 丁达尔层首帧：与 JS 同步前默认强光 */
   --uwl-tyndall: 1;
 }
 
-/* 主列纵向渐变：Hero（约 0–8%）保持「海面 → 闪电蓝深水」水下色温；
- * 8–10% 完成「出水线」过渡到 paper-1；10% 之后整段稳定在 editorial paper，
- * 让 Proof / Founders / Social / Call 都在同一统一暗色 deck 上，无硬切色带。 */
-.sg-main-depth {
+/* 主列底色：稳定 editorial paper（全页）；水下层单独叠加以 --ambient-mode 淡出 */
+.sg-main-depth-paper {
   background: linear-gradient(
     180deg,
-    color-mix(in oklch, var(--brand-teal) 22%, var(--depth-surface)) 0%,
-    color-mix(in oklch, var(--brand-primary) 38%, var(--depth-mid)) 4%,
-    var(--depth-mid) 7%,
-    color-mix(in oklch, var(--depth-mid) 52%, var(--paper-1)) 8.5%,
-    var(--paper-1) 10%,
-    var(--paper-1) 68%,
+    var(--paper-1) 0%,
+    var(--paper-1) 72%,
     var(--paper-0) 100%
   );
 }
 
-/* 全站水下光氛：须叠在 `page.tsx` 内 `.sg-main-depth` 之上，否则实色渐变会完全挡住光球 */
+/* 水下色温：用 vh 固定首屏高度，勿用整页 %（长页会在 Hero 底提前透明 → 黑带） */
+.sg-main-depth-submerge {
+  opacity: var(--ambient-mode, 1);
+  transition: opacity 420ms ease-out;
+  background:
+    radial-gradient(
+      ellipse 80% 52% at 32% 0%,
+      color-mix(in oklch, var(--brand-teal) 18%, var(--depth-surface)) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 52% 68% at 94% 22%,
+      color-mix(in oklch, var(--brand-navy) 85%, #000) 0%,
+      transparent 54%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--brand-primary) 32%, var(--depth-surface)) 0%,
+      color-mix(in oklch, var(--brand-primary) 38%, var(--depth-mid)) 28vh,
+      var(--depth-mid) 52vh,
+      color-mix(in oklch, var(--depth-mid) 62%, var(--paper-1)) 88vh,
+      var(--paper-1) 118vh
+    );
+  background-size: 100% 118vh;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+
+/* 全站水下光氛：须叠在 `sg-main-depth-*` 之上，否则实色渐变会完全挡住光球 */
 .uwl-stage {
   pointer-events: none;
   position: absolute;
@@ -75,9 +96,34 @@
   z-index: 0;
   isolation: isolate;
   mix-blend-mode: screen;
-  /* 「出水线」之后氛围层迅速衰减，避免 #founders 起继续抢戏 */
   opacity: var(--ambient-mode, 1);
-  transition: opacity 280ms ease-out;
+  transition: opacity 420ms ease-out;
+}
+
+.water-volume-fx {
+  opacity: calc(var(--ambient-mode, 1) * 0.88);
+  transition: opacity 420ms ease-out;
+}
+
+/* Hero 底：向下溢出渐变，衔接 Proof（避免 section 边界 + WebGL 截断形成黑条） */
+#manifesto::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 22vh;
+  transform: translateY(42%);
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in oklch, var(--depth-mid) 35%, transparent) 32%,
+    color-mix(in oklch, var(--paper-1) 92%, var(--depth-mid)) 72%,
+    var(--paper-1) 100%
+  );
+  opacity: calc(0.65 + var(--ambient-mode, 1) * 0.35);
 }
 
 .uwl-surface {
@@ -86,34 +132,34 @@
   top: -14%;
   height: 52%;
   transform: scaleY(-1);
-  transform-origin: 50% 0%;
-  opacity: 0.88;
+  transform-origin: 36% 0%;
+  opacity: 0.72;
   background:
-    radial-gradient(ellipse 95% 82% at 50% 100%, rgba(235, 255, 255, 0.52), transparent 52%),
-    radial-gradient(ellipse 42% 28% at 50% 100%, rgba(255, 255, 255, 0.22), transparent 62%),
-    linear-gradient(188deg, rgba(150, 240, 255, 0.36) 0%, transparent 46%);
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 100%);
+    radial-gradient(ellipse 88% 76% at 36% 100%, rgba(235, 255, 255, 0.42), transparent 54%),
+    radial-gradient(ellipse 38% 24% at 34% 100%, rgba(255, 255, 255, 0.16), transparent 64%),
+    linear-gradient(196deg, rgba(120, 220, 255, 0.28) 0%, transparent 48%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 48%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 48%, transparent 100%);
 }
 
 /* 水面「开孔」：顶缘强光渗入 */
 .uwl-aperture {
   position: absolute;
-  left: 50%;
-  top: -5%;
-  width: min(94vw, 58rem);
-  height: 24vh;
+  left: 36%;
+  top: -6%;
+  width: min(72vw, 44rem);
+  height: 22vh;
   transform: translateX(-50%);
   border-radius: 50%;
   background: radial-gradient(
-    ellipse 56% 48% at 50% 0%,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(220, 252, 255, 0.45) 22%,
-    rgba(120, 210, 255, 0.16) 48%,
-    transparent 74%
+    ellipse 52% 44% at 50% 0%,
+    rgba(255, 255, 255, 0.58) 0%,
+    rgba(200, 248, 255, 0.32) 24%,
+    rgba(90, 180, 220, 0.12) 50%,
+    transparent 76%
   );
-  filter: blur(22px) saturate(1.35);
-  opacity: calc(0.52 + var(--uwl-tyndall, 1) * 0.48);
+  filter: blur(26px) saturate(1.2);
+  opacity: calc(0.38 + var(--uwl-tyndall, 1) * 0.42);
   mix-blend-mode: screen;
 }
 
@@ -127,7 +173,7 @@
 
 .uwl-ray {
   position: absolute;
-  left: 50%;
+  left: 36%;
   top: -8%;
   width: 13vmin;
   height: 132vh;
@@ -168,10 +214,10 @@
 
 .uwl-orb-shell {
   position: absolute;
-  width: min(150vmin, 920px);
-  height: min(150vmin, 920px);
-  left: calc(var(--uwl-orb-x, 0.5) * 100vw);
-  top: calc(var(--uwl-orb-y, 0.12) * 100vh);
+  width: min(132vmin, 820px);
+  height: min(132vmin, 820px);
+  left: calc(var(--uwl-orb-x, 0.36) * 100vw);
+  top: calc(var(--uwl-orb-y, 0.1) * 100vh);
   transform: translate(-50%, -50%) translateZ(0);
   will-change: left, top;
 }
@@ -181,13 +227,13 @@
   inset: 0;
   border-radius: 50%;
   background: radial-gradient(
-    circle at 40% 38%,
+    circle at 44% 40%,
     var(--uwl-orb-mid, rgb(58, 214, 198)) 0%,
-    var(--uwl-orb-soft, rgba(39, 215, 199, 0.45)) 38%,
-    transparent 68%
+    var(--uwl-orb-soft, rgba(39, 215, 199, 0.45)) 34%,
+    transparent 64%
   );
-  filter: blur(42px) saturate(1.35);
-  opacity: calc(0.62 + var(--uwl-color-t, 0) * 0.28);
+  filter: blur(48px) saturate(1.22);
+  opacity: calc(0.48 + var(--uwl-color-t, 0) * 0.22);
 }
 
 .uwl-orb-hot {
@@ -229,6 +275,8 @@
 }
 
 html {
+  /* Lenis 接管平滑滚；减少动态效果时回退原生 smooth */
+  scroll-behavior: auto;
   /* 与 sticky 顶栏 + section scroll-mt 对齐，Lenis 锚点不挡标题 */
   scroll-padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
   scrollbar-gutter: stable;
@@ -238,6 +286,12 @@ html {
     var(--depth-mid) calc(36% * (1 - var(--sg-dt))),
     color-mix(in oklch, var(--paper-1) 70%, var(--paper-0))
   );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -264,14 +318,13 @@ body {
  * Editorial Typography 工具类（章节编号、mono 标签、serif 显示）
  * ============================================================ */
 
-/* §01 — SECTION NAME 章节编号小行：mono + 全大写 + 高字距 */
+/* 章节小标签（保留少量场景）；字号已上调，不再全大写 */
 .editorial-eyebrow {
   font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
   font-weight: 500;
-  font-size: 11px;
-  line-height: 1;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
   color: var(--muted);
   font-feature-settings: "tnum" 1, "calt" 0;
 }
@@ -306,6 +359,37 @@ body {
 }
 
 /* Manifesto 巨型英文骨牌：全大写、高字重、负字距（中文用独立 class，勿混用本类） */
+/* 统一区块标题（与 sg-layout SG_SECTION_TITLE_CLASS 一致） */
+.sg-section-title {
+  font-family: var(--font-zh), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: clamp(1.85rem, 3.8vw, 2.85rem);
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.sg-inline-link {
+  font-family: var(--font-zh), ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  color: var(--brand-teal);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--brand-teal) 30%, transparent);
+  text-underline-offset: 5px;
+  transition:
+    color 0.2s ease,
+    text-decoration-color 0.2s ease;
+}
+.sg-inline-link:hover {
+  color: var(--foreground);
+  text-decoration-color: color-mix(in oklch, var(--foreground) 35%, transparent);
+}
+@media (min-width: 768px) {
+  .sg-inline-link {
+    font-size: 16px;
+  }
+}
+
 .wordmark-display {
   font-family: var(--font-en), ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
@@ -381,7 +465,7 @@ body {
 
 .sg-river-layer {
   animation: sg-river-drift 24s ease-in-out infinite;
-  transform-origin: 62% 14%;
+  transform-origin: 40% 12%;
 }
 
 .sg-river-svg {
@@ -411,7 +495,7 @@ body {
   mix-blend-mode: screen;
   transition: opacity 320ms ease-out;
   animation: sg-river-drift 38s ease-in-out infinite;
-  transform-origin: 38% 30%;
+  transform-origin: 32% 28%;
 }
 
 .sg-river-deep-svg {
@@ -537,7 +621,28 @@ body {
   background-size: 160% 160%;
   filter: blur(48px);
   animation: sg-founder-breath-drift 36s ease-in-out infinite;
-  will-change: transform, opacity;
+}
+
+/* 运行时节能：标签隐藏或 Hero 离屏时暂停装饰动画（外观静止，不影响 GSAP scrub 透明度） */
+html[data-doc-hidden] .sg-river-layer,
+html[data-doc-hidden] .sg-river-svg,
+html[data-doc-hidden] .sg-river-path-shimmer,
+html[data-doc-hidden] .sg-river-deep,
+html[data-doc-hidden] .sg-river-deep-svg,
+html[data-doc-hidden] .sg-founder-breath-glow,
+html[data-doc-hidden] .sg-call-orb,
+html[data-doc-hidden] .sg-call-orb-core,
+html[data-doc-hidden] .sg-scroll-cue-line,
+html[data-sg-atmosphere-paused] .sg-river-layer,
+html[data-sg-atmosphere-paused] .sg-river-svg,
+html[data-sg-atmosphere-paused] .sg-river-path-shimmer,
+html[data-sg-atmosphere-paused] .sg-river-deep,
+html[data-sg-atmosphere-paused] .sg-river-deep-svg,
+html[data-sg-atmosphere-paused] .sg-founder-breath-glow,
+html[data-sg-atmosphere-paused] .sg-call-orb,
+html[data-sg-atmosphere-paused] .sg-call-orb-core,
+html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
+  animation-play-state: paused !important;
 }
 
 ::selection {
@@ -563,6 +668,208 @@ body {
 }
 .wechat-official-feed-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(200, 210, 230, 0.55);
+}
+
+/* 微信专栏 · 左栏 Vol 列表 */
+.sg-wechat-vol-panel:focus-within .sg-wechat-vol-scroll,
+.sg-wechat-vol-panel:hover .sg-wechat-vol-scroll {
+  scrollbar-color: rgba(200, 210, 230, 0.62) rgba(11, 12, 16, 0.5);
+}
+
+.sg-wechat-vol-scroll {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 147, 168, 0.42) rgba(11, 12, 16, 0.35);
+}
+.sg-wechat-vol-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+.sg-wechat-vol-scroll::-webkit-scrollbar-track {
+  margin-block: 4px;
+  background: rgba(11, 12, 16, 0.5);
+  border-radius: 9999px;
+}
+.sg-wechat-vol-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgba(139, 147, 168, 0.45);
+  transition: background 0.25s ease;
+}
+.sg-wechat-vol-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(39, 215, 199, 0.55);
+}
+
+.sg-wechat-vol-scroll-wrap::before,
+.sg-wechat-vol-scroll-wrap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 10px;
+  z-index: 2;
+  height: 2.25rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.sg-wechat-vol-scroll-wrap::before {
+  top: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--paper-1) 96%, transparent) 0%,
+    transparent 100%
+  );
+}
+.sg-wechat-vol-scroll-wrap::after {
+  bottom: 0;
+  background: linear-gradient(
+    0deg,
+    color-mix(in oklch, var(--paper-1) 96%, transparent) 0%,
+    transparent 100%
+  );
+}
+.sg-wechat-vol-scroll-wrap[data-can-scroll-top]::before {
+  opacity: 1;
+}
+.sg-wechat-vol-scroll-wrap[data-can-scroll-bottom]::after {
+  opacity: 1;
+}
+
+/* 视频播客 · 嘉宾名单滚轮区 */
+.sg-guest-roster-scroll {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 147, 168, 0.42) rgba(11, 12, 16, 0.35);
+}
+.sg-guest-roster-scroll-wrap:focus-within .sg-guest-roster-scroll,
+.sg-guest-roster-scroll-wrap:hover .sg-guest-roster-scroll {
+  scrollbar-color: rgba(200, 210, 230, 0.62) rgba(11, 12, 16, 0.5);
+}
+.sg-guest-roster-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.sg-guest-roster-scroll::-webkit-scrollbar-track {
+  margin-block: 6px;
+  background: rgba(11, 12, 16, 0.45);
+  border-radius: 9999px;
+}
+.sg-guest-roster-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgba(139, 147, 168, 0.45);
+}
+.sg-guest-roster-scroll-wrap::before,
+.sg-guest-roster-scroll-wrap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 8px;
+  z-index: 2;
+  height: 2.5rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.sg-guest-roster-scroll-wrap::before {
+  top: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--paper-1) 96%, transparent) 0%,
+    transparent 100%
+  );
+}
+.sg-guest-roster-scroll-wrap::after {
+  bottom: 0;
+  background: linear-gradient(
+    0deg,
+    color-mix(in oklch, var(--paper-1) 96%, transparent) 0%,
+    transparent 100%
+  );
+}
+.sg-guest-roster-scroll-wrap[data-can-scroll-top]::before,
+.sg-guest-roster-scroll-wrap[data-can-scroll-bottom]::after {
+  opacity: 1;
+}
+
+.sg-wechat-vol-option {
+  position: relative;
+}
+.sg-wechat-vol-option::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--brand-teal);
+  opacity: 0;
+  transform: scaleY(0.35);
+  transition:
+    opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sg-wechat-vol-option[aria-selected="true"]::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+@keyframes sg-wechat-cover-title-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.sg-wechat-cover-title-in {
+  animation: sg-wechat-cover-title-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sg-wechat-slide-next {
+  from {
+    opacity: 0;
+    transform: translateX(7%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes sg-wechat-slide-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-7%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.sg-wechat-cover-slide-next {
+  animation: sg-wechat-slide-next 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.sg-wechat-cover-slide-prev {
+  animation: sg-wechat-slide-prev 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.sg-wechat-cover-stage {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-wechat-vol-scroll {
+    scroll-behavior: auto;
+  }
+  .sg-wechat-vol-option::before,
+  .sg-wechat-vol-scroll-wrap::before,
+  .sg-wechat-vol-scroll-wrap::after {
+    transition: none;
+  }
+  .sg-wechat-cover-title-in,
+  .sg-wechat-cover-slide-next,
+  .sg-wechat-cover-slide-prev {
+    animation: none;
+  }
 }
 
 /* 横滑列表：非聚焦卡略缩，居中卡略放大（transform 在外链上，与 CardBody 倾角分层） */
@@ -675,11 +982,11 @@ body {
   pointer-events: none;
   background: radial-gradient(
     closest-side at 50% 50%,
-    color-mix(in oklch, var(--brand-teal) 18%, transparent) 0%,
-    color-mix(in oklch, var(--brand-primary) 8%, transparent) 32%,
+    color-mix(in oklch, var(--brand-teal) 12%, transparent) 0%,
+    color-mix(in oklch, var(--brand-primary) 6%, transparent) 32%,
     transparent 72%
   );
-  opacity: calc(var(--surface-mode, 0) * 0.55);
+  opacity: calc(var(--surface-mode, 0) * 0.42);
   transition: opacity 400ms ease-out;
   /* mix-blend-mode 让光叠加到 paper 上更柔和 */
   mix-blend-mode: screen;
@@ -704,9 +1011,74 @@ body {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.65 0 0 0 0 0.7 0 0 0 0 0.78 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   background-size: 160px 160px;
   background-repeat: repeat;
-  opacity: calc(0.06 + var(--surface-mode, 0) * 0.04);
+  opacity: calc(0.08 + var(--ambient-mode, 1) * 0.05 + var(--surface-mode, 0) * 0.03);
   mix-blend-mode: overlay;
   transition: opacity 320ms ease-out;
+}
+
+/* Hero 局部构图：只负责顶/侧，底缘交给全页 surface-bridge（避免 section 硬切） */
+.sg-hero-vignette {
+  pointer-events: none;
+  opacity: calc(0.55 + var(--ambient-mode, 1) * 0.45);
+  transition: opacity 360ms ease-out;
+  background:
+    radial-gradient(
+      ellipse 52% 42% at 28% 6%,
+      rgba(39, 215, 199, 0.14) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 58% 72% at 92% 32%,
+      rgba(3, 5, 20, 0.72) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      108deg,
+      rgba(0, 9, 226, 0.14) 0%,
+      transparent 38%,
+      rgba(6, 6, 68, 0.28) 100%
+    );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 58%,
+    rgba(0, 0, 0, 0.65) 78%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 58%,
+    rgba(0, 0, 0, 0.65) 78%,
+    transparent 100%
+  );
+}
+
+.sg-hero-scan {
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(200, 220, 255, 0.022) 3px,
+    rgba(200, 220, 255, 0.022) 4px
+  );
+  opacity: calc(0.2 + var(--ambient-mode, 1) * 0.22);
+  mix-blend-mode: soft-light;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 70%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-hero-scan {
+    opacity: 0.08;
+  }
+
+  .sg-main-depth-submerge,
+  #manifesto::after,
+  .uwl-stage,
+  .water-volume-fx {
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

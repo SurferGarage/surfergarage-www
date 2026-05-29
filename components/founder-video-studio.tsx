@@ -2,7 +2,11 @@
 
 import { BilibiliEmbedPlayer } from "@/components/bilibili-embed-player";
 import { BilibiliEpisodeCover } from "@/components/bilibili-episode-cover";
-import { bilibiliWatchUrl } from "@/lib/bilibili-player";
+import {
+  bilibiliWatchUrl,
+  buildBilibiliPlayerSrc,
+  prefetchBilibiliPlayerDocument,
+} from "@/lib/bilibili-player";
 import {
   BILIBILI_SPACE_URL,
   getDefaultEpisode,
@@ -11,61 +15,105 @@ import {
   type SurfingFoundersEpisode,
   type SurfingFoundersGuest,
 } from "@/lib/surfing-founders-video-season";
-import { useFounderPanelVisible } from "@/lib/use-founder-panel-visible";
+import {
+  useFounderPanelPrefetch,
+  useFounderPanelVisible,
+} from "@/lib/use-founder-panel-visible";
 import Image from "next/image";
-import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MutableRefObject,
+  type RefObject,
+  type WheelEvent as ReactWheelEvent,
+} from "react";
 
-/** 嘉宾大字垂直名单 — YC 式 */
+const ROSTER_SCROLL_EDGE = 10;
+
+function useScrollEdgeHints(
+  scrollRef: RefObject<HTMLElement | null>,
+  rerenderKey = "",
+) {
+  const [hints, setHints] = useState({ top: false, bottom: false });
+
+  const sync = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const canScroll = el.scrollHeight > el.clientHeight + 2;
+    setHints({
+      top: canScroll && el.scrollTop > ROSTER_SCROLL_EDGE,
+      bottom:
+        canScroll &&
+        el.scrollTop + el.clientHeight < el.scrollHeight - ROSTER_SCROLL_EDGE,
+    });
+  }, [scrollRef]);
+
+  useEffect(() => {
+    sync();
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", sync, { passive: true });
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", sync);
+      ro.disconnect();
+    };
+  }, [scrollRef, sync, rerenderKey]);
+
+  return hints;
+}
+
+/** 嘉宾名单 — 栏内水平垂直居中，大行距 */
 function GuestRoster({
   guests,
   activeId,
   onSelect,
+  optionRefs,
 }: {
   guests: readonly SurfingFoundersGuest[];
   activeId: string;
   onSelect: (id: string) => void;
+  optionRefs: MutableRefObject<Map<string, HTMLButtonElement>>;
 }) {
   return (
     <ul
       role="listbox"
       aria-label="本季嘉宾"
-      className="flex flex-col divide-y divide-[var(--hairline-soft)]"
+      className="flex w-full max-w-[14rem] flex-col items-center gap-6 md:max-w-[16rem] md:gap-8 lg:gap-9"
     >
       {guests.map((g) => {
         const isActive = g.id === activeId;
         const live = !g.comingSoon && g.episodes.length > 0;
         return (
-          <li key={g.id}>
+          <li key={g.id} className="w-full">
             <button
+              ref={(node) => {
+                if (node) optionRefs.current.set(g.id, node);
+                else optionRefs.current.delete(g.id);
+              }}
               type="button"
               role="option"
               aria-selected={isActive}
               disabled={!live && !isActive}
               onClick={() => live && onSelect(g.id)}
-              className={`group flex w-full flex-col items-start gap-1.5 py-3 text-left transition-[color,opacity] md:py-4 ${
-                !live && !isActive ? "cursor-not-allowed opacity-65" : ""
-              }`}
+              className={`group flex w-full flex-col items-center justify-center py-1 text-center transition-[color,opacity,transform] duration-300 md:py-1.5 ${
+                !live && !isActive ? "cursor-not-allowed opacity-50" : ""
+              } ${live && !isActive ? "hover:opacity-90" : ""}`}
             >
               <span
-                className={`font-[family-name:var(--font-en)] uppercase leading-[0.94] tracking-[-0.035em] transition-[font-size,font-weight,color] ${
+                className={`font-[family-name:var(--font-zh)] leading-snug transition-[font-size,font-weight,color] duration-300 ${
                   isActive
-                    ? "text-[clamp(1.85rem,3.4vw,2.7rem)] font-medium text-[var(--foreground)]"
+                    ? "editorial-serif text-[clamp(1.65rem,3vw,2.35rem)] text-[var(--foreground)]"
                     : live
-                      ? "text-[clamp(1.2rem,2vw,1.55rem)] font-normal text-[var(--muted-soft)] group-hover:text-[var(--muted-strong)]"
-                      : "text-[clamp(1.05rem,1.8vw,1.4rem)] font-normal text-[var(--muted-soft)]/55"
+                      ? "text-[clamp(1.1rem,1.85vw,1.45rem)] font-normal text-[var(--muted-soft)] group-hover:text-[var(--muted-strong)]"
+                      : "text-[clamp(1rem,1.6vw,1.25rem)] font-light tracking-[0.04em] text-[var(--muted-soft)]"
                 }`}
               >
-                {g.nameEn}
-              </span>
-              <span
-                className={`font-[family-name:var(--font-zh)] text-[12px] tracking-[0.02em] md:text-[13px] ${
-                  isActive
-                    ? "text-[var(--brand-teal)]"
-                    : "text-[var(--muted)]"
-                }`}
-              >
-                {g.nameZh}
-                {g.comingSoon ? " · 待公布" : ""}
+                {g.comingSoon ? "待公布" : g.nameZh}
               </span>
             </button>
           </li>
@@ -97,19 +145,11 @@ function EpisodeChip({
       }`}
     >
       <span
-        className={`editorial-mono text-[9.5px] uppercase tracking-[0.18em] ${
+        className={`editorial-mono-tabular text-[12px] md:text-[13px] ${
           active ? "text-[var(--brand-teal)]" : "text-[var(--muted)]"
         }`}
       >
         {episode.volLabel}
-      </span>
-      <span
-        className={`line-clamp-1 max-w-[12rem] font-[family-name:var(--font-zh)] text-[12px] leading-snug md:text-[12.5px] ${
-          active ? "text-[var(--foreground)]" : "text-[var(--muted-strong)]"
-        }`}
-        title={episode.titleZh}
-      >
-        {episode.titleZh}
       </span>
     </button>
   );
@@ -124,7 +164,11 @@ function EpisodeChip({
  */
 export function FounderVideoStudio() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const rosterScrollRef = useRef<HTMLDivElement>(null);
+  const rosterOptionRefs = useRef(new Map<string, HTMLButtonElement>());
   const panelVisible = useFounderPanelVisible(rootRef);
+  const panelPrefetch = useFounderPanelPrefetch(rootRef);
+  const shouldMountPlayer = panelVisible || panelPrefetch;
   const season = SURFING_FOUNDERS_SEASON_01;
   const liveGuests = useMemo(
     () => season.guests.filter((g) => !g.comingSoon && g.episodes.length > 0),
@@ -160,6 +204,55 @@ export function FounderVideoStudio() {
     ? `${guest.nameZh} · ${activeEpisode.titleZh}`
     : guest.nameZh;
 
+  const rosterScrollHints = useScrollEdgeHints(
+    rosterScrollRef,
+    `${guest.id}:${season.guests.length}`,
+  );
+
+  const handleRosterWheel = useCallback((e: ReactWheelEvent<HTMLElement>) => {
+    const el = rosterScrollRef.current;
+    if (!el) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    if (scrollHeight <= clientHeight + 1) return;
+
+    const delta = e.deltaY;
+    const atTop = scrollTop <= 0;
+    const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+    if ((delta < 0 && atTop) || (delta > 0 && atBottom)) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    el.scrollBy({ top: delta, behavior: "auto" });
+  }, []);
+
+  useEffect(() => {
+    const btn = rosterOptionRefs.current.get(guest.id);
+    const list = rosterScrollRef.current;
+    if (!btn || !list) return;
+    btn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [guest.id]);
+
+  useEffect(() => {
+    if (!panelPrefetch) return;
+    const episodes = new Set<SurfingFoundersEpisode>();
+    if (activeEpisode) episodes.add(activeEpisode);
+    const def = getDefaultEpisode(guest);
+    if (def) episodes.add(def);
+    for (const ep of episodes) {
+      prefetchBilibiliPlayerDocument(
+        buildBilibiliPlayerSrc(ep.bvid, {
+          aid: ep.aid,
+          cid: ep.cid,
+          autoplay: false,
+          danmaku: false,
+          highQuality: true,
+        }),
+      );
+    }
+  }, [panelPrefetch, guest, activeEpisode]);
+
   return (
     <div
       ref={rootRef}
@@ -172,20 +265,8 @@ export function FounderVideoStudio() {
         {guest.portraitSrc ? (
           /* —— 杂志人物专访 —— 彩色人像 + paper 暗背 letterbox + vignette 软边 */
           <div className="flex h-full w-full flex-col">
-            {/* 顶部 mono 元信息条（paper-2 底色上，不压图） */}
-            <div className="flex items-baseline justify-between gap-3 px-5 pt-6 md:px-8 md:pt-8 lg:px-9 lg:pt-10">
-              <div className="flex items-baseline gap-3">
-                <span className="editorial-mono text-[10.5px] uppercase tracking-[0.22em] text-[var(--foreground)]">
-                  {SURFING_FOUNDERS_SEASON_01.seasonLabelEn} · Origin
-                </span>
-                <span className="editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
-                  {originEpisode?.volLabel ?? "TBA"}
-                </span>
-              </div>
-            </div>
-
             {/* 人像主体：60-70% 容器宽，居中，aspect-[3/4] portrait；保留原色，仅轻微 tune */}
-            <div className="relative flex flex-1 items-center justify-center px-5 py-4 md:px-8 md:py-5 lg:px-10 lg:py-6">
+            <div className="relative flex flex-1 items-center justify-center px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10">
               <div
                 className="relative aspect-[3/4] w-full max-w-[260px] sm:max-w-[300px] md:max-w-[320px] lg:max-w-[300px] xl:max-w-[340px]"
                 style={{
@@ -208,32 +289,10 @@ export function FounderVideoStudio() {
               </div>
             </div>
 
-            {/* 底部 嘉宾名 + 引文 + Play chip（paper-2 底色上，独立区域） */}
-            <div className="flex flex-col gap-2 px-5 pb-6 md:px-8 md:pb-7 lg:px-9 lg:pb-8">
-              <p className="editorial-mono text-[10px] uppercase tracking-[0.22em] text-[color-mix(in_oklch,var(--brand-teal)_60%,var(--muted-strong))]">
-                Now featuring
-              </p>
-              <p className="editorial-serif text-[clamp(1.9rem,3.6vw,2.7rem)] leading-[0.98] text-[var(--foreground)]">
-                {guest.nameEn}
-              </p>
-              <p className="font-[family-name:var(--font-zh)] text-[14px] tracking-[0.04em] text-[var(--brand-teal)] md:text-[15px]">
+            <div className="px-5 pb-6 md:px-8 md:pb-8 lg:px-9 lg:pb-9">
+              <p className="editorial-serif text-[clamp(1.75rem,3.2vw,2.5rem)] leading-[1.02] text-[var(--foreground)]">
                 {guest.nameZh}
               </p>
-              <p className="mt-1 max-w-[36ch] font-[family-name:var(--font-zh)] text-[12px] leading-[1.6] text-[var(--muted-strong)] md:text-[13px]">
-                {guest.duringCaptionZh.slice(0, 36)}…
-              </p>
-
-              {originEpisode ? (
-                <button
-                  type="button"
-                  onClick={() => setEpisodeId(originEpisode.id)}
-                  aria-label={`播放 ${guest.nameZh} 的开场集`}
-                  className="mt-3 inline-flex w-fit items-center gap-2 rounded-sm border border-[var(--hairline-strong)] bg-[rgba(15,17,22,0.7)] px-3 py-1.5 editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_18%,transparent)]"
-                >
-                  <span aria-hidden>▶</span>
-                  Play {originEpisode.volLabel}
-                </button>
-              ) : null}
             </div>
           </div>
         ) : originEpisode ? (
@@ -250,25 +309,10 @@ export function FounderVideoStudio() {
               className="absolute inset-0"
             />
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,rgba(0,0,0,0.55)_100%)]" />
-            <div className="pointer-events-none absolute left-5 top-5 flex items-baseline gap-3 md:left-8 md:top-8">
-              <span className="editorial-mono text-[10.5px] uppercase tracking-[0.22em] text-[rgba(255,255,255,0.9)] [text-shadow:0_1px_3px_rgba(0,0,0,0.55)]">
-                Origin · {originEpisode.volLabel}
-              </span>
-            </div>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-2 px-5 py-6 md:px-8 md:py-7 lg:px-9 lg:py-8">
-              <p className="editorial-mono text-[10px] uppercase tracking-[0.22em] text-[rgba(255,255,255,0.72)] [text-shadow:0_1px_3px_rgba(0,0,0,0.55)]">
-                Now featuring
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 py-6 md:px-8 md:py-7 lg:px-9 lg:py-8">
+              <p className="editorial-serif text-[clamp(1.5rem,3vw,2.2rem)] leading-[1.02] text-[rgba(255,255,255,0.96)] [text-shadow:0_2px_8px_rgba(0,0,0,0.55)]">
+                {guest.nameZh}
               </p>
-              <p className="editorial-serif text-[clamp(1.6rem,3.4vw,2.4rem)] leading-[1.02] text-[rgba(255,255,255,0.96)] [text-shadow:0_2px_8px_rgba(0,0,0,0.55)]">
-                {guest.nameEn}
-              </p>
-              <p className="font-[family-name:var(--font-zh)] text-[12.5px] leading-[1.55] text-[rgba(255,255,255,0.78)] [text-shadow:0_1px_4px_rgba(0,0,0,0.5)] md:text-[13.5px]">
-                {guest.nameZh} · {guest.duringCaptionZh.slice(0, 28)}…
-              </p>
-              <span className="mt-2 inline-flex w-fit items-center gap-2 rounded-full border border-white/35 bg-black/35 px-3 py-1.5 editorial-mono text-[10px] uppercase tracking-[0.18em] text-white backdrop-blur-sm transition-opacity group-hover:bg-black/55">
-                <span aria-hidden>▶</span>
-                Play {originEpisode.volLabel}
-              </span>
             </div>
           </button>
         ) : (
@@ -281,79 +325,60 @@ export function FounderVideoStudio() {
         )}
       </div>
 
-      {/* 中：嘉宾大字垂直名单 — YC 风格 */}
-      <div className="flex flex-col gap-4 border-t border-b border-[var(--hairline)] px-5 py-6 md:px-8 md:py-8 lg:col-span-3 lg:border-t-0 lg:border-b-0 lg:border-x lg:px-6 lg:py-10 xl:px-8">
-        <div className="flex items-baseline justify-between gap-2">
-          <p className="editorial-eyebrow text-[var(--foreground)]">
-            {season.seasonLabelEn}
-          </p>
-          <p className="editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
-            {season.guests.length} 席
-          </p>
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <GuestRoster
-            guests={season.guests}
-            activeId={guest.id}
-            onSelect={selectGuest}
-          />
+      {/* 中：嘉宾名单 — 栏内居中，滚轮独立滚动 */}
+      <div className="flex min-h-[28svh] flex-col border-t border-b border-[var(--hairline)] lg:col-span-3 lg:min-h-0 lg:border-t-0 lg:border-b-0 lg:border-x">
+        <div
+          className="sg-guest-roster-scroll-wrap relative flex min-h-0 flex-1 flex-col"
+          data-can-scroll-top={rosterScrollHints.top ? "" : undefined}
+          data-can-scroll-bottom={rosterScrollHints.bottom ? "" : undefined}
+          data-lenis-prevent-wheel
+          onWheel={handleRosterWheel}
+        >
+          <div
+            ref={rosterScrollRef}
+            className="sg-guest-roster-scroll min-h-0 flex-1 overflow-y-auto overscroll-y-contain"
+            onWheel={handleRosterWheel}
+          >
+            <div className="flex min-h-full flex-col items-center justify-center px-5 py-10 md:px-8 md:py-12 lg:px-6 lg:py-14 xl:px-8">
+              <GuestRoster
+                guests={season.guests}
+                activeId={guest.id}
+                onSelect={selectGuest}
+                optionRefs={rosterOptionRefs}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       {/* 右：player + episode meta + 4 期 chip */}
       <div className="flex flex-col gap-4 bg-[var(--paper-1)] px-5 py-6 md:px-8 md:py-8 lg:col-span-5 lg:px-9 lg:py-10 xl:px-12">
-        <div className="flex items-baseline justify-between gap-3">
-          <div className="min-w-0">
-            <p className="editorial-eyebrow text-[var(--brand-teal)]">
-              Now playing
-            </p>
-            <p className="mt-2 line-clamp-2 editorial-serif text-[clamp(1.15rem,1.8vw,1.6rem)] leading-[1.15] text-[var(--foreground)]">
-              {activeEpisode?.titleZh ?? guest.nameZh}
-            </p>
-          </div>
-          {activeEpisode ? (
-            <a
-              href={bilibiliWatchUrl(activeEpisode.bvid)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="editorial-mono shrink-0 rounded-sm border border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_12%,transparent)] px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,transparent)]"
-            >
-              在 B 站打开 ↗
-            </a>
-          ) : null}
-        </div>
+        <p className="line-clamp-2 editorial-serif text-[clamp(1.2rem,1.9vw,1.65rem)] leading-[1.18] text-[var(--foreground)]">
+          {activeEpisode?.titleZh ?? guest.nameZh}
+        </p>
 
         {/* 大画幅播放器 — group 容器，hover 显示「在 B 站打开」遮罩兜底 */}
         <div className="min-h-0 flex-1">
           {activeEpisode?.bvid ? (
             <div className="group/player relative">
-              {panelVisible ? (
+              {shouldMountPlayer ? (
                 <BilibiliEmbedPlayer
-                  key={`${guest.id}-${activeEpisode.bvid}`}
                   bvid={activeEpisode.bvid}
+                  aid={activeEpisode.aid}
+                  cid={activeEpisode.cid}
                   title={playerTitle}
                   mode="eager"
                   aspectClassName="aspect-video"
                 />
               ) : (
-                <div className="flex aspect-video w-full items-center justify-center rounded-md border border-[var(--hairline)] bg-[rgba(15,17,22,0.55)]">
-                  <p className="font-[family-name:var(--font-zh)] text-sm text-[var(--muted-strong)]">
-                    进入本屏加载
-                  </p>
+                <div className="relative aspect-video w-full overflow-hidden rounded-md border border-[var(--hairline)] bg-[rgba(15,17,22,0.55)]">
+                  <BilibiliEpisodeCover
+                    bvid={activeEpisode.bvid}
+                    alt={playerTitle}
+                    className="absolute inset-0"
+                  />
                 </div>
               )}
-
-              {/* hover 角标兜底：内嵌如果不可播放，用户能立即看到外跳口 */}
-              <a
-                href={bilibiliWatchUrl(activeEpisode.bvid)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="absolute right-3 top-3 z-10 inline-flex items-center gap-2 rounded-sm border border-[var(--hairline-strong)] bg-[rgba(11,12,16,0.78)] px-3 py-1.5 editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)] opacity-100 backdrop-blur-md transition-opacity duration-200 hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,rgba(11,12,16,0.78))] md:opacity-0 md:group-hover/player:opacity-100 focus-visible:opacity-100"
-                aria-label="在 B 站打开当前集"
-              >
-                <span>在 B 站打开</span>
-                <span aria-hidden className="text-[var(--brand-teal)]">↗</span>
-              </a>
             </div>
           ) : (
             <div className="flex aspect-video w-full items-center justify-center rounded-md border border-dashed border-[var(--hairline)] bg-[rgba(15,17,22,0.45)]">
@@ -364,33 +389,19 @@ export function FounderVideoStudio() {
           )}
         </div>
 
-        {/* 静音提示 + 显著外跳 CTA — 兜底入口（iframe 内错无法 detect） */}
         {activeEpisode ? (
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-[var(--hairline-soft)] bg-[var(--paper-2)] px-3.5 py-2.5">
-            <p className="editorial-mono text-[9.5px] uppercase tracking-[0.18em] text-[var(--muted)]">
-              <span className="mr-1.5 inline-block rounded-sm border border-[var(--hairline-strong)] px-1.5 py-0.5 text-[9px] text-[var(--muted-strong)]">
-                MUTED
-              </span>
-              默认静音
-            </p>
-            <a
-              href={bilibiliWatchUrl(activeEpisode.bvid)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-sm border border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_12%,transparent)] px-3 py-1.5 editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,transparent)]"
-            >
-              <span>在 B 站播放</span>
-              <span aria-hidden className="text-[var(--brand-teal)]">↗</span>
-            </a>
-          </div>
+          <a
+            href={bilibiliWatchUrl(activeEpisode.bvid)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-fit font-[family-name:var(--font-zh)] text-[15px] text-[var(--brand-teal)] underline decoration-[var(--brand-teal)]/35 underline-offset-[5px] transition-colors hover:text-[var(--foreground)] md:text-[16px]"
+          >
+            在 B 站打开 ↗
+          </a>
         ) : null}
 
-        {/* 4 期 chip strip */}
         {guest.episodes.length > 0 ? (
-          <div className="flex flex-col gap-2.5">
-            <p className="editorial-eyebrow text-[var(--muted)]">
-              四期
-            </p>
+          <div className="flex flex-col gap-3">
             <ul className="flex w-full gap-2 overflow-x-auto pb-1 md:gap-2.5">
               {guest.episodes.map((ep) => (
                 <li key={ep.id} className="shrink-0">
@@ -409,10 +420,9 @@ export function FounderVideoStudio() {
           href={BILIBILI_SPACE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-auto inline-flex w-fit items-center gap-2 editorial-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--muted-strong)] transition-opacity hover:opacity-70"
+          className="mt-auto inline-flex w-fit font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)] transition-colors hover:text-[var(--brand-teal)] md:text-[15px]"
         >
           B 站空间 ↗
-          <span aria-hidden>↗</span>
         </a>
       </div>
     </div>

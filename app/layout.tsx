@@ -7,6 +7,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { HeroWaveCanvas } from "@/components/hero-wave-canvas";
+import { SgPerformanceGuards } from "@/components/sg-performance-guards";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { buildSiteMetadata, buildSiteViewport } from "@/lib/site-metadata";
 import { getOrganizationJsonLd, getWebSiteJsonLd } from "@/lib/site-json-ld";
@@ -55,8 +56,18 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className={`${ibm.variable} ${notoSansSC.variable} ${ibmMono.variable} ${instrumentSerif.variable} h-full scroll-smooth antialiased`}
+      suppressHydrationWarning
+      className={`${ibm.variable} ${notoSansSC.variable} ${ibmMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
+      <head>
+        <link
+          rel="preconnect"
+          href="https://player.bilibili.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="dns-prefetch" href="https://player.bilibili.com" />
+        <link rel="dns-prefetch" href="https://api.bilibili.com" />
+      </head>
       <body className="min-h-full">
         {JSON_LD.map((data, index) => (
           <script
@@ -66,6 +77,7 @@ export default function RootLayout({
           />
         ))}
         <SmoothScroll>
+          <SgPerformanceGuards />
           <HeroWaveCanvas hostSelector="[data-hero-wave]" variant="global" />
           <div className="relative z-[1] min-h-full" data-scroll-depth-root>
             {children}

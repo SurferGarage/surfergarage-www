@@ -8,7 +8,10 @@ import {
   FOUNDER_BREATH_MIN_H,
   FOUNDERS_BRIDGE_SECTION_PT,
 } from "@/lib/founders-scroll-rhythm";
-import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import {
+  SG_PAGE_SHELL_CLASS,
+  SG_SECTION_TITLE_CLASS,
+} from "@/lib/sg-layout";
 import { Fragment } from "react";
 
 /** 单屏 pin 容器 — 始终 100dvh − header，overflow-hidden 防止溢出 */
@@ -17,59 +20,21 @@ const PANEL_CARD_BASE =
 
 /** 居中网格内（Playbook / Visual 用） — 标题区 + 内容 padding；顶部 padding 加大避免被 sticky header 切 */
 const PANEL_INNER_CENTERED =
-  "flex h-full w-full min-h-0 flex-col gap-5 px-5 pt-10 pb-8 md:gap-7 md:px-10 md:pt-14 md:pb-10 lg:px-14 lg:pt-20 lg:pb-12 xl:px-16";
+  "flex h-full w-full min-h-0 flex-col gap-6 px-5 pt-12 pb-10 md:gap-8 md:px-10 md:pt-16 md:pb-12 lg:px-14 lg:pt-20 lg:pb-14 xl:px-16";
 
-/** 全宽 breakout panel（wechat / video 用） — 两行标题区 + 主体撑满
- * Row 1: § 编号 + eyebrow + metaRight（小字 mono / eyebrow）
- * Row 2: titleZh（大 serif） + titleEn（mono）
- * pt 大幅加大避免被 sticky header 切，加 paper-2 微底色区分层级 */
 function FullBleedPanel({
-  index,
-  eyebrow,
   titleZh,
-  titleEn,
-  metaRight,
   children,
 }: {
-  index: string;
-  eyebrow: string;
   titleZh: string;
-  titleEn: string;
-  metaRight?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="flex h-full w-full min-h-0 flex-col">
-      {/* 顶部双行标题区：明显的 paper-2 暗背 + 大 pt 留白，确保滚到 pin 时清晰可见 */}
-      <div className="shrink-0 border-b border-[var(--hairline)] bg-[var(--paper-2)] px-5 pb-5 pt-12 md:px-10 md:pb-6 md:pt-16 lg:px-14 lg:pb-7 lg:pt-20 xl:px-16">
-        {/* Row 1：编号 + eyebrow + meta（单行可扫读） */}
-        <div className="flex items-baseline justify-between gap-4 max-md:flex-col max-md:items-start max-md:gap-1">
-          <div className="flex items-baseline gap-3">
-            <span className="editorial-mono text-[10.5px] uppercase tracking-[0.22em] text-[var(--accent-amber)]">
-              § {index}
-            </span>
-            <p className="editorial-eyebrow text-[var(--brand-teal)]">
-              {eyebrow}
-            </p>
-          </div>
-          {metaRight ? (
-            <p className="editorial-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
-              {metaRight}
-            </p>
-          ) : null}
-        </div>
-
-        {/* Row 2：大标题（serif） + 英文小标 */}
-        <div className="mt-3 flex flex-col gap-2 md:mt-4 md:flex-row md:items-baseline md:gap-5">
-          <p className="editorial-serif text-[clamp(1.6rem,3vw,2.4rem)] leading-[1.04] text-[var(--foreground)]">
-            {titleZh}
-          </p>
-          <p className="editorial-eyebrow text-[var(--muted)]">{titleEn}</p>
-        </div>
+      <div className="shrink-0 border-b border-[var(--hairline)] px-5 pb-5 pt-12 md:px-10 md:pb-6 md:pt-16 lg:px-14 lg:pt-20 xl:px-16">
+        <h2 className={SG_SECTION_TITLE_CLASS}>{titleZh}</h2>
       </div>
-
-      {/* 主体撑满剩余高度 */}
-      <div className="min-h-0 flex-1" data-founders-intro>
+      <div className="min-h-0 flex-1 bg-[var(--paper-1)]" data-founders-intro>
         {children}
       </div>
     </div>
@@ -102,38 +67,20 @@ export function HomeFounders() {
               >
                 <div data-founder-card className={PANEL_CARD_BASE}>
                   {m.kind === "wechat_column" ? (
-                    <FullBleedPanel
-                      index={m.index}
-                      eyebrow={m.eyebrow}
-                      titleZh={m.titleZh}
-                      titleEn={m.titleEn}
-                      metaRight="点 vol 换篇"
-                    >
+                    <FullBleedPanel titleZh={m.titleZh}>
                       <FounderWechatColumn />
                     </FullBleedPanel>
                   ) : null}
 
                   {m.kind === "video_studio" ? (
-                    <FullBleedPanel
-                      index={m.index}
-                      eyebrow={m.eyebrow}
-                      titleZh={m.titleZh}
-                      titleEn={m.titleEn}
-                      metaRight="点嘉宾切换"
-                    >
+                    <FullBleedPanel titleZh={m.titleZh}>
                       <FounderVideoStudio />
                     </FullBleedPanel>
                   ) : null}
 
                   {m.kind === "github_repo" && m.githubRepo ? (
                     <div className={`${SG_PAGE_SHELL_CLASS} ${PANEL_INNER_CENTERED}`}>
-                      <SgModuleShell
-                        eyebrow={m.eyebrow}
-                        sectionIndex={m.index}
-                        titleZh={m.titleZh}
-                        titleEn={m.titleEn}
-                        leadZh={m.leadZh}
-                      />
+                      <SgModuleShell titleZh={m.titleZh} />
                       <div className="min-h-0 flex-1" data-founders-intro>
                         <GithubPlaybookBlock config={m.githubRepo} />
                       </div>
@@ -142,13 +89,7 @@ export function HomeFounders() {
 
                   {m.kind === "brand_visual" ? (
                     <div className={`${SG_PAGE_SHELL_CLASS} ${PANEL_INNER_CENTERED}`}>
-                      <SgModuleShell
-                        eyebrow={m.eyebrow}
-                        sectionIndex={m.index}
-                        titleZh={m.titleZh}
-                        titleEn={m.titleEn}
-                        leadZh={m.leadZh}
-                      />
+                      <SgModuleShell titleZh={m.titleZh} />
                       <div className="min-h-0 flex-1" data-founders-intro>
                         <VisualGarage />
                       </div>

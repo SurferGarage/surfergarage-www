@@ -15,7 +15,7 @@ export function GlowRiver() {
       <div
         aria-hidden
         className="sg-river-deep"
-        style={{ willChange: "transform, filter", transform: "translateZ(0)" }}
+        style={{ transform: "translateZ(0)" }}
       >
         <svg
           className="sg-river-deep-svg"
@@ -59,7 +59,7 @@ export function GlowRiver() {
       <div
         aria-hidden
         className="sg-river-layer sg-river-depth pointer-events-none absolute inset-0 z-[1] overflow-hidden"
-        style={{ willChange: "transform, filter", transform: "translateZ(0)" }}
+        style={{ transform: "translateZ(0)" }}
       >
         <svg
           className="sg-river-svg h-[220vh] w-full [filter:blur(90px)]"

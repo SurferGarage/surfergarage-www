@@ -12,7 +12,6 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // 真生产环境可以接入 Sentry / 自建上报
     if (typeof console !== "undefined") {
       console.error("[surfergarage] unhandled error", error);
     }
@@ -21,50 +20,30 @@ export default function GlobalError({
   return (
     <div className="flex min-h-[100svh] flex-col justify-center bg-[var(--paper-1)]">
       <main
-        className={`${SG_PAGE_SHELL_CLASS} flex flex-col gap-8`}
+        className={`${SG_PAGE_SHELL_CLASS} flex max-w-[40rem] flex-col gap-8`}
         role="alert"
       >
-        <div className="flex items-baseline gap-3">
-          <span className="editorial-mono text-[11px] uppercase tracking-[0.22em] text-[var(--accent-amber)]">
-            § ERR
-          </span>
-          <p className="editorial-eyebrow text-[var(--foreground)]">
-            站点波动 · Unhandled
-          </p>
-        </div>
-        <h1 className="editorial-serif text-[clamp(2rem,5vw,3.5rem)] leading-[1.04] text-[var(--foreground)]">
-          这里有一点湍流，<br aria-hidden />
-          <span className="text-[var(--muted-strong)]">先停一下再继续。</span>
+        <h1 className="editorial-serif text-[clamp(2rem,5vw,3.25rem)] leading-[1.06] text-[var(--foreground)]">
+          页面加载出错
         </h1>
-        <p className="max-w-[44ch] font-[family-name:var(--font-zh)] text-[15px] leading-[1.75] text-[var(--muted-strong)] md:text-[16.5px]">
-          页面在加载时发生了一次未捕获的错误。可以试试刷新；如果还在出错，请把下面的{" "}
-          <span className="text-[var(--brand-teal)]">digest</span> 发邮件给我们。
+        <p className="font-[family-name:var(--font-zh)] text-[16px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px]">
+          请尝试刷新。若问题仍在，发邮件至 hello@surfergarage.com
+          {error.digest ? `，并附上错误码 ${error.digest}` : ""}。
         </p>
-        {error.digest ? (
-          <p className="editorial-mono-tabular text-[11px] uppercase tracking-[0.16em] text-[var(--muted)]">
-            digest · {error.digest}
-          </p>
-        ) : null}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-4">
           <button
             type="button"
             onClick={() => reset()}
-            className="rounded-sm border border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_14%,transparent)] px-5 py-3 editorial-mono text-[11px] uppercase tracking-[0.18em] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,transparent)]"
+            className="rounded-sm border border-[var(--brand-teal)]/55 bg-[color-mix(in_oklch,var(--brand-teal)_14%,transparent)] px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] text-[var(--foreground)] transition-[background-color,border-color] hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_22%,transparent)]"
           >
-            重试 ↻
+            重试
           </button>
           <Link
             href="/"
-            className="editorial-mono text-[10.5px] uppercase tracking-[0.18em] text-[var(--muted-strong)] underline-offset-4 transition-colors hover:text-[var(--brand-teal)] hover:underline"
+            className="font-[family-name:var(--font-zh)] text-[15px] text-[var(--brand-teal)] underline-offset-4 hover:underline"
           >
             回到首页
           </Link>
-          <a
-            href="mailto:hello@surfergarage.com?subject=Site%20error%20report"
-            className="editorial-mono text-[10.5px] uppercase tracking-[0.18em] text-[var(--muted)] underline-offset-4 transition-colors hover:text-[var(--brand-teal)] hover:underline"
-          >
-            上报问题 ↗
-          </a>
         </div>
       </main>
     </div>

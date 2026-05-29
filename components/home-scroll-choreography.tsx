@@ -56,7 +56,7 @@ export function HomeScrollChoreography() {
       resizeT = setTimeout(() => {
         resizeT = undefined;
         ScrollTrigger.refresh();
-      }, 120);
+      }, 200);
     };
     window.addEventListener("resize", onResize);
 

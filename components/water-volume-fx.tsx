@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode }
 import * as THREE from "three";
 
 import { getScrollDepthT, getWaveScrollVel } from "@/lib/sg-scroll-signals";
+import { isSgAtmospherePaused } from "@/components/sg-performance-guards";
 import { shouldMountWaterVolume, useSgWebglTier } from "@/lib/sg-webgl-policy";
 import { useReducedMotion } from "@/lib/sg-reduced-motion";
 
@@ -54,8 +55,8 @@ void main() {
   float mv = clamp(uVel, 0.0, 1.0);
 
   vec2 sun = vec2(
-    0.5 + sin(t * 0.19) * 0.032,
-    0.028 + cos(t * 0.15) * 0.018
+    0.36 + sin(t * 0.19) * 0.026,
+    0.024 + cos(t * 0.15) * 0.016
   );
   vec2 d = uv - sun;
   float toSun = length(d);
@@ -158,10 +159,18 @@ export function WaterVolumeFx(): ReactNode {
   useEffect(() => {
     if (reduced !== false || tier !== "full") return;
 
-    const apply = () => setRunLoop(!document.hidden);
+    const apply = () => setRunLoop(!isSgAtmospherePaused());
     apply();
     document.addEventListener("visibilitychange", apply);
-    return () => document.removeEventListener("visibilitychange", apply);
+    const mo = new MutationObserver(apply);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-sg-atmosphere-paused", "data-doc-hidden"],
+    });
+    return () => {
+      document.removeEventListener("visibilitychange", apply);
+      mo.disconnect();
+    };
   }, [reduced, tier]);
 
   if (reduced !== false || tier === null || !shouldMountWaterVolume(tier)) {
@@ -169,7 +178,7 @@ export function WaterVolumeFx(): ReactNode {
   }
 
   return (
-    <div className="water-volume-fx pointer-events-none absolute inset-0 z-0 mix-blend-screen opacity-[0.94]">
+    <div className="water-volume-fx pointer-events-none absolute inset-0 z-0 mix-blend-screen">
       <Canvas
         className="h-full w-full"
         frameloop={runLoop ? "always" : "never"}

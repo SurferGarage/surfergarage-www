@@ -28,11 +28,16 @@ export function WeChatOfficialFeed() {
   useEffect(() => {
     if (reducedMotion) return;
     const el = scrollerRef.current;
-    if (!el) return;
+    const stage = el?.closest<HTMLElement>("[data-wechat-stage]");
+    if (!el || !stage) return;
 
     let raf = 0;
+    let active = false;
+
     const updateFocus = () => {
       raf = 0;
+      if (!active) return;
+
       const sr = el.getBoundingClientRect();
       const mid = sr.left + sr.width / 2;
       const cards = el.querySelectorAll<HTMLElement>("[data-wechat-card]");
@@ -61,17 +66,44 @@ export function WeChatOfficialFeed() {
     };
 
     const schedule = () => {
-      if (raf !== 0) return;
+      if (!active || raf !== 0) return;
       raf = requestAnimationFrame(updateFocus);
     };
 
-    el.addEventListener("scroll", schedule, { passive: true });
+    const onScroll = () => schedule();
+    const enable = () => {
+      if (active) return;
+      active = true;
+      el.addEventListener("scroll", onScroll, { passive: true });
+      schedule();
+    };
+    const disable = () => {
+      if (!active) return;
+      active = false;
+      el.removeEventListener("scroll", onScroll);
+      if (raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      el.querySelectorAll<HTMLElement>("[data-wechat-card]").forEach((card) => {
+        card.removeAttribute("data-wechat-focus");
+      });
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.some((e) => e.isIntersecting);
+        if (hit) enable();
+        else disable();
+      },
+      { root: null, rootMargin: "80px 0px", threshold: 0 },
+    );
+    io.observe(stage);
     window.addEventListener("resize", schedule);
-    schedule();
 
     return () => {
-      if (raf !== 0) cancelAnimationFrame(raf);
-      el.removeEventListener("scroll", schedule);
+      disable();
+      io.disconnect();
       window.removeEventListener("resize", schedule);
     };
   }, [reducedMotion]);

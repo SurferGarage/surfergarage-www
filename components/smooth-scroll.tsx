@@ -44,8 +44,13 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       setLenis(lenisInstance);
     });
 
+    let stRaf = 0;
     lenisInstance.on("scroll", () => {
-      ScrollTrigger.update();
+      if (stRaf) return;
+      stRaf = requestAnimationFrame(() => {
+        stRaf = 0;
+        ScrollTrigger.update();
+      });
     });
 
     ScrollTrigger.scrollerProxy(document.documentElement, {
@@ -80,6 +85,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     ScrollTrigger.refresh();
 
     return () => {
+      if (stRaf) cancelAnimationFrame(stRaf);
       window.removeEventListener("resize", onResize);
       gsap.ticker.remove(ticker);
       lenisInstance.destroy();

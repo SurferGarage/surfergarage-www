@@ -2,8 +2,11 @@
 
 import { useEffect, useState, type RefObject } from "react";
 
-/** 叠卡顶屏时约 ≥15% 可见才挂载重资源（B 站 iframe） */
-const PANEL_VISIBLE_RATIO = 0.15;
+/** 叠卡顶屏时约 ≥8% 可见即挂载播放器（原 15% 偏晚） */
+const PANEL_VISIBLE_RATIO = 0.08;
+
+/** 面板顶边进入视口下方约半屏时开始预热（DNS + prefetch） */
+const PANEL_PREFETCH_ROOT_MARGIN = "0px 0px 50vh 0px";
 
 function measurePanelVisible(target: Element): boolean {
   const rect = target.getBoundingClientRect();
@@ -65,4 +68,35 @@ export function useFounderPanelVisible(
   }, [containerRef]);
 
   return visible;
+}
+
+/**
+ * 用户滚向「视频播客」屏前即返回 true，用于 prefetch / 提前挂载 iframe。
+ */
+export function useFounderPanelPrefetch(
+  containerRef: RefObject<HTMLElement | null>,
+): boolean {
+  const [prefetch, setPrefetch] = useState(false);
+
+  useEffect(() => {
+    const stage = containerRef.current;
+    if (!stage) return;
+
+    const panel = stage.closest<HTMLElement>("[data-founder-panel]");
+    const target = panel ?? stage;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        setPrefetch(entry.isIntersecting);
+      },
+      { root: null, rootMargin: PANEL_PREFETCH_ROOT_MARGIN, threshold: 0 },
+    );
+
+    io.observe(target);
+    return () => io.disconnect();
+  }, [containerRef]);
+
+  return prefetch;
 }

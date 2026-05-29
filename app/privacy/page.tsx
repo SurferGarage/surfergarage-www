@@ -18,19 +18,16 @@ export default function PrivacyPage() {
       <SiteHeader />
       <main className={`relative z-[3] flex-1 py-16 md:py-24 ${SG_PAGE_SHELL_CLASS}`}>
         <article className="mx-auto max-w-[48rem]">
-          <p className="editorial-mono text-[11px] uppercase tracking-[0.22em] text-[var(--accent-amber)]">
-            Legal · Privacy
-          </p>
-          <h1 className="mt-4 editorial-serif text-[clamp(2rem,4vw,2.75rem)] leading-[1.06] text-[var(--foreground)]">
+          <h1 className="editorial-serif text-[clamp(2rem,4vw,2.75rem)] leading-[1.06] text-[var(--foreground)]">
             隐私政策
           </h1>
-          <p className="mt-3 font-[family-name:var(--font-zh)] text-sm text-[var(--muted)]">
+          <p className="mt-3 font-[family-name:var(--font-zh)] text-[15px] text-[var(--muted)] md:text-[16px]">
             最后更新：2026 年 5 月
           </p>
 
-          <div className="mt-10 flex flex-col gap-8 font-[family-name:var(--font-zh)] text-[15px] leading-[1.75] text-[var(--muted-strong)]">
+          <div className="mt-12 flex flex-col gap-10 font-[family-name:var(--font-zh)] text-[16px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px]">
             <section>
-              <h2 className="editorial-eyebrow text-[var(--foreground)]">
+              <h2 className="font-[family-name:var(--font-zh)] text-[17px] font-medium text-[var(--foreground)] md:text-[18px]">
                 我们收集什么
               </h2>
               <p className="mt-3">
@@ -40,8 +37,8 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="editorial-eyebrow text-[var(--foreground)]">
-                Newsletter
+              <h2 className="font-[family-name:var(--font-zh)] text-[17px] font-medium text-[var(--foreground)] md:text-[18px]">
+                订阅
               </h2>
               <p className="mt-3">
                 页脚订阅通过你的邮件客户端向{" "}
@@ -56,7 +53,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="editorial-eyebrow text-[var(--foreground)]">
+              <h2 className="font-[family-name:var(--font-zh)] text-[17px] font-medium text-[var(--foreground)] md:text-[18px]">
                 分析与 Cookie
               </h2>
               <p className="mt-3">
@@ -65,7 +62,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="editorial-eyebrow text-[var(--foreground)]">
+              <h2 className="font-[family-name:var(--font-zh)] text-[17px] font-medium text-[var(--foreground)] md:text-[18px]">
                 外链与嵌入
               </h2>
               <p className="mt-3">
@@ -74,7 +71,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="editorial-eyebrow text-[var(--foreground)]">
+              <h2 className="font-[family-name:var(--font-zh)] text-[17px] font-medium text-[var(--foreground)] md:text-[18px]">
                 联系我们
               </h2>
               <p className="mt-3">
