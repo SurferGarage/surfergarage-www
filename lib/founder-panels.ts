@@ -35,7 +35,7 @@ export const FOUNDER_STACK_MODULES: FounderStackModule[] = [
     githubRepo: {
       owner: "SurferGarage",
       repo: "Startup-playbook",
-      description: "超级个体 · 认知与工具箱",
+      description: "创业进攻 · 失败手册 · 学习路径",
       showTelemetry: false,
     },
   },

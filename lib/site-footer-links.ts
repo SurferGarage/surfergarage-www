@@ -27,6 +27,16 @@ export const FOOTER_CONTENT_LINKS: readonly FooterLink[] = [
     href: "https://github.com/SurferGarage/Startup-playbook",
     external: true,
   },
+  {
+    label: "失败手册",
+    href: "https://github.com/SurferGarage/failure-manual",
+    external: true,
+  },
+  {
+    label: "学习路径",
+    href: "https://github.com/SurferGarage/.github/blob/main/docs/LEARNING_PATH.md",
+    external: true,
+  },
 ] as const;
 
 export const FOOTER_CONTACT_LINKS: readonly FooterLink[] = [

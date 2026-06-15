@@ -274,7 +274,8 @@ function OpenSourceHero({ ch }: { ch: SocialChannel }) {
 
       <ul className="flex w-full shrink-0 flex-col divide-y divide-[var(--hairline-soft)] border-t border-[var(--hairline-soft)] md:w-[240px] md:border-t-0 md:border-l md:pl-8 lg:w-[280px]">
         {[
-          { name: "Startup-playbook", hint: "开源手册" },
+          { name: "Startup-playbook", hint: "创业进攻手册" },
+          { name: "failure-manual", hint: "失败复盘手册" },
           { name: "surfergarage-www", hint: "官网源码" },
         ].map((repo) => (
           <li key={repo.name} className="py-4 first:md:pt-0">

@@ -118,7 +118,7 @@ const githubOrg: SocialChannel = {
   href: "https://github.com/SurferGarage",
   descriptionZh: "仓库 · 手册 · 源码",
   followerLabel: "Public org",
-  latest: "Startup Playbook · 新增章节「非共识与可核对的样本」",
+  latest: "Playbook v1 · 失败手册 · 学习路径已开源",
 };
 
 /** Connect 首页：按产品逻辑分三块（与 `home-social` 一致）。 */
