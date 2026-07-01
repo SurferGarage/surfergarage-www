@@ -1,6 +1,6 @@
 /**
  * Surfing Founders 人物访谈 · 微信专栏：横向新闻卡。
- * `imageSrc` 与 `public/wechat-feed/01.png` … `11.png` 一一对应。
+ * `imageSrc` 与 `public/wechat-feed/01.png` … `12.png` 一一对应；Muji 篇复用 B 站 Vol.03 封面。
  */
 
 import { cleanWechatArticleUrl } from "@/lib/wechat-url";
@@ -76,12 +76,26 @@ const RAW_FEED: WechatOfficialFeedItem[] = [
   {
     id: "wx-10",
     titleZh:
-      "19岁成为硅谷全职工程师，他押中了Agent开发新范式 | 何介然Klein「Trellis」Surfing Founders",
-    href: "https://mp.weixin.qq.com/s/WX10_KLEIN_TRELLIS",
-    imageSrc: "/wechat-feed/10.png",
+      "3个月10万用户，他让你不再为「抽卡式设计」抓狂 | 浪前对话「Seede.AI」杨沐锦Muji",
+    href: "https://mp.weixin.qq.com/s/3Udu_QNbidBRSxU5pyKlEA",
+    imageSrc: "/video-covers/muji-vol-03.jpg",
   },
   {
     id: "wx-11",
+    titleZh:
+      "19岁成为硅谷全职工程师，他押中了Agent开发新范式 | 何介然Klein「Trellis」Surfing Founders",
+    href: "https://mp.weixin.qq.com/s/5rcC24smfaDHC2FAoaRNjQ",
+    imageSrc: "/wechat-feed/10.png",
+  },
+  {
+    id: "wx-12",
+    titleZh:
+      "19岁做了8款产品后，她说要创业，就不要怕被抄 | Yiwei「GoGlobal.to」Surfing Founders",
+    href: "https://mp.weixin.qq.com/s/6fsE2v1MGyJ0vw6qlBkd6A",
+    imageSrc: "/wechat-feed/12.png",
+  },
+  {
+    id: "wx-13",
     titleZh:
       "22岁千万营收之后，她选择按下人生重启键 | Kiana「济谦AI」Surfing Founders",
     href: "https://mp.weixin.qq.com/s/p928ZFBxBMMiO9uQgd9UwQ",
