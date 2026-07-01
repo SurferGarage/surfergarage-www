@@ -1,7 +1,11 @@
 "use client";
 
 import { SgScrollRail } from "@/components/sg-scroll-rail";
-import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
+import { useScrollRailMetrics } from "@/lib/use-scroll-rail-metrics";
+import {
+  DEFAULT_WECHAT_FEED_ID,
+  WECHAT_OFFICIAL_FEED,
+} from "@/lib/wechat-official-feed";
 import { SG_INLINE_LINK_CLASS } from "@/lib/sg-layout";
 import { useReducedMotion } from "@/lib/sg-reduced-motion";
 import Image from "next/image";
@@ -12,43 +16,10 @@ import {
   useState,
   type KeyboardEvent,
   type PointerEvent as ReactPointerEvent,
-  type RefObject,
   type WheelEvent as ReactWheelEvent,
 } from "react";
 
-const SCROLL_EDGE = 10;
 const SWIPE_THRESHOLD_PX = 52;
-
-function useScrollEdgeHints(listRef: RefObject<HTMLUListElement | null>) {
-  const [hints, setHints] = useState({ top: false, bottom: false });
-
-  const sync = useCallback(() => {
-    const el = listRef.current;
-    if (!el) return;
-    const canScroll = el.scrollHeight > el.clientHeight + 2;
-    setHints({
-      top: canScroll && el.scrollTop > SCROLL_EDGE,
-      bottom:
-        canScroll &&
-        el.scrollTop + el.clientHeight < el.scrollHeight - SCROLL_EDGE,
-    });
-  }, [listRef]);
-
-  useEffect(() => {
-    sync();
-    const el = listRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", sync, { passive: true });
-    const ro = new ResizeObserver(sync);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", sync);
-      ro.disconnect();
-    };
-  }, [listRef, sync]);
-
-  return hints;
-}
 
 /**
  * Founders Block A · 微信专栏
@@ -56,7 +27,7 @@ function useScrollEdgeHints(listRef: RefObject<HTMLUListElement | null>) {
  */
 export function FounderWechatColumn() {
   const items = WECHAT_OFFICIAL_FEED;
-  const [activeId, setActiveId] = useState(items[0]?.id ?? "");
+  const [activeId, setActiveId] = useState(DEFAULT_WECHAT_FEED_ID);
   const [slideDir, setSlideDir] = useState<1 | -1>(1);
   const [coverAnim, setCoverAnim] = useState(true);
   const active = items.find((i) => i.id === activeId) ?? items[0]!;
@@ -65,12 +36,12 @@ export function FounderWechatColumn() {
   const listRef = useRef<HTMLUListElement>(null);
   const optionRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const coverStageRef = useRef<HTMLDivElement>(null);
-  const coverFadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const coverFadeTimer = useRef<number | null>(null);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
   const didSwipe = useRef(false);
 
   const reduced = useReducedMotion();
-  const scrollHints = useScrollEdgeHints(listRef);
+  const listScroll = useScrollRailMetrics(listRef, activeId);
   const scrollBehavior = reduced ? "auto" : "smooth";
 
   const goByDelta = useCallback(
@@ -91,7 +62,7 @@ export function FounderWechatColumn() {
       }
 
       setCoverAnim(false);
-      coverFadeTimer.current = setTimeout(() => {
+      coverFadeTimer.current = window.setTimeout(() => {
         setActiveId(items[nextIdx]!.id);
         requestAnimationFrame(() => setCoverAnim(true));
         coverFadeTimer.current = null;
@@ -117,7 +88,7 @@ export function FounderWechatColumn() {
       }
 
       setCoverAnim(false);
-      coverFadeTimer.current = setTimeout(() => {
+      coverFadeTimer.current = window.setTimeout(() => {
         setActiveId(id);
         requestAnimationFrame(() => setCoverAnim(true));
         coverFadeTimer.current = null;
@@ -244,8 +215,8 @@ export function FounderWechatColumn() {
       <div className="sg-wechat-vol-panel relative order-2 flex flex-col gap-4 px-5 py-6 md:px-10 md:py-8 lg:order-1 lg:col-span-6 lg:gap-5 lg:px-14 lg:py-10 xl:px-20">
         <div
           className="sg-wechat-vol-scroll-wrap relative w-full"
-          data-can-scroll-top={scrollHints.top ? "" : undefined}
-          data-can-scroll-bottom={scrollHints.bottom ? "" : undefined}
+          data-can-scroll-top={listScroll.edgeTop ? "" : undefined}
+          data-can-scroll-bottom={listScroll.edgeBottom ? "" : undefined}
           onWheel={handleListWheel}
         >
           <div
@@ -315,6 +286,7 @@ export function FounderWechatColumn() {
             <SgScrollRail
               scrollRef={listRef}
               measureKey={`${items.length}:${activeId}`}
+              metrics={listScroll}
             />
           </div>
         </div>
@@ -356,7 +328,6 @@ export function FounderWechatColumn() {
             src={active.imageSrc}
             alt=""
             fill
-            priority
             sizes="(max-width: 1024px) 100vw, 55vw"
             className={`object-cover object-center blur-3xl saturate-[0.6] transition-opacity duration-500 ease-out ${
               coverAnim ? "opacity-50" : "opacity-20"
@@ -388,7 +359,7 @@ export function FounderWechatColumn() {
               src={active.imageSrc}
               alt=""
               fill
-              priority
+              loading="lazy"
               sizes="(max-width: 1024px) 90vw, 50vw"
               className="object-cover object-center"
             />

@@ -40,6 +40,7 @@ export function HeroWaveCanvasLazy(props: HeroWaveProps) {
 
     return () => {
       cancelled = true;
+      setHero(null);
     };
   }, [canMount]);
 

@@ -1,6 +1,6 @@
 /**
  * Surfing Founders 人物访谈 · 微信专栏：横向新闻卡。
- * `imageSrc` 与 `public/wechat-feed/01.png` … `08.png` 一一对应。
+ * `imageSrc` 与 `public/wechat-feed/01.png` … `11.png` 一一对应。
  */
 
 import { cleanWechatArticleUrl } from "@/lib/wechat-url";
@@ -73,6 +73,20 @@ const RAW_FEED: WechatOfficialFeedItem[] = [
     href: "https://mp.weixin.qq.com/s/_mzUi2P013Rz4XbkK2K1Ew",
     imageSrc: "/wechat-feed/09.png",
   },
+  {
+    id: "wx-10",
+    titleZh:
+      "19岁成为硅谷全职工程师，他押中了Agent开发新范式 | 何介然Klein「Trellis」Surfing Founders",
+    href: "https://mp.weixin.qq.com/s/WX10_KLEIN_TRELLIS",
+    imageSrc: "/wechat-feed/10.png",
+  },
+  {
+    id: "wx-11",
+    titleZh:
+      "22岁千万营收之后，她选择按下人生重启键 | Kiana「济谦AI」Surfing Founders",
+    href: "https://mp.weixin.qq.com/s/p928ZFBxBMMiO9uQgd9UwQ",
+    imageSrc: "/wechat-feed/11.png",
+  },
 ];
 
 export const WECHAT_OFFICIAL_FEED: WechatOfficialFeedItem[] = RAW_FEED.map(
@@ -81,6 +95,12 @@ export const WECHAT_OFFICIAL_FEED: WechatOfficialFeedItem[] = RAW_FEED.map(
     href: cleanWechatArticleUrl(item.href),
   }),
 );
+
+/** 微信专栏默认选中最新一篇（片场右栏封面 / Vol 列表） */
+export const LATEST_WECHAT_FEED_ITEM =
+  WECHAT_OFFICIAL_FEED[WECHAT_OFFICIAL_FEED.length - 1]!;
+
+export const DEFAULT_WECHAT_FEED_ID = LATEST_WECHAT_FEED_ITEM.id;
 
 /** 公众号目录：触点区「文章」侧栏用。
  * 当前按发布顺序倒序展示（最新在上），保留 8 条；如未来接入真实日期可改 group by month。 */

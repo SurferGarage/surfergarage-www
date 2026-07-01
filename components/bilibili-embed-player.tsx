@@ -6,7 +6,7 @@ import {
   normalizeBvid,
 } from "@/lib/bilibili-player";
 import { pauseBilibiliEmbed } from "@/lib/bilibili-embed";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 export type BilibiliEmbedPlayerProps = {
   bvid: string;
@@ -68,11 +68,22 @@ export function BilibiliEmbedPlayer({
 
   const [inView, setInView] = useState(mode === "eager");
   const [fetchedSrc, setFetchedSrc] = useState<string | null>(null);
-  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
 
   const playerSrc = knownSrc ?? fetchedSrc;
   const mountIframe = Boolean(playerSrc && (mode === "eager" || inView));
-  const frameReady = mountIframe && loadedSrc === playerSrc;
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    return () => {
+      pauseBilibiliEmbed(iframe);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mountIframe) {
+      pauseBilibiliEmbed(iframeRef.current);
+    }
+  }, [mountIframe]);
 
   useEffect(() => {
     if (mode === "eager") return;
@@ -137,31 +148,11 @@ export function BilibiliEmbedPlayer({
         className={`relative w-full overflow-hidden rounded-md border border-[var(--hairline)] bg-[#0a0a12] ${aspectClassName} ${frameClassName}`}
       >
         {mountIframe && playerSrc ? (
-          <>
-            <iframe
-              ref={iframeRef}
-              title={title}
-              src={playerSrc}
-              className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-300 ${
-                frameReady ? "opacity-100" : "opacity-0"
-              }`}
-              allowFullScreen
-              scrolling="no"
-              frameBorder={0}
-              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-              onLoad={() => setLoadedSrc(playerSrc)}
-            />
-            {!frameReady ? (
-              <div
-                className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#0a0a12]"
-                aria-hidden
-              >
-                <p className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)]">
-                  播放器加载中…
-                </p>
-              </div>
-            ) : null}
-          </>
+          <BilibiliPlayerFrame
+            iframeRef={iframeRef}
+            playerSrc={playerSrc}
+            title={title}
+          />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
             <p className="font-[family-name:var(--font-zh)] text-[15px] leading-relaxed text-[var(--muted-strong)]">
@@ -175,5 +166,46 @@ export function BilibiliEmbedPlayer({
         )}
       </div>
     </div>
+  );
+}
+
+function BilibiliPlayerFrame({
+  iframeRef,
+  playerSrc,
+  title,
+}: {
+  iframeRef: RefObject<HTMLIFrameElement | null>;
+  playerSrc: string;
+  title: string;
+}) {
+  const [frameReady, setFrameReady] = useState(false);
+
+  return (
+    <>
+      <iframe
+        key={playerSrc}
+        ref={iframeRef}
+        title={title}
+        src={playerSrc}
+        className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-300 ${
+          frameReady ? "opacity-100" : "opacity-0"
+        }`}
+        allowFullScreen
+        scrolling="no"
+        frameBorder={0}
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+        onLoad={() => setFrameReady(true)}
+      />
+      {!frameReady ? (
+        <div
+          className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#0a0a12]"
+          aria-hidden
+        >
+          <p className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)]">
+            播放器加载中…
+          </p>
+        </div>
+      ) : null}
+    </>
   );
 }

@@ -25,10 +25,14 @@ export function SgPerformanceGuards() {
     syncDocHidden();
     document.addEventListener("visibilitychange", syncDocHidden);
 
-    const hero = document.querySelector<HTMLElement>(HERO_SELECTOR);
     let heroIo: IntersectionObserver | undefined;
+    let observed: Element | null = null;
 
-    if (hero) {
+    const attachHeroIo = () => {
+      const hero = document.querySelector<HTMLElement>(HERO_SELECTOR);
+      if (!hero || hero === observed) return;
+      heroIo?.disconnect();
+      observed = hero;
       heroIo = new IntersectionObserver(
         (entries) => {
           const e = entries[0];
@@ -38,11 +42,20 @@ export function SgPerformanceGuards() {
         { root: null, threshold: [0, HERO_PAUSE_RATIO, 0.2] },
       );
       heroIo.observe(hero);
-    }
+    };
+
+    attachHeroIo();
+    const domMo = new MutationObserver(() => {
+      attachHeroIo();
+      if (observed) domMo.disconnect();
+    });
+    domMo.observe(document.documentElement, { childList: true, subtree: true });
 
     return () => {
       document.removeEventListener("visibilitychange", syncDocHidden);
+      domMo.disconnect();
       heroIo?.disconnect();
+      observed = null;
       document.documentElement.removeAttribute("data-doc-hidden");
       document.documentElement.removeAttribute("data-sg-atmosphere-paused");
     };

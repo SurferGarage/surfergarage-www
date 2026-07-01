@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 type FounderArticleActionsProps = {
   href: string;
@@ -13,12 +13,23 @@ export function FounderArticleActions({
 }: FounderArticleActionsProps) {
   const toastId = useId();
   const [copied, setCopied] = useState(false);
+  const copyTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   const copyLink = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(href);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 2200);
+      copyTimerRef.current = window.setTimeout(() => {
+        copyTimerRef.current = null;
+        setCopied(false);
+      }, 2200);
     } catch {
       window.prompt("复制链接", href);
     }

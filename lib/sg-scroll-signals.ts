@@ -57,11 +57,15 @@ export function resetHeroWaveSignals(): void {
   heroWave = { ...HERO_WAVE_DEFAULT };
 }
 
-/** ScrollTrigger scrub 后同步一次（勿在 R3F useFrame 里调用） */
+/** GSAP 写入 inline style 后优先读 style，避免 scrub 每帧 getComputedStyle */
 export function syncHeroWaveFromElement(el: HTMLElement): void {
-  const cs = getComputedStyle(el);
+  const inline = el.style;
   const n = (key: string, fallback: number) => {
-    const v = Number.parseFloat(cs.getPropertyValue(key));
+    let raw = inline.getPropertyValue(key).trim();
+    if (!raw) {
+      raw = getComputedStyle(el).getPropertyValue(key).trim();
+    }
+    const v = Number.parseFloat(raw);
     return Number.isFinite(v) ? v : fallback;
   };
   setHeroWaveSignals({

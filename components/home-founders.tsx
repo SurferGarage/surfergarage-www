@@ -1,8 +1,6 @@
-import { FounderVideoStudio } from "@/components/founder-video-studio";
-import { FounderWechatColumn } from "@/components/founder-wechat-column";
+import dynamic from "next/dynamic";
 import { GithubPlaybookBlock } from "@/components/github-playbook-block";
 import { SgModuleShell } from "@/components/sg-module-shell";
-import { VisualGarage } from "@/components/visual-garage";
 import { FOUNDER_STACK_MODULES } from "@/lib/founder-panels";
 import { SgVisSectionHeader } from "@/components/sg-vis-section-header";
 import { visPillForFounderKind, type SgVisPillId } from "@/lib/sg-vis";
@@ -12,6 +10,30 @@ import {
 } from "@/lib/founders-scroll-rhythm";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import { Fragment } from "react";
+
+const FounderWechatColumn = dynamic(
+  () =>
+    import("@/components/founder-wechat-column").then((m) => ({
+      default: m.FounderWechatColumn,
+    })),
+  { ssr: true },
+);
+
+const FounderVideoStudio = dynamic(
+  () =>
+    import("@/components/founder-video-studio").then((m) => ({
+      default: m.FounderVideoStudio,
+    })),
+  { ssr: true },
+);
+
+const VisualGarage = dynamic(
+  () =>
+    import("@/components/visual-garage").then((m) => ({
+      default: m.VisualGarage,
+    })),
+  { ssr: true },
+);
 
 /** 单屏 pin 容器 — 始终 100dvh − header，overflow-hidden 防止溢出 */
 const PANEL_CARD_BASE =

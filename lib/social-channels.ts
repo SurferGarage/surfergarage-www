@@ -46,7 +46,7 @@ const wechatArticle: SocialChannel = {
   descriptionZh: "",
   followerLabel: undefined,
   latest:
-    "从小玩硝糖火箭的少年，现在想把世界永存进树脂里 · 对话「稀树科技」曹瑞翔",
+    "22岁千万营收之后，她选择按下人生重启键 · 对话Kiana「济谦AI」",
 };
 
 const videoChannels: SocialChannel[] = [
@@ -70,9 +70,9 @@ const videoChannels: SocialChannel[] = [
     href: "https://space.bilibili.com/3546759022250564",
     descriptionZh: "",
     followerLabel: undefined,
-    latest: "第二期 · 真正的冒险，是勇于对别人负责 | 对话 Seede.AI 杨沐锦",
+    latest: "第二期 · AI 时代，请保持你珍贵的活人感！| 对话 Seede.AI 杨沐锦",
     coverSrc:
-      "https://i2.hdslb.com/bfs/archive/f65e5ecb934a65d39df7a61c39be0821d35a5525.jpg",
+      "https://i2.hdslb.com/bfs/archive/b6d85f1249911607824f2eaf84b3948aaf8c705e.jpg",
   },
   {
     id: "twitter",

@@ -62,7 +62,7 @@ export function GlowRiver() {
         style={{ transform: "translateZ(0)" }}
       >
         <svg
-          className="sg-river-svg h-[220vh] w-full [filter:blur(90px)]"
+          className="sg-river-svg h-[220vh] w-full"
           viewBox="0 0 1440 3200"
           preserveAspectRatio="none"
         >

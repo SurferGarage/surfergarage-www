@@ -120,6 +120,42 @@ const MUJI_EPISODES: readonly SurfingFoundersEpisode[] = [
     coverPic: "/video-covers/muji-vol-01.jpg",
     coverFocus: "center",
   },
+  {
+    id: "muji-vol-02",
+    bvid: "BV1ZfVz6GE5U",
+    aid: 116679480710384,
+    cid: 38795870878,
+    volLabel: "Vol.02",
+    titleZh: "你的 AI 在抽卡？还是在稳定持续地工作？ | 对话 Seede.AI 杨沐锦",
+    role: "spotlight",
+    publishedAt: "2026-06-02",
+    coverPic: "/video-covers/muji-vol-02.jpg",
+    coverFocus: "center",
+  },
+  {
+    id: "muji-vol-03",
+    bvid: "BV1t77k6kEFb",
+    aid: 116697415553307,
+    cid: 38883822255,
+    volLabel: "Vol.03",
+    titleZh: "3 个月 10 万用户，我只花了 0 元 | 对话 Seede.AI 杨沐锦",
+    role: "method",
+    publishedAt: "2026-06-05",
+    coverPic: "/video-covers/muji-vol-03.jpg",
+    coverFocus: "center",
+  },
+  {
+    id: "muji-vol-04",
+    bvid: "BV16CE367Erk",
+    aid: 116714998077446,
+    cid: 38964105167,
+    volLabel: "Vol.04",
+    titleZh: "AI 时代，请保持你珍贵的活人感！| 对话 Seede.AI 杨沐锦",
+    role: "finale",
+    publishedAt: "2026-06-08",
+    coverPic: "/video-covers/muji-vol-04.jpg",
+    coverFocus: "center",
+  },
 ] as const;
 
 /** 第一季：已上线嘉宾 + 待公布席位（保持 6 人网格感，与 YC 名单长度接近） */
@@ -145,7 +181,7 @@ export const SURFING_FOUNDERS_SEASON_01: SurfingFoundersSeason = {
       duringCaptionZh:
         "Seede.AI 联合创始人。南开毕业后经奥美、Founder Park，亲历一代中国早期创业者；0 营销投入，3 个月内做到 10 万用户。",
       nowCaptionZh:
-        "浪前视频播客第二期：AI Native 增长、营销与「活人感」——初创团队如何把品味与执行力叠在一起。",
+        "最新一期谈 AI 时代的「活人感」：当工具越来越像人，创作者最该守住的是什么。",
       episodes: MUJI_EPISODES,
     },
     {

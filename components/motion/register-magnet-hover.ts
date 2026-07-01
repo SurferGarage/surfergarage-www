@@ -67,3 +67,8 @@ export function registerMagnetHover(): Cleanup {
   };
   return attached;
 }
+
+/** HMR / 全局 teardown 时显式释放 magnet 指针监听 */
+export function teardownMagnetHover(): void {
+  attached?.();
+}

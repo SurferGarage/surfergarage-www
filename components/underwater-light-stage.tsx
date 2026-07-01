@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 
 import { useLenis } from "@/components/lenis-context";
 import { isSgAtmospherePaused } from "@/components/sg-performance-guards";
+import { useReducedMotion } from "@/lib/sg-reduced-motion";
 import { getScrollDepthT, getWaveScrollVel } from "@/lib/sg-scroll-signals";
 
 function clamp(n: number, a: number, b: number): number {
@@ -36,21 +37,12 @@ function setOrbColors(root: HTMLElement, colorT: number): void {
 
 /**
  * 首页背景栈内氛围层：顶区「颠倒」水面高光 + 随滚动下沉的光球（青→黄）。
- * 由 `app/page.tsx` 置于 `.sg-main-depth` 之上、`main/footer`（z-3）之下，避免被实色渐变盖住。
  */
 export function UnderwaterLightStage(): ReactNode {
   const lenis = useLenis();
-  const [reduced, setReduced] = useState<boolean | null>(null);
+  const reduced = useReducedMotion();
   const lastScrollRef = useRef(0);
   const impulseRef = useRef(0);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduced(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
 
   useEffect(() => {
     if (reduced !== false) return;
@@ -104,6 +96,7 @@ export function UnderwaterLightStage(): ReactNode {
 
     let raf = 0;
     const schedule = (): void => {
+      if (isSgAtmospherePaused()) return;
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;

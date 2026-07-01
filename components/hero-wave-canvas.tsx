@@ -1,10 +1,11 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
+import { isSgAtmospherePaused } from "@/components/sg-performance-guards";
 import { getHeroWaveSignals, getScrollDepthT, getWaveScrollVel } from "@/lib/sg-scroll-signals";
 import {
   shouldMountHeroWebGL,
@@ -22,6 +23,23 @@ const HERO_BLOOM_INTENSITY = 1.05;
 const HERO_BLOOM_THRESHOLD = 0.26;
 const HERO_BLOOM_SMOOTHING = 0.26;
 const FRAME_INTERVAL_MS = 1000 / 30;
+
+/** demand 模式下按固定间隔 invalidate，避免 60fps 空转 */
+function DemandTick({ intervalMs }: { intervalMs: number }) {
+  const invalidate = useThree((s) => s.invalidate);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const schedule = () => {
+      invalidate();
+      timer = setTimeout(schedule, intervalMs);
+    };
+    schedule();
+    return () => clearTimeout(timer);
+  }, [intervalMs, invalidate]);
+
+  return null;
+}
 
 function waveY(
   x: number,
@@ -181,26 +199,35 @@ function HeroWaveCanvasActive({
 
     const intersecting = { current: false };
     const apply = () => {
-      setRunLoop(intersecting.current && !document.hidden);
+      setRunLoop(
+        intersecting.current && !document.hidden && !isSgAtmospherePaused(),
+      );
     };
 
     const io = new IntersectionObserver(
       (entries) => {
         const e = entries[0];
         if (!e) return;
-        intersecting.current = e.isIntersecting;
+        intersecting.current =
+          e.isIntersecting && e.intersectionRatio >= 0.1;
         apply();
       },
-      { root: null, rootMargin: "0px 0px 8% 0px", threshold: 0 },
+      { root: null, rootMargin: "0px 0px 8% 0px", threshold: [0, 0.1, 0.2] },
     );
     io.observe(host);
     apply();
 
     const onVisibility = () => apply();
     document.addEventListener("visibilitychange", onVisibility);
+    const mo = new MutationObserver(apply);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-sg-atmosphere-paused", "data-doc-hidden"],
+    });
 
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
+      mo.disconnect();
       io.disconnect();
     };
   }, [hostSelector]);
@@ -216,7 +243,7 @@ function HeroWaveCanvasActive({
         <Canvas
           camera={{ far: 140, fov: 50, near: 0.06, position: [0, 3.12, 7.6] }}
           dpr={dpr}
-          frameloop="always"
+          frameloop="demand"
           gl={{
             alpha: true,
             antialias: false,
@@ -226,6 +253,7 @@ function HeroWaveCanvasActive({
           }}
           style={{ width: "100%", height: "100%" }}
         >
+          <DemandTick intervalMs={FRAME_INTERVAL_MS} />
           <CameraRig />
           <CyberSeaSurface gridSeg={gridSeg} />
           {useBloom ? (

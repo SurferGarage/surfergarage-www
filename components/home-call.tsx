@@ -13,7 +13,7 @@ import {
   SG_PAGE_SHELL_CLASS,
   SG_SECTION_TITLE_CLASS,
 } from "@/lib/sg-layout";
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 const WECHAT_ID = "x3167056428";
 
@@ -82,10 +82,19 @@ function CallBlock({
 
 export function HomeCall() {
   const [toast, setToast] = useState<ToastState>({ id: null, label: "" });
+  const toastTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
 
   const fireToast = useCallback((id: string, label: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ id, label });
-    window.setTimeout(() => {
+    toastTimerRef.current = window.setTimeout(() => {
+      toastTimerRef.current = null;
       setToast((prev) => (prev.id === id ? { id: null, label: "" } : prev));
     }, 2400);
   }, []);

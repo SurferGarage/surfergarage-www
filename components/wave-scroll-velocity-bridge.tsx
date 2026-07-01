@@ -47,6 +47,8 @@ export function WaveScrollVelocityBridge() {
 
     return () => {
       lenis.off("scroll", onScroll);
+      gsap.killTweensOf(storeObj);
+      quickRef.current = null;
       setWaveScrollVel(0);
       lastWritten.current = -1;
       storeObj.n = 0;

@@ -16,6 +16,8 @@ type SgScrollRailProps = {
   scrollRef: RefObject<HTMLElement | null>;
   /** 列表项数量等，变化时重算 thumb */
   measureKey?: string;
+  /** 父级已 sync 的 metrics，避免重复 scroll/RO 监听 */
+  metrics?: ScrollRailMetrics;
   className?: string;
 };
 
@@ -25,10 +27,14 @@ type SgScrollRailProps = {
 export function SgScrollRail({
   scrollRef,
   measureKey = "",
+  metrics: metricsProp,
   className = "",
 }: SgScrollRailProps) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const metrics = useScrollRailMetrics(scrollRef, measureKey);
+  const internalMetrics = useScrollRailMetrics(scrollRef, measureKey, {
+    enabled: !metricsProp,
+  });
+  const metrics = metricsProp ?? internalMetrics;
 
   const onTrackPointerDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {

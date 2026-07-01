@@ -118,8 +118,7 @@ function ChannelLink({
 /** 微信公众号 — 独立产品位，带封面 */
 function WechatFeatureCard({ ch }: { ch: SocialChannel }) {
   const featured =
-    WECHAT_OFFICIAL_FEED.find((item) => item.id === "wx-08") ??
-    WECHAT_OFFICIAL_FEED[WECHAT_OFFICIAL_FEED.length - 1];
+    WECHAT_OFFICIAL_FEED[WECHAT_OFFICIAL_FEED.length - 1]!;
 
   return (
     <ChannelLink ch={ch} className={`${channelShell} flex-col`}>

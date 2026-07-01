@@ -20,6 +20,7 @@ import {
 } from "@/lib/sg-reduced-motion";
 import {
   forceScrollTop,
+  isScrollViewportLocked,
   lockViewportDuringMotionInit,
   refreshScrollTriggersHoldTop,
   unlockViewportAfterMotionInit,
@@ -49,8 +50,12 @@ export function HomeScrollChoreography() {
     forceScrollTop(lenis);
 
     if (lenis === null) {
+      const t = window.setTimeout(() => {
+        if (readReducedMotion()) return;
+        finishMotionInit();
+      }, 2500);
       return () => {
-        document.documentElement.classList.remove("sg-motion-ready");
+        window.clearTimeout(t);
       };
     }
 
@@ -72,30 +77,24 @@ export function HomeScrollChoreography() {
 
     let refreshCancelled = false;
     let refreshRaf = 0;
+    let refreshGeneration = 0;
+    const generation = ++refreshGeneration;
+
     refreshRaf = requestAnimationFrame(() => {
-      if (refreshCancelled) return;
-      refreshScrollTriggersHoldTop(lenis);
+      if (refreshCancelled || generation !== refreshGeneration) return;
+      unlockViewportAfterMotionInit(lenis);
       refreshRaf = requestAnimationFrame(() => {
-        if (refreshCancelled) return;
-        unlockViewportAfterMotionInit(lenis);
+        if (refreshCancelled || generation !== refreshGeneration) return;
+        refreshScrollTriggersHoldTop(lenis);
         forceScrollTop(lenis);
         finishMotionInit();
       });
     });
 
-    let resizeT: ReturnType<typeof setTimeout> | undefined;
-    const onResize = () => {
-      if (resizeT) clearTimeout(resizeT);
-      resizeT = setTimeout(() => {
-        resizeT = undefined;
-        refreshScrollTriggersHoldTop(lenis);
-      }, 200);
-    };
-    window.addEventListener("resize", onResize);
-
     let fontsCancelled = false;
     void document.fonts?.ready?.then(() => {
       if (fontsCancelled) return;
+      if (isScrollViewportLocked()) return;
       const nearTop = (lenis?.scroll ?? window.scrollY) < 120;
       if (!nearTop) return;
       refreshScrollTriggersHoldTop(lenis);
@@ -104,14 +103,13 @@ export function HomeScrollChoreography() {
     return () => {
       fontsCancelled = true;
       refreshCancelled = true;
+      refreshGeneration += 1;
       if (refreshRaf) cancelAnimationFrame(refreshRaf);
-      window.removeEventListener("resize", onResize);
-      if (resizeT) clearTimeout(resizeT);
       unlockViewportAfterMotionInit(lenis);
-      document.documentElement.classList.remove("sg-motion-ready");
       mm.revert();
       ctx.revert();
       teardownScrollMotion();
+      finishMotionInit();
     };
   }, [lenis]);
 

@@ -218,10 +218,14 @@
   position: absolute;
   width: min(132vmin, 820px);
   height: min(132vmin, 820px);
-  left: calc(var(--uwl-orb-x, 0.36) * 100vw);
-  top: calc(var(--uwl-orb-y, 0.1) * 100vh);
-  transform: translate(-50%, -50%) translateZ(0);
-  will-change: left, top;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(
+    calc((var(--uwl-orb-x, 0.36) - 0.5) * 100vw),
+    calc((var(--uwl-orb-y, 0.1) - 0.5) * 100vh),
+    0
+  );
+  will-change: transform;
 }
 
 .uwl-orb-glow {
@@ -567,15 +571,24 @@ html[data-sg-scroll-lock] {
   }
 }
 
+/* 只动画 opacity：勿动画 filter:blur()，大画幅 SVG 会每帧重算模糊并拖死 GPU/内存 */
 @keyframes sg-river-breath {
-  0% {
-    filter: blur(90px) saturate(1);
+  0%,
+  100% {
+    opacity: 0.92;
   }
   50% {
-    filter: blur(94px) saturate(1.04);
+    opacity: 1;
   }
+}
+
+@keyframes sg-orb-breath {
+  0%,
   100% {
-    filter: blur(90px) saturate(1);
+    opacity: 0.74;
+  }
+  50% {
+    opacity: 0.82;
   }
 }
 
@@ -612,11 +625,12 @@ html[data-sg-scroll-lock] {
 }
 
 .sg-river-layer {
-  animation: sg-river-drift 24s ease-in-out infinite;
+  animation: sg-river-breath 24s ease-in-out infinite;
   transform-origin: 40% 12%;
 }
 
 .sg-river-svg {
+  filter: blur(64px) saturate(1.02);
   animation: sg-river-breath 18s ease-in-out infinite;
 }
 
@@ -627,7 +641,7 @@ html[data-sg-scroll-lock] {
 .sg-river-path-shimmer {
   opacity: calc(0.1 + (1 - var(--sg-dt)) * 0.22);
   stroke-dasharray: 8 72;
-  animation: sg-river-shimmer 28s linear infinite;
+  /* 勿在 blur SVG 内动画 stroke，会每帧重算模糊 */
 }
 
 /* 光河 · 深流：贯穿整页的暗流纹理，paper 区也保留极弱存在感
@@ -638,18 +652,19 @@ html[data-sg-scroll-lock] {
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
+  contain: strict;
   /* hero 0.18 → paper deep 0.05 — 始终可感知 */
   opacity: calc(0.05 + (1 - var(--sg-dt)) * 0.13);
   mix-blend-mode: screen;
   transition: opacity 320ms ease-out;
-  animation: sg-river-drift 38s ease-in-out infinite;
+  animation: sg-river-breath 38s ease-in-out infinite;
   transform-origin: 32% 28%;
 }
 
 .sg-river-deep-svg {
   width: 100%;
   height: 100%;
-  filter: blur(150px) saturate(1.08);
+  filter: blur(52px) saturate(1.04);
   animation: sg-river-breath 32s ease-in-out infinite;
 }
 
@@ -668,11 +683,11 @@ html[data-sg-scroll-lock] {
   }
 
   .sg-river-svg {
-    filter: blur(48px) saturate(1.02);
+    filter: blur(40px) saturate(1.02);
   }
 
   .sg-river-deep-svg {
-    filter: blur(90px) saturate(1.04);
+    filter: blur(48px) saturate(1.04);
   }
 }
 
@@ -740,7 +755,7 @@ html[data-sg-scroll-lock] {
 }
 
 .sg-call-orb-core {
-  animation: sg-river-breath 18s ease-in-out infinite;
+  animation: sg-orb-breath 18s ease-in-out infinite;
   opacity: 0.78;
 }
 
@@ -771,6 +786,19 @@ html[data-sg-scroll-lock] {
   animation: sg-founder-breath-drift 36s ease-in-out infinite;
 }
 
+/* ST 初始化完成前暂停装饰动画，避免与 pin refresh 叠加重算 */
+html:not(.sg-motion-ready) .sg-river-layer,
+html:not(.sg-motion-ready) .sg-river-svg,
+html:not(.sg-motion-ready) .sg-river-path-shimmer,
+html:not(.sg-motion-ready) .sg-river-deep,
+html:not(.sg-motion-ready) .sg-river-deep-svg,
+html:not(.sg-motion-ready) .sg-founder-breath-glow,
+html:not(.sg-motion-ready) .sg-call-orb,
+html:not(.sg-motion-ready) .sg-call-orb-core,
+html:not(.sg-motion-ready) .sg-scroll-cue-line {
+  animation-play-state: paused !important;
+}
+
 /* 运行时节能：标签隐藏或 Hero 离屏时暂停装饰动画（外观静止，不影响 GSAP scrub 透明度） */
 html[data-doc-hidden] .sg-river-layer,
 html[data-doc-hidden] .sg-river-svg,
@@ -789,7 +817,8 @@ html[data-sg-atmosphere-paused] .sg-river-deep-svg,
 html[data-sg-atmosphere-paused] .sg-founder-breath-glow,
 html[data-sg-atmosphere-paused] .sg-call-orb,
 html[data-sg-atmosphere-paused] .sg-call-orb-core,
-html[data-sg-atmosphere-paused] .sg-scroll-cue-line {
+html[data-sg-atmosphere-paused] .sg-scroll-cue-line,
+html[data-sg-atmosphere-paused] .uwl-stage {
   animation-play-state: paused !important;
 }
 

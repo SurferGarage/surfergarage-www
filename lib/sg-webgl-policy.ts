@@ -37,11 +37,9 @@ export function useSgWebglTier(): SgWebglTier | null {
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     mq.addEventListener("change", sync);
-    window.addEventListener("resize", sync);
 
     return () => {
       mq.removeEventListener("change", sync);
-      window.removeEventListener("resize", sync);
     };
   }, []);
 

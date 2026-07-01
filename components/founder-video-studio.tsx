@@ -4,6 +4,7 @@ import { BilibiliEmbedPlayer } from "@/components/bilibili-embed-player";
 import { BilibiliEpisodeCover } from "@/components/bilibili-episode-cover";
 import Image from "next/image";
 import { SgScrollRail } from "@/components/sg-scroll-rail";
+import { useScrollRailMetrics } from "@/lib/use-scroll-rail-metrics";
 import {
   bilibiliWatchUrl,
   buildBilibiliPlayerSrc,
@@ -19,8 +20,7 @@ import {
   type SurfingFoundersGuest,
 } from "@/lib/surfing-founders-video-season";
 import {
-  useFounderPanelPrefetch,
-  useFounderPanelVisible,
+  useFounderPanelGate,
 } from "@/lib/use-founder-panel-visible";
 import {
   useCallback,
@@ -29,10 +29,7 @@ import {
   useRef,
   useState,
   type MutableRefObject,
-  type RefObject,
 } from "react";
-
-const ROSTER_SCROLL_EDGE = 10;
 
 /** 列布局由 globals `.sg-video-studio-col` 控制（移动 flex / 桌面 subgrid），勿加 Tailwind `flex` 以免盖掉 grid */
 const STUDIO_COL = "sg-video-studio-col h-full min-h-0";
@@ -45,40 +42,6 @@ const STAGE_INNER = "sg-video-studio-stage-inner";
 
 const bandEyebrow =
   "editorial-eyebrow font-[family-name:var(--font-zh)] text-[11px] text-[var(--muted)] md:text-[12px]";
-
-function useScrollEdgeHints(
-  scrollRef: RefObject<HTMLElement | null>,
-  rerenderKey = "",
-) {
-  const [hints, setHints] = useState({ top: false, bottom: false });
-
-  const sync = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const canScroll = el.scrollHeight > el.clientHeight + 2;
-    setHints({
-      top: canScroll && el.scrollTop > ROSTER_SCROLL_EDGE,
-      bottom:
-        canScroll &&
-        el.scrollTop + el.clientHeight < el.scrollHeight - ROSTER_SCROLL_EDGE,
-    });
-  }, [scrollRef]);
-
-  useEffect(() => {
-    sync();
-    const el = scrollRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", sync, { passive: true });
-    const ro = new ResizeObserver(sync);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", sync);
-      ro.disconnect();
-    };
-  }, [scrollRef, sync, rerenderKey]);
-
-  return hints;
-}
 
 function GuestRoster({
   guests,
@@ -174,9 +137,10 @@ export function FounderVideoStudio() {
   const rootRef = useRef<HTMLDivElement>(null);
   const rosterScrollRef = useRef<HTMLDivElement>(null);
   const rosterOptionRefs = useRef(new Map<string, HTMLButtonElement>());
-  const panelVisible = useFounderPanelVisible(rootRef);
-  const panelPrefetch = useFounderPanelPrefetch(rootRef);
-  const shouldMountPlayer = panelVisible || panelPrefetch;
+  const { visible: panelVisible, prefetch: panelPrefetch } =
+    useFounderPanelGate(rootRef);
+  /** 仅视口内挂载 iframe；prefetch 只预取 player 文档，避免半屏外就拉 B 站播放器占内存 */
+  const shouldMountPlayer = panelVisible;
   const season = SURFING_FOUNDERS_SEASON_01;
   const liveGuests = useMemo(
     () => season.guests.filter((g) => !g.comingSoon && g.episodes.length > 0),
@@ -214,7 +178,7 @@ export function FounderVideoStudio() {
     ? `${guest.nameZh} · ${activeEpisode.titleZh}`
     : guest.nameZh;
 
-  const rosterScrollHints = useScrollEdgeHints(
+  const rosterScroll = useScrollRailMetrics(
     rosterScrollRef,
     `${guest.id}:${season.guests.length}`,
   );
@@ -261,21 +225,27 @@ export function FounderVideoStudio() {
 
   useEffect(() => {
     if (!panelPrefetch) return;
+    const cancels: Array<() => void> = [];
     const episodes = new Set<SurfingFoundersEpisode>();
     if (activeEpisode) episodes.add(activeEpisode);
     const def = getDefaultEpisode(guest);
     if (def) episodes.add(def);
     for (const ep of episodes) {
-      prefetchBilibiliPlayerDocument(
-        buildBilibiliPlayerSrc(ep.bvid, {
-          aid: ep.aid,
-          cid: ep.cid,
-          autoplay: false,
-          danmaku: false,
-          highQuality: true,
-        }),
+      cancels.push(
+        prefetchBilibiliPlayerDocument(
+          buildBilibiliPlayerSrc(ep.bvid, {
+            aid: ep.aid,
+            cid: ep.cid,
+            autoplay: false,
+            danmaku: false,
+            highQuality: true,
+          }),
+        ),
       );
     }
+    return () => {
+      cancels.forEach((cancel) => cancel());
+    };
   }, [panelPrefetch, guest, activeEpisode]);
 
   return (
@@ -308,7 +278,7 @@ export function FounderVideoStudio() {
                   src={coverEpisode.coverPic}
                   alt={`${guest.nameEn} · ${coverEpisode.titleZh}`}
                   fill
-                  priority
+                  priority={panelVisible}
                   sizes="(max-width: 1024px) 100vw, 36vw"
                   className="object-contain"
                 />
@@ -346,8 +316,8 @@ export function FounderVideoStudio() {
 
         <div
           className={`${STUDIO_STAGE} sg-guest-roster-scroll-wrap relative min-h-[18rem] lg:min-h-0`}
-          data-can-scroll-top={rosterScrollHints.top ? "" : undefined}
-          data-can-scroll-bottom={rosterScrollHints.bottom ? "" : undefined}
+          data-can-scroll-top={rosterScroll.edgeTop ? "" : undefined}
+          data-can-scroll-bottom={rosterScroll.edgeBottom ? "" : undefined}
           data-lenis-prevent
         >
           <div className={`${STAGE_INNER} sg-video-studio-stage-inner--roster`}>
@@ -371,6 +341,7 @@ export function FounderVideoStudio() {
             <SgScrollRail
               scrollRef={rosterScrollRef}
               measureKey={`${guest.id}:${season.guests.length}`}
+              metrics={rosterScroll}
             />
           </div>
           </div>

@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/components/motion/gsap-register";
 
 import "lenis/dist/lenis.css";
 
 import { LenisContext } from "@/components/lenis-context";
+import { SgScrollReadyGuard } from "@/components/sg-scroll-ready-guard";
 import { WaveScrollVelocityBridge } from "@/components/wave-scroll-velocity-bridge";
 import {
   forceScrollTop,
@@ -15,8 +15,6 @@ import {
 } from "@/lib/scroll-top-lock";
 import { readReducedMotion } from "@/lib/sg-reduced-motion";
 import { teardownScrollMotion } from "@/lib/sg-scroll-teardown";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
@@ -64,9 +62,14 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       },
     });
 
+    let resizeT: ReturnType<typeof setTimeout> | undefined;
     const onResize = () => {
-      lenisInstance.resize();
-      refreshScrollTriggersHoldTop(lenisInstance);
+      if (resizeT) clearTimeout(resizeT);
+      resizeT = setTimeout(() => {
+        resizeT = undefined;
+        lenisInstance.resize();
+        refreshScrollTriggersHoldTop(lenisInstance, { preserveScroll: true });
+      }, 200);
     };
     window.addEventListener("resize", onResize);
 
@@ -84,8 +87,10 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
     return () => {
       if (stRaf) cancelAnimationFrame(stRaf);
+      if (resizeT) clearTimeout(resizeT);
       window.removeEventListener("resize", onResize);
       gsap.ticker.remove(ticker);
+      ScrollTrigger.scrollerProxy(document.documentElement, {});
       teardownScrollMotion();
       lenisInstance.destroy();
       lenisRef.current = null;
@@ -101,6 +106,8 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       if (!mq.matches) return;
       lenisRef.current?.destroy();
       lenisRef.current = null;
+      ScrollTrigger.scrollerProxy(document.documentElement, {});
+      teardownScrollMotion();
       setLenis(null);
     };
     mq.addEventListener("change", onChange);
@@ -109,6 +116,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
   return (
     <LenisContext.Provider value={lenis}>
+      <SgScrollReadyGuard />
       <WaveScrollVelocityBridge />
       {children}
     </LenisContext.Provider>

@@ -8,21 +8,41 @@ export type ScrollRailMetrics = {
   thumbOffset: number;
   /** 0–1，thumb 高度占轨道比例 */
   thumbSize: number;
+  /** 距顶仍可滚（用于渐隐 hint） */
+  edgeTop: boolean;
+  /** 距底仍可滚 */
+  edgeBottom: boolean;
 };
 
 const EMPTY: ScrollRailMetrics = {
   canScroll: false,
   thumbOffset: 0,
   thumbSize: 1,
+  edgeTop: false,
+  edgeBottom: false,
 };
 
-function measureScrollRail(el: HTMLElement): ScrollRailMetrics {
+const DEFAULT_SCROLL_EDGE = 10;
+
+function measureScrollRail(
+  el: HTMLElement,
+  scrollEdge = DEFAULT_SCROLL_EDGE,
+): ScrollRailMetrics {
   const { scrollHeight, clientHeight, scrollTop } = el;
-  if (scrollHeight <= clientHeight + 1) return EMPTY;
+  const canScroll = scrollHeight > clientHeight + 2;
+  const edgeTop = canScroll && scrollTop > scrollEdge;
+  const edgeBottom =
+    canScroll && scrollTop + clientHeight < scrollHeight - scrollEdge;
+
+  if (scrollHeight <= clientHeight + 1) {
+    return { ...EMPTY, edgeTop, edgeBottom };
+  }
 
   const ratio = clientHeight / scrollHeight;
   /* 可滚余量极小则不显示轨，避免「几乎满条」的误导 */
-  if (ratio > 0.9) return EMPTY;
+  if (ratio > 0.9) {
+    return { ...EMPTY, edgeTop, edgeBottom };
+  }
 
   const thumbSize = Math.min(1, Math.max(0.08, ratio));
   const maxOffset = 1 - thumbSize;
@@ -30,14 +50,22 @@ function measureScrollRail(el: HTMLElement): ScrollRailMetrics {
   const thumbOffset =
     scrollRange > 0 ? (scrollTop / scrollRange) * maxOffset : 0;
 
-  return { canScroll: true, thumbOffset, thumbSize };
+  return {
+    canScroll: true,
+    thumbOffset,
+    thumbSize,
+    edgeTop,
+    edgeBottom,
+  };
 }
 
 /** 自定义滚动轨：与可滚动容器 sync 的 thumb 比例与位置 */
 export function useScrollRailMetrics(
   scrollRef: RefObject<HTMLElement | null>,
   deps: string = "",
+  options?: { enabled?: boolean },
 ): ScrollRailMetrics {
+  const enabled = options?.enabled ?? true;
   const [metrics, setMetrics] = useState<ScrollRailMetrics>(EMPTY);
 
   const sync = useCallback(() => {
@@ -50,6 +78,7 @@ export function useScrollRailMetrics(
   }, [scrollRef]);
 
   useEffect(() => {
+    if (!enabled) return;
     sync();
     const el = scrollRef.current;
     if (!el) return;
@@ -61,9 +90,9 @@ export function useScrollRailMetrics(
       el.removeEventListener("scroll", sync);
       ro.disconnect();
     };
-  }, [scrollRef, sync, deps]);
+  }, [scrollRef, sync, deps, enabled]);
 
-  return metrics;
+  return enabled ? metrics : EMPTY;
 }
 
 /** 点击轨道时跳转到对应滚动位置 */

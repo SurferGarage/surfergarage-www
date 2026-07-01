@@ -95,6 +95,24 @@ void main() {
 }
 `;
 
+const FRAME_INTERVAL_MS = 1000 / 24;
+
+function DemandTick({ intervalMs }: { intervalMs: number }) {
+  const invalidate = useThree((s) => s.invalidate);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const schedule = () => {
+      invalidate();
+      timer = setTimeout(schedule, intervalMs);
+    };
+    schedule();
+    return () => clearTimeout(timer);
+  }, [intervalMs, invalidate]);
+
+  return null;
+}
+
 function FixedOrthoCamera() {
   const set = useThree((s) => s.set);
   useLayoutEffect(() => {
@@ -105,10 +123,9 @@ function FixedOrthoCamera() {
   return null;
 }
 
-function WaterVolumeQuad({ active }: { active: boolean }) {
+function WaterVolumeQuad() {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const lastFrameAt = useRef(0);
-  const FRAME_INTERVAL_MS = 1000 / 24;
 
   const shader = useMemo(() => {
     return {
@@ -123,7 +140,6 @@ function WaterVolumeQuad({ active }: { active: boolean }) {
   }, []);
 
   useFrame((state) => {
-    if (!active) return;
     const now = state.clock.elapsedTime * 1000;
     if (now - lastFrameAt.current < FRAME_INTERVAL_MS) return;
     lastFrameAt.current = now;
@@ -137,6 +153,12 @@ function WaterVolumeQuad({ active }: { active: boolean }) {
 
   const geo = useMemo(() => new THREE.PlaneGeometry(2, 2), []);
   useEffect(() => () => geo.dispose(), [geo]);
+  useEffect(() => {
+    const mat = matRef.current;
+    return () => {
+      mat?.dispose();
+    };
+  }, [shader]);
 
   return (
     <mesh position={[0, 0, 0]} renderOrder={-2} geometry={geo}>
@@ -184,7 +206,7 @@ export function WaterVolumeFx(): ReactNode {
       {runLoop ? (
         <Canvas
           className="h-full w-full"
-          frameloop="always"
+          frameloop="demand"
           dpr={[1, 1.15]}
           gl={{
             alpha: true,
@@ -193,8 +215,9 @@ export function WaterVolumeFx(): ReactNode {
             stencil: false,
           }}
         >
+          <DemandTick intervalMs={FRAME_INTERVAL_MS} />
           <FixedOrthoCamera />
-          <WaterVolumeQuad active />
+          <WaterVolumeQuad />
         </Canvas>
       ) : null}
     </div>

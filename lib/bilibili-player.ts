@@ -64,13 +64,29 @@ export function buildBilibiliPlayerSrc(
 
 const prefetchedPlayerDocs = new Set<string>();
 
+export type PrefetchCancel = () => void;
+
 /** 浏览器空闲时预取播放器文档（同一 URL 只 prefetch 一次） */
-export function prefetchBilibiliPlayerDocument(src: string | null): void {
-  if (!src || typeof document === "undefined") return;
-  if (prefetchedPlayerDocs.has(src)) return;
+export function prefetchBilibiliPlayerDocument(src: string | null): PrefetchCancel {
+  if (!src || typeof document === "undefined") return () => {};
+
+  let cancelled = false;
+  let idleId: number | undefined;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  const cancel = () => {
+    cancelled = true;
+    if (idleId !== undefined && "cancelIdleCallback" in window) {
+      window.cancelIdleCallback(idleId);
+    }
+    if (timeoutId !== undefined) clearTimeout(timeoutId);
+  };
+
+  if (prefetchedPlayerDocs.has(src)) return cancel;
   prefetchedPlayerDocs.add(src);
 
   const run = () => {
+    if (cancelled) return;
     const link = document.createElement("link");
     link.rel = "prefetch";
     link.as = "document";
@@ -79,10 +95,12 @@ export function prefetchBilibiliPlayerDocument(src: string | null): void {
   };
 
   if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(run, { timeout: 2000 });
+    idleId = window.requestIdleCallback(run, { timeout: 2000 });
   } else {
-    setTimeout(run, 0);
+    timeoutId = setTimeout(run, 0);
   }
+
+  return cancel;
 }
 
 export function bilibiliWatchUrl(bvid: string): string {

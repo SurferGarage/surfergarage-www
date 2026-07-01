@@ -5,7 +5,7 @@ import { SITE_PRIMARY_NAV } from "@/lib/site-nav";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import { useAnchorNav } from "@/lib/use-anchor-nav";
 import Image from "next/image";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 /** 入口 CTA 主操作：与 #call 落点一致 */
 const HEADER_CTA_HREF = "#call";
@@ -58,7 +58,7 @@ function useActiveSection(sectionIds: readonly string[]) {
             bestId = id;
           }
         });
-        if (bestId) setActive(bestId);
+        if (bestId) setActive((prev) => (prev === bestId ? prev : bestId));
       },
       {
         root: null,
@@ -120,7 +120,10 @@ function HamburgerIcon({ open }: { open: boolean }) {
 }
 
 export function SiteHeader() {
-  const sectionIds = SITE_PRIMARY_NAV.map((n) => n.href.replace(/^#/, ""));
+  const sectionIds = useMemo(
+    () => SITE_PRIMARY_NAV.map((n) => n.href.replace(/^#/, "")),
+    [],
+  );
   const activeId = useActiveSection(sectionIds);
   const [open, setOpen] = useState(false);
   const drawerId = useId();
