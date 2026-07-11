@@ -113,94 +113,119 @@ export function HomeEvents() {
         </article>
       ) : null}
 
-      <div className="grid lg:grid-cols-2">
-        {adventureX ? (
-          <article
-            className="border-t border-white/12 bg-[#17100d] text-white lg:border-r"
-            aria-labelledby="adventurex-heading"
+      {adventureX ? (
+        <article
+          className="border-t border-white/12 bg-[#17100d] text-white"
+          aria-labelledby="adventurex-heading"
+        >
+          <div
+            className={`${SG_PAGE_SHELL_CLASS} grid items-center gap-14 py-20 md:py-24 lg:min-h-[calc(100svh-4.5rem)] lg:grid-cols-12 lg:gap-16 lg:py-28`}
           >
-            <div className="mx-auto flex h-full max-w-[52rem] flex-col px-5 py-20 md:px-10 md:py-24 lg:px-12 lg:py-28 xl:px-16">
-              <div className="relative aspect-[16/10] overflow-hidden bg-[#3a2416]">
+            <a
+              href={adventureX.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group lg:col-span-5"
+              aria-label={`${adventureX.title}，${adventureX.linkLabel}`}
+            >
+              <div className="mx-auto w-full max-w-[22rem] overflow-hidden">
                 <Image
                   src={adventureX.imageSrc}
                   alt={adventureX.imageAlt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="origin-top object-cover object-[50%_12%] scale-[1.28]"
+                  width={907}
+                  height={1594}
+                  sizes="(max-width: 1024px) 100vw, 36vw"
+                  className="h-auto w-full transition-transform duration-700 group-hover:scale-[1.012]"
                 />
               </div>
+            </a>
 
-              <div className="mt-10 flex flex-1 flex-col">
-                <div className="flex items-center justify-between gap-6 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/55 md:text-[11px]">
-                  <span>{adventureX.role}</span>
-                  <span className="text-[var(--accent-amber)]">{adventureX.dateShort}</span>
-                </div>
-                <p className="mt-7 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/55 md:text-[11px]">
-                  {adventureX.titleEn} · {adventureX.dateDisplay}
-                </p>
-                <h3
-                  id="adventurex-heading"
-                  className="mt-4 font-[family-name:var(--font-serif-zh)] text-[2.25rem] font-semibold leading-[1.25] md:text-[3.1rem]"
-                >
-                  {adventureX.title}
-                </h3>
-                <p className="mt-6 max-w-[38rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.85] text-white/72 md:text-[16px]">
-                  {adventureX.description}
-                </p>
-                <EventAction
-                  event={adventureX}
-                  className="mt-9 inline-flex w-fit items-center gap-4 border-b border-[var(--accent-amber)] pb-2 font-[family-name:var(--font-zh)] text-[15px] text-[var(--accent-amber)] transition-opacity hover:opacity-65 md:text-[16px]"
-                />
+            <div className="lg:col-span-7 lg:pl-4 xl:pl-10">
+              <div className="flex items-center justify-between gap-6 border-b border-white/18 pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/58 md:text-[11px]">
+                <span>{adventureX.role}</span>
+                <span className="text-[var(--accent-amber)]">{adventureX.dateShort}</span>
               </div>
+              <p className="mt-10 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/55 md:text-[11px]">
+                {adventureX.titleEn} · {adventureX.dateDisplay}
+              </p>
+              <h3
+                id="adventurex-heading"
+                className="mt-5 max-w-[42rem] font-[family-name:var(--font-serif-zh)] text-[2.5rem] font-semibold leading-[1.2] md:text-[3.5rem] lg:text-[4rem]"
+              >
+                <span className="block">为创造，</span>
+                <span className="block">再一次信仰之跃</span>
+              </h3>
+              <p className="mt-7 max-w-[38rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.85] text-white/72 md:text-[17px]">
+                {adventureX.description}
+              </p>
+              <p className="mt-5 font-[family-name:var(--font-zh)] text-[14px] text-white/48 md:text-[15px]">
+                {adventureX.location}
+              </p>
+              <EventAction
+                event={adventureX}
+                className="mt-10 inline-flex w-fit items-center gap-4 border-b border-[var(--accent-amber)] pb-2 font-[family-name:var(--font-zh)] text-[15px] text-[var(--accent-amber)] transition-opacity hover:opacity-65 md:text-[16px]"
+              />
             </div>
-          </article>
-        ) : null}
+          </div>
+        </article>
+      ) : null}
 
-        {rebuildZ ? (
-          <article
-            className="border-t border-[#241d18]/15 bg-[#d8d3ca] text-[#211b17]"
-            aria-labelledby="rebuild-heading"
+      {rebuildZ ? (
+        <article
+          className="border-t border-[#241d18]/15 bg-[#d8d3ca] text-[#211b17]"
+          aria-labelledby="rebuild-heading"
+        >
+          <div
+            className={`${SG_PAGE_SHELL_CLASS} grid items-center gap-14 py-20 md:py-24 lg:min-h-[calc(100svh-4.5rem)] lg:grid-cols-12 lg:gap-16 lg:py-28`}
           >
-            <div className="mx-auto flex h-full max-w-[52rem] flex-col px-5 py-20 md:px-10 md:py-24 lg:px-12 lg:py-28 xl:px-16">
-              <div className="relative aspect-[16/10] overflow-hidden bg-[#b9b1a4]">
+            <div className="order-2 lg:order-1 lg:col-span-5 lg:pr-4 xl:pr-10">
+              <div className="flex items-center justify-between gap-6 border-b border-[#241d18]/18 pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[#655b52] md:text-[11px]">
+                <span>{rebuildZ.role}</span>
+                <span className="text-[var(--brand-primary)]">{rebuildZ.dateShort}</span>
+              </div>
+              <p className="mt-10 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[#655b52] md:text-[11px]">
+                {rebuildZ.titleEn} · {rebuildZ.dateDisplay}
+              </p>
+              <h3
+                id="rebuild-heading"
+                className="mt-5 font-[family-name:var(--font-serif-zh)] text-[2.5rem] font-semibold leading-[1.2] md:text-[3.5rem] lg:text-[4rem]"
+              >
+                <span className="block">先有场景，</span>
+                <span className="block">还是先有技术？</span>
+              </h3>
+              <p className="mt-7 max-w-[38rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.85] text-[#50463f] md:text-[17px]">
+                {rebuildZ.description}
+              </p>
+              <p className="mt-5 font-[family-name:var(--font-zh)] text-[14px] text-[#655b52] md:text-[15px]">
+                {rebuildZ.location}
+              </p>
+              <EventAction
+                event={rebuildZ}
+                className="mt-10 inline-flex w-fit items-center gap-4 border-b border-[var(--brand-primary)] pb-2 font-[family-name:var(--font-zh)] text-[15px] text-[var(--brand-primary)] transition-opacity hover:opacity-65 md:text-[16px]"
+              />
+            </div>
+
+            <a
+              href={rebuildZ.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group order-1 lg:order-2 lg:col-span-7"
+              aria-label={`${rebuildZ.title}，${rebuildZ.linkLabel}`}
+            >
+              <div className="mx-auto w-full max-w-[36rem] overflow-hidden">
                 <Image
                   src={rebuildZ.imageSrc}
                   alt={rebuildZ.imageAlt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover object-[50%_64%] scale-[1.08]"
+                  width={908}
+                  height={1136}
+                  sizes="(max-width: 1024px) 100vw, 48vw"
+                  className="h-auto w-full transition-transform duration-700 group-hover:scale-[1.012]"
                 />
               </div>
-
-              <div className="mt-10 flex flex-1 flex-col">
-                <div className="flex items-center justify-between gap-6 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[#655b52] md:text-[11px]">
-                  <span>{rebuildZ.role}</span>
-                  <span className="text-[var(--brand-primary)]">{rebuildZ.dateShort}</span>
-                </div>
-                <p className="mt-7 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[#655b52] md:text-[11px]">
-                  {rebuildZ.titleEn} · {rebuildZ.dateDisplay}
-                </p>
-                <h3
-                  id="rebuild-heading"
-                  className="mt-4 font-[family-name:var(--font-serif-zh)] text-[2.25rem] font-semibold leading-[1.25] md:text-[3.1rem]"
-                >
-                  {rebuildZ.title}
-                </h3>
-                <p className="mt-6 max-w-[38rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.85] text-[#50463f] md:text-[16px]">
-                  {rebuildZ.description}
-                </p>
-                <p className="mt-4 font-[family-name:var(--font-zh)] text-[14px] text-[#655b52] md:text-[15px]">
-                  {rebuildZ.location}
-                </p>
-                <EventAction
-                  event={rebuildZ}
-                  className="mt-9 inline-flex w-fit items-center gap-4 border-b border-[var(--brand-primary)] pb-2 font-[family-name:var(--font-zh)] text-[15px] text-[var(--brand-primary)] transition-opacity hover:opacity-65 md:text-[16px]"
-                />
-              </div>
-            </div>
-          </article>
-        ) : null}
-      </div>
+            </a>
+          </div>
+        </article>
+      ) : null}
     </section>
   );
 }
