@@ -37,7 +37,7 @@ const RAW_FEED: WechatOfficialFeedItem[] = [
     titleZh:
       "对话「旧棋新弈」李政翰：认为酷的事，必须自己做 | Surfing Founders",
     href: "https://mp.weixin.qq.com/s/gFv8kSmMDDD25wMIl613Qg",
-    imageSrc: "/wechat-feed/04.png",
+    imageSrc: "/editorial/li-zhenghan-cover.png",
   },
   {
     id: "wx-05",
@@ -100,6 +100,13 @@ const RAW_FEED: WechatOfficialFeedItem[] = [
       "22岁千万营收之后，她选择按下人生重启键 | Kiana「济谦AI」Surfing Founders",
     href: "https://mp.weixin.qq.com/s/p928ZFBxBMMiO9uQgd9UwQ",
     imageSrc: "/wechat-feed/11.png",
+  },
+  {
+    id: "wx-14",
+    titleZh:
+      "看过上千份简历后，他发现大厂与初创抢的是一种人 | 泛函 Surfing Founders",
+    href: "https://mp.weixin.qq.com/s/msFP2SiFLQTHdwnuFsBFBQ",
+    imageSrc: "/editorial/fanhan-cover.png",
   },
 ];
 

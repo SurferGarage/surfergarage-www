@@ -47,7 +47,7 @@ export default function OpenGraphImage() {
               maxWidth: 900,
             }}
           >
-            在非共识里造船
+            记录 Surfing Founders.
           </p>
           <p
             style={{
@@ -58,7 +58,7 @@ export default function OpenGraphImage() {
               lineHeight: 1.35,
             }}
           >
-            记录仍在海里建造的人 · 可核对样本，不包装神话
+            16–28 岁极早期科技创业者的高信任媒体与社区基础设施
           </p>
         </div>
         <div

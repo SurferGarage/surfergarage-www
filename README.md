@@ -1,6 +1,6 @@
 # 浪前 SurferGarage · 官网
 
-Official site for **浪前 SurferGarage** — [surfergarage.com](https://www.surfergarage.com)
+Official site for **浪前 SurferGarage** — [lang-qian.com](https://www.lang-qian.com)
 
 高信任科技媒体与 builder 社区。开源教材见 GitHub 组织：[SurferGarage](https://github.com/SurferGarage)
 

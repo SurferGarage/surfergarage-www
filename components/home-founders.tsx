@@ -1,161 +1,154 @@
-import dynamic from "next/dynamic";
-import { GithubPlaybookBlock } from "@/components/github-playbook-block";
-import { SgModuleShell } from "@/components/sg-module-shell";
-import { FOUNDER_STACK_MODULES } from "@/lib/founder-panels";
-import { SgVisSectionHeader } from "@/components/sg-vis-section-header";
-import { visPillForFounderKind, type SgVisPillId } from "@/lib/sg-vis";
-import {
-  FOUNDER_BREATH_MIN_H,
-  FOUNDERS_BRIDGE_SECTION_PT,
-} from "@/lib/founders-scroll-rhythm";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
-import { Fragment } from "react";
+import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
 
-const FounderWechatColumn = dynamic(
-  () =>
-    import("@/components/founder-wechat-column").then((m) => ({
-      default: m.FounderWechatColumn,
-    })),
-  { ssr: true },
-);
-
-const FounderVideoStudio = dynamic(
-  () =>
-    import("@/components/founder-video-studio").then((m) => ({
-      default: m.FounderVideoStudio,
-    })),
-  { ssr: true },
-);
-
-const VisualGarage = dynamic(
-  () =>
-    import("@/components/visual-garage").then((m) => ({
-      default: m.VisualGarage,
-    })),
-  { ssr: true },
-);
-
-/** 单屏 pin 容器 — 始终 100dvh − header，overflow-hidden 防止溢出 */
-const PANEL_CARD_BASE =
-  "relative flex w-full min-h-0 min-w-0 flex-col overflow-hidden md:h-[calc(100dvh-4.5rem)]";
-
-/** 居中网格内（Playbook / Visual 用） — 标题区 + 内容 padding；顶部 padding 加大避免被 sticky header 切 */
-const PANEL_INNER_CENTERED =
-  "flex h-full w-full min-h-0 flex-col gap-6 px-5 pt-12 pb-10 md:gap-8 md:px-10 md:pt-16 md:pb-12 lg:px-14 lg:pt-20 lg:pb-14 xl:px-16";
-
-function FullBleedPanel({
-  titleZh,
-  pill,
-  titleEn,
-  children,
-}: {
-  titleZh: string;
-  pill: SgVisPillId;
-  titleEn?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex h-full w-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-[var(--hairline)] px-5 pb-6 pt-12 md:px-10 md:pb-7 md:pt-16 lg:px-14 lg:pt-20 xl:px-16">
-        <SgVisSectionHeader titleZh={titleZh} pill={pill} titleEn={titleEn} />
-      </div>
-      <div className="min-h-0 flex-1 bg-[var(--paper-1)]" data-founders-intro>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-/** 浪前片场 — 三屏 sticky stack（V3）：
- * - 03.a 微信专栏（全宽 breakout）
- * - 03.b 视频播客（全宽 breakout）
- * - 03.c Startup Playbook（居中网格）
- * 桌面 pin/scrub 由 register-desktop-pins 不变接管。 */
 export function HomeFounders() {
+  const latestArticle = WECHAT_OFFICIAL_FEED.at(-1);
+  const methodArticle = WECHAT_OFFICIAL_FEED.find(
+    (article) => article.id === "wx-09",
+  );
+  const columns = [
+    {
+      no: "01",
+      title: "Surfing Founder",
+      titleZh: "记录人",
+      type: "人物特稿",
+      status: "持续更新",
+      description: "成为极早期科技创业者的第一篇深度访谈。",
+      href: latestArticle?.href,
+      accent: "text-[var(--brand-teal)]",
+    },
+    {
+      no: "02",
+      title: "浪前对话",
+      titleZh: "记录对话",
+      type: "视频播客",
+      status: "第一季",
+      description: "保留判断、分歧与停顿发生时的完整过程。",
+      href: "https://space.bilibili.com/3546759022250564",
+      accent: "text-[#6f78ff]",
+    },
+    {
+      no: "03",
+      title: "风暴之中",
+      titleZh: "记录事件",
+      type: "事件特稿",
+      status: "筹备中",
+      description: "进入发布、融资、失败与关键转折的现场。",
+      accent: "text-[var(--accent-amber)]",
+    },
+    {
+      no: "04",
+      title: "冲浪板",
+      titleZh: "记录产品",
+      type: "产品观察",
+      status: "筹备中",
+      description: "从真实使用出发，理解产品与早期市场信号。",
+      accent: "text-[var(--brand-teal)]",
+    },
+    {
+      no: "05",
+      title: "造浪之人",
+      titleZh: "记录方法",
+      type: "方法论对谈",
+      status: "已上线",
+      description: "与塑造技术、产品和生态的人讨论方法。",
+      href: methodArticle?.href,
+      accent: "text-[var(--accent-amber)]",
+    },
+  ] as const;
+
   return (
     <section
       id="founders"
-      className={`scroll-mt-[4.5rem] border-b border-[var(--hairline)] pb-12 md:pb-16 ${FOUNDERS_BRIDGE_SECTION_PT}`}
-      aria-label="浪前片场"
+      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] bg-[var(--paper-1)]"
+      aria-labelledby="founders-heading"
     >
-      <div className="divide-y divide-[var(--hairline)]" data-founders-stack>
-        {FOUNDER_STACK_MODULES.map((m, stackIdx) => {
-          const isFullBleed =
-            m.kind === "wechat_column" || m.kind === "video_studio";
+      <header>
+        <div
+          className={`${SG_PAGE_SHELL_CLASS} flex min-h-[62svh] flex-col justify-between py-20 md:py-28 lg:py-32`}
+        >
+          <div className="flex items-center justify-between gap-6 border-b border-[var(--hairline)] pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
+            <span className="text-[var(--brand-teal)]">Editorial system / 04</span>
+            <span>Five ways of seeing</span>
+          </div>
+
+          <div className="grid gap-9 pt-20 lg:grid-cols-12 lg:items-end lg:gap-12">
+            <h2
+              id="founders-heading"
+              className="font-[family-name:var(--font-serif-zh)] text-[2.55rem] font-semibold leading-[1.2] text-[var(--foreground)] md:text-[4rem] lg:col-span-8 lg:text-[4.5rem]"
+            >
+              <span className="block">五种记录方式。</span>
+              <span className="block">
+                追同一件事：
+                <span className="block sm:inline">变化如何发生。</span>
+              </span>
+            </h2>
+            <p className="max-w-[34rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px] lg:col-span-4">
+              从一个人开始，延伸到对话、事件、产品与方法。栏目不是分类标签，而是五种进入真实现场的角度。
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <ol className="border-t border-[var(--hairline)]">
+        {columns.map((column, index) => {
+          const content = (
+            <div
+              className={`${SG_PAGE_SHELL_CLASS} grid min-h-60 items-center gap-7 py-10 md:min-h-64 md:grid-cols-[6rem_1.25fr_1.2fr_7rem] md:gap-9 md:py-12 lg:min-h-72 lg:grid-cols-[8rem_1.25fr_1.4fr_8rem] lg:gap-12`}
+            >
+              <span
+                className={`font-[family-name:var(--font-serif)] text-[4rem] leading-none md:text-[5rem] ${column.accent}`}
+              >
+                {column.no}
+              </span>
+
+              <div>
+                <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
+                  {column.type} · {column.titleZh}
+                </p>
+                <h3 className="mt-3 font-[family-name:var(--font-serif-zh)] text-[2rem] font-semibold leading-[1.2] text-[var(--foreground)] transition-colors group-hover:text-white md:text-[2.5rem]">
+                  {column.title}
+                </h3>
+              </div>
+
+              <p className="max-w-[34rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px]">
+                {column.description}
+              </p>
+
+              <div className="flex items-center justify-between gap-4 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:block md:text-right md:text-[11px]">
+                <span>{column.status}</span>
+                {"href" in column && column.href ? (
+                  <span className={`md:mt-5 md:block ${column.accent}`} aria-hidden>
+                    ↗
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          );
 
           return (
-            <Fragment key={m.id}>
-              <article
-                data-founder-panel
-                data-founder-module={m.kind}
-                className="relative first:pt-0"
-              >
-                <div data-founder-card className={PANEL_CARD_BASE}>
-                  {m.kind === "wechat_column" ? (
-                    <FullBleedPanel
-                      titleZh={m.titleZh}
-                      pill={visPillForFounderKind(m.kind)}
-                      titleEn="SURFING FOUNDERS"
-                    >
-                      <FounderWechatColumn />
-                    </FullBleedPanel>
-                  ) : null}
-
-                  {m.kind === "video_studio" ? (
-                    <FullBleedPanel
-                      titleZh={m.titleZh}
-                      pill={visPillForFounderKind(m.kind)}
-                      titleEn="VIDEO PODCAST"
-                    >
-                      <FounderVideoStudio />
-                    </FullBleedPanel>
-                  ) : null}
-
-                  {m.kind === "github_repo" && m.githubRepo ? (
-                    <div className={`${SG_PAGE_SHELL_CLASS} ${PANEL_INNER_CENTERED}`}>
-                      <SgModuleShell
-                        titleZh={m.titleZh}
-                        visPill={visPillForFounderKind(m.kind)}
-                        titleEn="STARTUP PLAYBOOK"
-                      />
-                      <div className="min-h-0 flex-1" data-founders-intro>
-                        <GithubPlaybookBlock config={m.githubRepo} />
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {m.kind === "brand_visual" ? (
-                    <div className={`${SG_PAGE_SHELL_CLASS} ${PANEL_INNER_CENTERED}`}>
-                      <SgModuleShell
-                        titleZh={m.titleZh}
-                        visPill={visPillForFounderKind(m.kind)}
-                        titleEn="BRAND KIT"
-                      />
-                      <div className="min-h-0 flex-1" data-founders-intro>
-                        <VisualGarage />
-                      </div>
-                    </div>
-                  ) : null}
-                  {/* 仅 padding 调试用占位（开发者侧） */}
-                  {isFullBleed ? null : null}
-                </div>
-              </article>
-              {stackIdx < FOUNDER_STACK_MODULES.length - 1 ? (
-                <div
-                  data-founder-breath
-                  aria-hidden
-                  className={`relative w-screen max-w-[100vw] shrink-0 overflow-hidden ml-[calc(50%-50vw)] ${FOUNDER_BREATH_MIN_H}`}
+            <li
+              key={column.no}
+              className={`border-b border-[var(--hairline)] transition-colors hover:bg-white/[0.025] ${
+                index % 2 === 1 ? "bg-[#0c0e13]" : "bg-[var(--paper-0)]"
+              }`}
+            >
+              {"href" in column && column.href ? (
+                <a
+                  href={column.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block"
                 >
-                  <div
-                    data-breath-glow
-                    className="sg-founder-breath-glow pointer-events-none absolute inset-[10%_6%] opacity-[0.12] md:inset-[12%_8%]"
-                  />
-                </div>
-              ) : null}
-            </Fragment>
+                  {content}
+                </a>
+              ) : (
+                content
+              )}
+            </li>
           );
         })}
-      </div>
+      </ol>
     </section>
   );
 }

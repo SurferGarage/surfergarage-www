@@ -1,86 +1,91 @@
-import { SgVisInsightBar } from "@/components/sg-vis-insight-bar";
-import { SG_BODY_ZH_CLASS, SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
-import type { CSSProperties } from "react";
+import { HeroFlowField } from "@/components/hero-flow-field";
+import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import { getSiteStats } from "@/lib/site-stats";
 
-/** Hero：字标 + 主张，桌面垂直居中、移动底对齐 */
 export function HomeHero() {
+  const stats = getSiteStats();
+
   return (
     <section
       id="manifesto"
-      className="relative flex h-[100svh] max-md:min-h-0 flex-col md:min-h-[46rem] scroll-mt-[4.5rem] overflow-x-clip overflow-y-visible pt-[max(5rem,calc(4.5rem+env(safe-area-inset-top)))] md:pt-28"
+      className="relative scroll-mt-[4.5rem] overflow-hidden border-b border-[var(--hairline)] bg-[#08090d]"
       aria-labelledby="hero-title"
-      data-hero-wave
-      style={
-        {
-          "--wave-distortion": 1,
-          "--wave-opacity": 0.72,
-          "--hero-cam-x": 0,
-          "--hero-cam-y": 3.12,
-          "--hero-cam-z": 7.6,
-          "--hero-look-x": 0,
-          "--hero-look-y": 0.12,
-          "--hero-look-z": 0,
-        } as CSSProperties
-      }
     >
-      <div aria-hidden className="sg-hero-vignette pointer-events-none absolute inset-0 z-[1]" />
-      <div aria-hidden className="sg-hero-scan pointer-events-none absolute inset-0 z-[2]" />
+      <div className="sg-home-hero-frame relative h-[calc(100svh-8rem)] min-h-[40rem] overflow-hidden">
+        <HeroFlowField />
 
-      <div
-        className={`relative z-[3] flex flex-1 flex-col justify-end pb-28 md:justify-center md:pb-32 ${SG_PAGE_SHELL_CLASS} [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_12px_48px_rgba(0,0,0,0.35)]`}
-      >
         <div
-          className="max-w-[min(100%,54rem)]"
-          data-manifesto-pin
-          data-manifesto-right
-        >
-          <div data-manifesto-fade>
-            <h1 id="hero-title" className="text-left">
-              <div
-                className="flex max-w-[min(100%,92rem)] flex-col items-start gap-4 md:gap-5"
-                data-hero-wordmark
-              >
-                <span
-                  className="font-[family-name:var(--font-zh)] text-[14px] font-light tracking-[0.12em] text-[var(--muted-strong)] md:text-[15px]"
-                  data-hero-reveal
-                >
-                  浪前
-                </span>
-                <span
-                  className="wordmark-display block w-full overflow-hidden uppercase text-[clamp(1.35rem,10vw,7rem)] text-[var(--foreground)] md:text-[clamp(2.5rem,6vw,7rem)]"
-                  data-hero-letters
-                >
-                  SURFERGARAGE
-                </span>
-              </div>
-            </h1>
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 w-full bg-[linear-gradient(90deg,rgba(7,8,11,0.97)_0%,rgba(7,8,11,0.91)_34%,rgba(7,8,11,0.54)_52%,rgba(7,8,11,0.04)_78%)] md:w-[78%]"
+        />
 
-            <div className="mt-6 max-w-[min(100%,28rem)] md:mt-8" data-hero-reveal>
-              <SgVisInsightBar />
+        <div className={`sg-home-hero-shell relative z-[2] flex h-full flex-col pt-16 md:pt-20 ${SG_PAGE_SHELL_CLASS}`}>
+          <div className="sg-home-hero-body flex flex-1 items-center py-7 md:py-10">
+            <div className="sg-home-hero-copy max-w-[48rem]">
+            <div className="sg-home-hero-kicker flex flex-wrap items-center gap-x-4 gap-y-2 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--brand-teal)] md:text-[11px]">
+              <span>SG://INDEX</span>
+              <span className="h-px w-10 bg-[var(--brand-teal)]" aria-hidden />
+              <span>Independent media / 2026</span>
             </div>
 
-            <div className="mt-10 max-w-[42rem] md:mt-12" data-hero-reveal>
-              <p className="font-[family-name:var(--font-zh)] text-[clamp(1.25rem,2.5vw,1.9rem)] font-medium leading-[1.35] tracking-tight text-[var(--foreground)]">
-                在非共识里造船，而不是在共识里讲故事。
-              </p>
+            <h1 id="hero-title" className="sg-home-hero-heading mt-6 text-white">
+              <span className="sg-home-hero-heading-zh block font-[family-name:var(--font-serif-zh)] text-[2.85rem] font-semibold leading-none md:text-[4.5rem] lg:text-[5rem]">
+                浪前
+              </span>
+              <span className="sg-home-hero-heading-en mt-1 block font-[family-name:var(--font-serif)] text-[3.15rem] leading-[0.94] md:text-[5rem] lg:text-[6rem]">
+                Surfer Garage
+              </span>
+            </h1>
+
+            <p className="sg-home-hero-tagline mt-6 font-[family-name:var(--font-serif-zh)] text-[1.45rem] leading-snug text-white md:text-[1.8rem]">
+              记录正在冲浪的人。
+            </p>
+            <p className="sg-home-hero-description mt-4 max-w-[42rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.72] text-[var(--muted-strong)] md:text-[17px]">
+              浪前是一家记录 16–28 岁极早期科技创业者的高信任科技媒体。我们在共识形成之前，留下他们的第一篇深度访谈。
+            </p>
+
+            <div className="sg-home-hero-actions mt-7 flex flex-wrap items-center gap-3">
+              <a
+                href="#proof"
+                className="sg-home-hero-action inline-flex min-h-11 items-center gap-3 bg-[var(--brand-primary)] px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] font-medium text-white transition-colors hover:bg-[#1420ff]"
+              >
+                浏览最新记录
+                <span aria-hidden>↓</span>
+              </a>
+              <a
+                href="#call-join"
+                className="sg-home-hero-action inline-flex min-h-11 items-center gap-3 border border-white/24 bg-black/20 px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] font-medium text-white transition-colors hover:border-white/48 hover:bg-black/34"
+              >
+                提交故事
+                <span aria-hidden>→</span>
+              </a>
+            </div>
+
             </div>
           </div>
 
-          <p
-            className={`mt-8 max-w-[34rem] md:mt-10 ${SG_BODY_ZH_CLASS}`}
-            data-hero-scrub
-          >
-            只收可核对样本：动作、代价、复盘。
-          </p>
-        </div>
-      </div>
+          <dl className="sg-home-hero-stats grid grid-cols-3 border-t border-white/14 font-[family-name:var(--font-mono)] md:grid-cols-[0.7fr_0.7fr_0.7fr_1.4fr]">
+            {[
+              [String(stats.articles).padStart(2, "0"), "Stories"],
+              [String(stats.episodes).padStart(2, "0"), "Episodes"],
+              [stats.season.replace("Season ", "S"), "Archive"],
+              ["Before consensus", "Editorial scope"],
+            ].map(([value, label], index) => (
+              <div
+                key={label}
+                className={`py-4 md:py-5 ${index > 0 ? "border-l border-white/12 pl-4 md:pl-6" : ""} ${index === 3 ? "hidden md:block" : ""}`}
+              >
+                <dt className="text-[9px] uppercase text-[var(--muted)] md:text-[10px]">{label}</dt>
+                <dd className="mt-1 text-[12px] uppercase text-white md:text-[14px]">{value}</dd>
+              </div>
+            ))}
+          </dl>
 
-      <div
-        aria-hidden
-        className={`pointer-events-none absolute inset-x-0 bottom-8 z-[3] flex justify-center md:bottom-10 ${SG_PAGE_SHELL_CLASS}`}
-      >
-        <div data-hero-reveal className="flex flex-col items-center gap-2.5">
-          <span className="sg-scroll-cue-line" />
+          <div className="pointer-events-none absolute right-5 top-7 hidden border-r border-[var(--brand-teal)]/35 pr-3 text-right font-[family-name:var(--font-mono)] text-[9px] uppercase leading-[1.8] text-[var(--muted)] sm:block md:right-10 md:top-9 lg:right-12 xl:right-16">
+            <p className="text-[var(--brand-teal)]">Editorial field / live</p>
+            <p>{String(stats.articles).padStart(2, "0")} stories · {String(stats.episodes).padStart(2, "0")} episodes</p>
+            <p>Shanghai · Suzhou</p>
+          </div>
         </div>
       </div>
     </section>

@@ -4,5 +4,5 @@
  */
 export function getSiteUrl(): string {
   const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  return raw ? raw.replace(/\/$/, "") : "https://www.surfergarage.com";
+  return raw ? raw.replace(/\/$/, "") : "https://www.lang-qian.com";
 }

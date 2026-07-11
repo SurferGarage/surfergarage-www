@@ -1,86 +1,102 @@
-import {
-  SG_PAGE_SHELL_CLASS,
-  SG_SECTION_TITLE_CLASS,
-} from "@/lib/sg-layout";
-import { getSiteStats } from "@/lib/site-stats";
-import { SURFING_FOUNDERS_SEASON_01 } from "@/lib/surfing-founders-video-season";
+import Image from "next/image";
 
-/** Proof — 出水线：数字 + 嘉宾，统一 section 节奏 */
+import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
+
 export function HomeProof() {
-  const stats = getSiteStats();
-  const liveGuests = SURFING_FOUNDERS_SEASON_01.guests.filter(
-    (g) => !g.comingSoon && g.episodes.length > 0,
+  const latestArticle = WECHAT_OFFICIAL_FEED.at(-1);
+  const liZhenghanArticle = WECHAT_OFFICIAL_FEED.find(
+    (article) => article.id === "wx-04",
   );
-  const pendingCount = stats.guestSlots - liveGuests.length;
-
-  const statItems = [
-    { label: "长文", value: String(stats.articles).padStart(2, "0") },
-    { label: "视频", value: String(stats.episodes).padStart(2, "0") },
-    {
-      label: "嘉宾",
-      value: `${stats.liveGuests}/${stats.guestSlots}`,
-      tabular: true,
-    },
-  ] as const;
 
   return (
     <section
       id="proof"
-      data-home-proof
-      className="relative -mt-[6vh] scroll-mt-[4.5rem] pt-[calc(6vh+4.5rem)] pb-20 md:pt-[calc(6vh+6rem)] md:pb-28"
+      className="scroll-mt-[4.5rem] border-b border-white/20 bg-[var(--brand-primary)] text-white"
       aria-labelledby="proof-heading"
     >
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-[8%] top-0 z-[1] h-px bg-[linear-gradient(90deg,transparent_0%,color-mix(in_oklch,var(--brand-teal)_50%,transparent)_50%,transparent_100%)] opacity-40"
-      />
+      <div className={`${SG_PAGE_SHELL_CLASS} py-20 md:py-28 lg:py-32`}>
+        <header className="flex min-h-[48svh] flex-col justify-between">
+          <div className="flex items-center justify-between gap-6 border-b border-white/25 pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/65 md:text-[11px]">
+            <span className="text-white">Latest records / 02</span>
+            <span>Field notes · July 2026</span>
+          </div>
 
-      <div className={SG_PAGE_SHELL_CLASS}>
-        <header className="relative z-[2] overflow-visible pt-1">
-          <h2 id="proof-heading" className={SG_SECTION_TITLE_CLASS}>
-            内容一览
-          </h2>
+          <div className="grid gap-8 pt-20 lg:grid-cols-12 lg:items-end lg:gap-12">
+            <h2
+              id="proof-heading"
+              className="font-[family-name:var(--font-serif-zh)] text-[2.8rem] font-semibold leading-[1.16] text-white md:text-[4.5rem] lg:col-span-8 lg:text-[5.25rem]"
+            >
+              刚刚发生的，
+              <br />
+              先被留下。
+            </h2>
+            <p className="max-w-[34rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-white/78 md:text-[17px] lg:col-span-4">
+              人还在变化，产品还没有定型，判断也尚未成为共识。这正是记录最有价值的时刻。
+            </p>
+          </div>
         </header>
 
-        <ul className="mt-12 grid grid-cols-1 gap-px divide-y divide-[var(--hairline)] border-y border-[var(--hairline)] sm:mt-14 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          {statItems.map((item) => (
-            <li
-              key={item.label}
-              className="flex flex-col gap-4 px-6 py-9 sm:px-8 sm:py-11 md:py-12"
+        <div className="mt-16 grid items-end gap-14 border-t border-white/25 pt-10 md:mt-20 md:pt-14 lg:grid-cols-12 lg:gap-0">
+          {latestArticle ? (
+            <a
+              href={latestArticle.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group lg:col-span-7 lg:pr-12"
             >
-              <span className="font-[family-name:var(--font-zh)] text-[16px] text-[var(--muted-strong)]">
-                {item.label}
-              </span>
-              <span
-                className={`editorial-serif text-[clamp(2.75rem,7vw,4.5rem)] leading-none tracking-[-0.025em] text-[var(--foreground)] ${
-                  "tabular" in item && item.tabular
-                    ? "editorial-mono-tabular"
-                    : ""
-                }`}
-              >
-                {item.value}
-              </span>
-            </li>
-          ))}
-        </ul>
+              <div className="relative aspect-video overflow-hidden bg-white/10">
+                <Image
+                  src={latestArticle.imageSrc}
+                  alt="泛函在字节跳动活动现场分享"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.018]"
+                />
+              </div>
+              <div className="mt-5 flex items-center justify-between gap-6 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/65 md:text-[11px]">
+                <span>Surfing Founder · New</span>
+                <span className="text-white">Read ↗</span>
+              </div>
+              <h3 className="mt-4 max-w-[48rem] font-[family-name:var(--font-serif-zh)] text-[1.8rem] font-semibold leading-[1.45] text-white transition-opacity group-hover:opacity-80 md:text-[2.45rem]">
+                看过上千份简历后，他发现大厂与初创抢的是一种人
+              </h3>
+              <p className="mt-4 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/60 md:text-[11px]">
+                泛函 · AI recruiting · 2026.07.10
+              </p>
+            </a>
+          ) : null}
 
-        {(liveGuests.length > 0 || pendingCount > 0) && (
-          <div className="mt-14 flex min-h-[9rem] flex-col items-center justify-center gap-7 border-t border-[var(--hairline)] pt-12 sm:mt-16 sm:min-h-[10rem] sm:gap-8 sm:pt-14 md:min-h-[11rem]">
-            {liveGuests.map((g) => (
-              <p
-                key={g.id}
-                className="font-[family-name:var(--font-zh)] text-[clamp(1.5rem,3.2vw,2.15rem)] leading-[1.25] text-[var(--foreground)]"
-              >
-                {g.nameZh}
+          {liZhenghanArticle ? (
+            <a
+              href={liZhenghanArticle.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group border-t border-white/25 pt-10 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0"
+            >
+              <div className="relative aspect-[21/9] overflow-hidden bg-white">
+                <Image
+                  src={liZhenghanArticle.imageSrc}
+                  alt="李政翰旧棋新弈文章的蓝白象棋系统视觉"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 42vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.018]"
+                />
+              </div>
+              <div className="mt-5 flex items-center justify-between gap-6 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/65 md:text-[11px]">
+                <span>Archive · Visual rebuild</span>
+                <span className="text-white">Read ↗</span>
+              </div>
+              <h3 className="mt-4 font-[family-name:var(--font-serif-zh)] text-[1.55rem] font-semibold leading-[1.5] text-white transition-opacity group-hover:opacity-80 md:text-[2rem]">
+                认为酷的事，必须自己做
+              </h3>
+              <p className="mt-4 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/60 md:text-[11px]">
+                李政翰 · 旧棋新弈 · New visual
               </p>
-            ))}
-            {pendingCount > 0 ? (
-              <p className="font-[family-name:var(--font-zh)] text-[16px] tracking-[0.02em] text-[var(--muted)] md:text-[17px]">
-                另有 {pendingCount} 席待公布
-              </p>
-            ) : null}
-          </div>
-        )}
+            </a>
+          ) : null}
+        </div>
       </div>
     </section>
   );

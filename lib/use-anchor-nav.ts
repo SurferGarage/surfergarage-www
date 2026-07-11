@@ -22,7 +22,7 @@ export function useAnchorNav(onAfterNav?: () => void) {
       e.preventDefault();
 
       if (lenis) {
-        lenis.scrollTo(target, { immediate: true, lock: true });
+        lenis.scrollTo(target, { immediate: true, lock: true, force: true });
       } else {
         target.scrollIntoView({ behavior: "auto", block: "start" });
       }

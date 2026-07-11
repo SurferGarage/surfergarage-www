@@ -1,333 +1,174 @@
 "use client";
 
-import { AssistantQrSlot } from "@/components/assistant-qr-slot";
-import { TeamMemberPortrait } from "@/components/team-member-portrait";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import {
   DISCORD_INVITE_URL,
   MAIL_HELLO,
   MAIL_PARTNERS,
 } from "@/lib/site-contact";
-import { SURFER_GARAGE_TEAM } from "@/lib/site-team";
-import {
-  SG_BODY_ZH_CLASS,
-  SG_PAGE_SHELL_CLASS,
-  SG_SECTION_TITLE_CLASS,
-} from "@/lib/sg-layout";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 
 const WECHAT_ID = "x3167056428";
 
-const WHAT_FOR_US: ReadonlyArray<string> = [
-  "手上有可核对产出",
-  "能聊代价与复盘",
-  "非共识路径上的建造者",
-];
-
-const NOT_FOR_US: ReadonlyArray<string> = [
-  "只要曝光 · 找媒体",
-  "卖课 · 套模板",
-  "投递 · 走 partners 邮箱",
-];
-
-const sectionEyebrow =
-  "editorial-eyebrow font-[family-name:var(--font-zh)] text-[var(--muted)]";
-
-type ToastState = { id: string | null; label: string };
-
-function CallBlock({
-  id,
-  eyebrow,
-  title,
-  titleLocale = "zh",
-  children,
-}: {
-  id: string;
-  eyebrow: string;
-  title?: string;
-  titleLocale?: "zh" | "en";
-  children: ReactNode;
-}) {
-  return (
-    <section
-      id={id}
-      data-call-block
-      className="border-t border-[var(--hairline)] py-14 md:py-20"
-      aria-labelledby={`${id}-heading`}
-    >
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-10 lg:gap-14">
-        <header className="md:col-span-4 md:pt-1" data-call-intro>
-          <p className={sectionEyebrow}>{eyebrow}</p>
-          {title ? (
-            <h3
-              id={`${id}-heading`}
-              className={
-                titleLocale === "en"
-                  ? "mt-3 font-[family-name:var(--font-en)] text-[clamp(1.5rem,2.4vw,1.9rem)] font-medium leading-none tracking-[0.04em] text-[var(--foreground)]"
-                  : "mt-3 font-[family-name:var(--font-zh)] text-[clamp(1.35rem,2.2vw,1.75rem)] font-medium leading-snug text-[var(--foreground)]"
-              }
-            >
-              {title}
-            </h3>
-          ) : (
-            <h3 id={`${id}-heading`} className="sr-only">
-              {eyebrow}
-            </h3>
-          )}
-        </header>
-        <div className="md:col-span-8">{children}</div>
-      </div>
-    </section>
-  );
-}
+const STORY_SIGNALS = [
+  "16–28 岁，正在做科技产品",
+  "已经有真实 demo、用户或关键复盘",
+  "愿意公开讲速度、风险与代价",
+] as const;
 
 export function HomeCall() {
-  const [toast, setToast] = useState<ToastState>({ id: null, label: "" });
-  const toastTimerRef = useRef<number | null>(null);
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
-      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      if (timerRef.current) window.clearTimeout(timerRef.current);
     };
-  }, []);
-
-  const fireToast = useCallback((id: string, label: string) => {
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    setToast({ id, label });
-    toastTimerRef.current = window.setTimeout(() => {
-      toastTimerRef.current = null;
-      setToast((prev) => (prev.id === id ? { id: null, label: "" } : prev));
-    }, 2400);
   }, []);
 
   const copyWeChat = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(WECHAT_ID);
-      fireToast("wechat", "已复制微信号");
+      setCopied(true);
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+      timerRef.current = window.setTimeout(() => setCopied(false), 2200);
     } catch {
       window.prompt("复制微信号", WECHAT_ID);
     }
-  }, [fireToast]);
+  }, []);
 
   return (
     <section
       id="call"
-      className="relative scroll-mt-[4.5rem] overflow-hidden border-b border-[var(--hairline)] py-20 md:py-28"
+      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] bg-[var(--paper-1)]"
       aria-labelledby="call-heading"
     >
       <div
-        aria-hidden
-        className="pointer-events-none absolute -right-32 top-[18%] h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,rgba(39,215,199,0.22)_0%,rgba(11,12,16,0)_72%)] blur-3xl"
-      />
-
-      <div className={SG_PAGE_SHELL_CLASS}>
-        <header
-          className="sg-spotlight-host max-w-[46rem]"
-          data-call-intro
-          data-spotlight="amber"
-        >
-          <h2 id="call-heading" className={SG_SECTION_TITLE_CLASS}>
-            联络
-          </h2>
-          <p className={`${SG_BODY_ZH_CLASS} mt-5 max-w-[34rem]`}>
-            先认人，再选对入口。建造者、合作伙伴与社区成员，走不同的门。
-          </p>
+        className={`${SG_PAGE_SHELL_CLASS} flex min-h-[calc(100svh-4.5rem)] flex-col py-20 md:py-28 lg:py-32`}
+      >
+        <header className="flex items-center justify-between gap-6 border-b border-[var(--hairline)] pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
+          <span className="text-[var(--accent-amber)]">Submit / 07</span>
+          <span>Open call</span>
         </header>
 
-        <div className="mt-10 md:mt-14">
-          {/* —— 1. 核心成员 —— */}
-          <CallBlock
-            id="call-team"
-            eyebrow="核心成员"
-            title="Founders"
-            titleLocale="en"
-          >
-            <ul
-              className="grid max-w-3xl grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8"
-              data-call-item
+        <div
+          id="call-join"
+          className="grid flex-1 scroll-mt-[6rem] items-center gap-14 py-16 md:py-20 lg:grid-cols-12 lg:gap-16 lg:py-24"
+        >
+          <div className="lg:col-span-7">
+            <h2
+              id="call-heading"
+              className="font-[family-name:var(--font-serif-zh)] text-[3rem] font-semibold leading-[1.15] text-[var(--foreground)] md:text-[4.5rem] lg:text-[4.75rem] xl:text-[5.25rem]"
             >
-              {SURFER_GARAGE_TEAM.map((member) => (
-                <li key={member.id} className="flex flex-col gap-5">
-                  <TeamMemberPortrait
-                    nameZh={member.nameZh}
-                    portraitSrc={member.portraitSrc}
-                  />
-                  <div className="flex flex-col gap-2">
-                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <p className="font-[family-name:var(--font-zh)] text-[clamp(1.2rem,2vw,1.45rem)] font-medium text-[var(--foreground)]">
-                        {member.nameZh}
-                      </p>
-                      {member.nameEn ? (
-                        <span className="font-[family-name:var(--font-en)] text-[13px] tracking-[0.04em] text-[var(--muted)]">
-                          {member.nameEn}
-                        </span>
-                      ) : null}
-                    </div>
-                    <p className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--brand-teal)] md:text-[15px]">
-                      {member.roleZh}
-                    </p>
-                    <p className="font-[family-name:var(--font-zh)] text-[15px] leading-[1.65] text-[var(--muted-strong)] md:text-[16px]">
-                      {member.bioZh}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </CallBlock>
+              <span className="block">你也正在</span>
+              <span className="block">造浪吗？</span>
+            </h2>
+            <p className="mt-8 max-w-[42rem] font-[family-name:var(--font-serif-zh)] text-[1.45rem] font-semibold leading-[1.65] text-[var(--foreground)] md:text-[1.8rem]">
+              也许你正在 Garage，也许还在学校宿舍里。只要你在认真建造，就值得留下第一份真实记录。
+            </p>
+            <p className="mt-6 max-w-[39rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.85] text-[var(--muted-strong)] md:text-[16px]">
+              添加小浪微信，附一句你在做什么，以及 demo、链接或一段真实复盘。我们会先理解，再决定用哪一种方式记录。
+            </p>
 
-          {/* —— 2. 加入浪前 —— */}
-          <CallBlock id="call-join" eyebrow="加入浪前" title="我们在找什么样的人">
-            <div className="flex flex-col gap-10" data-call-item>
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-10">
-                <div>
-                  <p className="border-b border-[var(--hairline-soft)] pb-3 font-[family-name:var(--font-zh)] text-[15px] text-[var(--brand-teal)] md:text-[16px]">
-                    适合
-                  </p>
-                  <ul className="mt-5 flex flex-col gap-4">
-                    {WHAT_FOR_US.map((line) => (
-                      <li key={line}>
-                        <p className="font-[family-name:var(--font-zh)] text-[16px] leading-snug text-[var(--foreground)] md:text-[17px]">
-                          {line}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <p className="border-b border-[var(--hairline-soft)] pb-3 font-[family-name:var(--font-zh)] text-[15px] text-[var(--muted-strong)] md:text-[16px]">
-                    不适合
-                  </p>
-                  <ul className="mt-5 flex flex-col gap-4">
-                    {NOT_FOR_US.map((line) => (
-                      <li key={line}>
-                        <p className="font-[family-name:var(--font-zh)] text-[16px] leading-snug text-[var(--muted-strong)] md:text-[17px]">
-                          {line}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+            <button
+              type="button"
+              onClick={copyWeChat}
+              className="mt-9 inline-flex min-h-12 items-center gap-6 bg-[var(--brand-primary)] px-5 py-3 text-left text-white transition-colors hover:bg-[#1420ff]"
+              aria-label={`复制微信号 ${WECHAT_ID}`}
+            >
+              <span className="font-[family-name:var(--font-zh)] text-[15px] font-medium">
+                {copied ? "微信号已复制" : "复制微信号"}
+              </span>
+              <span className="font-[family-name:var(--font-mono)] text-[13px] text-white/75">
+                {WECHAT_ID}
+              </span>
+            </button>
+          </div>
 
-              <div className="flex flex-col gap-5 border-t border-[var(--hairline-soft)] pt-8 md:flex-row md:items-center md:justify-between md:gap-8">
-                <div className="min-w-0">
-                  <p className="font-[family-name:var(--font-zh)] text-[clamp(1.15rem,2vw,1.4rem)] font-medium text-[var(--foreground)]">
-                    提交手搓项目
-                  </p>
-                  <p className="mt-2 font-[family-name:var(--font-zh)] text-[15px] text-[var(--muted-strong)] md:text-[16px]">
-                    微信添加小浪，附一句你在做什么、可核对的链接或 demo。
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={copyWeChat}
-                  aria-label={`复制微信号 ${WECHAT_ID}`}
-                  className="group inline-flex shrink-0 items-center gap-4 rounded-sm border border-[var(--hairline)] bg-[var(--paper-1)] px-5 py-4 transition-[border-color,background-color] hover:border-[color-mix(in_oklch,var(--brand-teal)_45%,var(--hairline-strong))] hover:bg-[var(--paper-2)]"
+          <aside className="border-t border-[var(--hairline)] pt-9 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
+            <div className="grid items-start gap-8 sm:grid-cols-[10rem_1fr] lg:grid-cols-1 xl:grid-cols-[10rem_1fr]">
+              <Image
+                src="/wechat-assistant-qr.png"
+                alt="小浪微信二维码"
+                width={160}
+                height={200}
+                className="h-auto w-40 bg-white p-1"
+              />
+              <div>
+                <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--brand-teal)] md:text-[11px]">
+                  Scan / Connect
+                </p>
+                <h3 className="mt-4 font-[family-name:var(--font-zh)] text-[1.45rem] font-medium leading-[1.45] text-[var(--foreground)] md:text-[1.65rem]">
+                  把正在发生的事，直接发给我们。
+                </h3>
+                <p className="mt-4 font-[family-name:var(--font-zh)] text-[14px] leading-[1.75] text-[var(--muted-strong)] md:text-[15px]">
+                  节目更新、线下活动与驻地讨论也会通过小浪微信同步。
+                </p>
+                <a
+                  href={DISCORD_INVITE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex font-[family-name:var(--font-zh)] text-[14px] text-[var(--brand-teal)] transition-colors hover:text-[var(--foreground)]"
                 >
-                  <span className="font-[family-name:var(--font-en)] text-[clamp(1.05rem,2.5vw,1.35rem)] font-medium tracking-[-0.01em] text-[var(--foreground)]">
-                    {WECHAT_ID}
-                  </span>
-                  <span
-                    className={`font-[family-name:var(--font-zh)] text-[14px] transition-colors md:text-[15px] ${
-                      toast.id === "wechat"
-                        ? "text-[var(--brand-teal)]"
-                        : "text-[var(--muted)] group-hover:text-[var(--foreground)]"
-                    }`}
-                  >
-                    {toast.id === "wechat" ? toast.label : "复制"}
-                  </span>
-                </button>
+                  Discord 社群 ↗
+                </a>
               </div>
             </div>
-          </CallBlock>
+          </aside>
+        </div>
 
-          {/* —— 3. 商务合作 —— */}
-          <CallBlock id="call-partners" eyebrow="商务合作" title="媒体 · 演讲 · 生态">
-            <ul className="flex flex-col divide-y divide-[var(--hairline-soft)]" data-call-item>
-              <li className="py-6 first:pt-0">
-                <a
-                  href={`mailto:${MAIL_HELLO}`}
-                  className="group block rounded-sm"
-                >
-                  <p className="break-all font-[family-name:var(--font-en)] text-[clamp(1.25rem,3.5vw,2rem)] font-medium leading-tight text-[var(--foreground)] transition-opacity group-hover:opacity-85">
-                    {MAIL_HELLO}
-                  </p>
-                  <p className="mt-2 font-[family-name:var(--font-zh)] text-[15px] text-[var(--muted-strong)] md:text-[16px]">
-                    品牌合作 · 演讲邀请 · 媒体采访
-                  </p>
-                </a>
-              </li>
-              <li className="py-6">
-                <a
-                  href={`mailto:${MAIL_PARTNERS}`}
-                  className="group block rounded-sm"
-                >
-                  <p className="break-all font-[family-name:var(--font-en)] text-[clamp(1.25rem,3.5vw,2rem)] font-medium leading-tight text-[var(--foreground)] transition-opacity group-hover:opacity-85">
-                    {MAIL_PARTNERS}
-                  </p>
-                  <p className="mt-2 font-[family-name:var(--font-zh)] text-[15px] text-[var(--muted-strong)] md:text-[16px]">
-                    生态伙伴 · 联合出品 · 赞助与资源置换
-                  </p>
-                </a>
-              </li>
-            </ul>
-          </CallBlock>
-
-          {/* —— 4. 加入社区 —— */}
-          <CallBlock id="call-community" eyebrow="加入社区" title="日常活动与讨论">
-            <div
-              className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10"
-              data-call-item
+        <ol className="grid border-y border-[var(--hairline)] md:grid-cols-3">
+          {STORY_SIGNALS.map((signal, index) => (
+            <li
+              key={signal}
+              className={`flex min-h-28 items-start gap-5 py-6 md:min-h-36 md:px-7 md:py-7 ${
+                index > 0
+                  ? "border-t border-[var(--hairline-soft)] md:border-l md:border-t-0"
+                  : ""
+              }`}
             >
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
-                <AssistantQrSlot />
-                <div className="min-w-0 flex-1">
-                  <p className="font-[family-name:var(--font-zh)] text-[clamp(1.15rem,2vw,1.4rem)] font-medium text-[var(--foreground)]">
-                    加小浪微信
-                  </p>
-                  <p className="mt-2 font-[family-name:var(--font-zh)] text-[15px] leading-[1.65] text-[var(--muted-strong)] md:text-[16px]">
-                    入群通知、线下活动与季播更新。扫码或搜索微信号添加。
-                  </p>
-                </div>
-              </div>
+              <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--accent-amber)] md:text-[11px]">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <p className="max-w-[18rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.7] text-[var(--foreground)] md:text-[16px]">
+                {signal}
+              </p>
+            </li>
+          ))}
+        </ol>
 
-              <a
-                href={DISCORD_INVITE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex min-h-[8.5rem] flex-col justify-between rounded-sm border border-[var(--hairline)] bg-[var(--paper-1)] px-6 py-6 transition-[border-color,background-color] hover:border-[color-mix(in_oklch,var(--brand-teal)_45%,var(--hairline-strong))] hover:bg-[var(--paper-2)] md:px-7 md:py-7"
-              >
-                <div>
-                  <p className="font-[family-name:var(--font-zh)] text-[clamp(1.15rem,2vw,1.4rem)] font-medium text-[var(--foreground)]">
-                    Discord 社群
-                  </p>
-                  <p className="mt-2 font-[family-name:var(--font-zh)] text-[15px] leading-[1.65] text-[var(--muted-strong)] md:text-[16px]">
-                    异步讨论、活动召集与海外成员入口。
-                  </p>
-                </div>
-                <span
-                  aria-hidden
-                  className="mt-6 font-[family-name:var(--font-zh)] text-[15px] text-[var(--brand-teal)] transition-colors group-hover:text-[var(--foreground)]"
-                >
-                  进入 Discord ↗
-                </span>
-              </a>
-            </div>
-          </CallBlock>
+        <div className="grid gap-7 pt-9 md:grid-cols-2 md:gap-10">
+          <div>
+            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
+              Media / Editorial
+            </p>
+            <a
+              href={`mailto:${MAIL_HELLO}`}
+              className="mt-3 block break-all font-[family-name:var(--font-en)] text-[17px] text-[var(--foreground)] transition-colors hover:text-[var(--brand-teal)] md:text-[19px]"
+            >
+              {MAIL_HELLO}
+            </a>
+          </div>
+          <div>
+            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
+              Event / Ecosystem
+            </p>
+            <a
+              href={`mailto:${MAIL_PARTNERS}`}
+              className="mt-3 block break-all font-[family-name:var(--font-en)] text-[17px] text-[var(--foreground)] transition-colors hover:text-[var(--brand-teal)] md:text-[19px]"
+            >
+              {MAIL_PARTNERS}
+            </a>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/** @deprecated 匹配度已并入 `#call-join`；保留空壳避免旧锚点 `#fit` 404 */
+/** 兼容旧链接；匹配规则已并入 #call-join。 */
 export function HomeFit() {
-  return (
-    <section
-      id="fit"
-      data-fit-panel
-      className="sr-only"
-      aria-hidden
-      tabIndex={-1}
-    />
-  );
+  return <span id="fit" className="sr-only" aria-hidden />;
 }

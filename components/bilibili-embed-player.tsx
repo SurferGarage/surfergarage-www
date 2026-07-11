@@ -178,34 +178,27 @@ function BilibiliPlayerFrame({
   playerSrc: string;
   title: string;
 }) {
-  const [frameReady, setFrameReady] = useState(false);
-
   return (
     <>
+      <div
+        className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#0a0a12]"
+        aria-hidden
+      >
+        <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)]">
+          Bilibili player
+        </p>
+      </div>
       <iframe
         key={playerSrc}
         ref={iframeRef}
         title={title}
         src={playerSrc}
-        className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-300 ${
-          frameReady ? "opacity-100" : "opacity-0"
-        }`}
+        className="absolute inset-0 z-[1] h-full w-full border-0"
         allowFullScreen
         scrolling="no"
         frameBorder={0}
         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-        onLoad={() => setFrameReady(true)}
       />
-      {!frameReady ? (
-        <div
-          className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#0a0a12]"
-          aria-hidden
-        >
-          <p className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)]">
-            播放器加载中…
-          </p>
-        </div>
-      ) : null}
     </>
   );
 }

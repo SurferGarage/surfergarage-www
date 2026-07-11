@@ -27,4 +27,4 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: https://www.surfergarage.com
+          NEXT_PUBLIC_SITE_URL: https://www.lang-qian.com

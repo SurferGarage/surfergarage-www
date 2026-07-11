@@ -7,8 +7,8 @@ import { useAnchorNav } from "@/lib/use-anchor-nav";
 import Image from "next/image";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
-/** 入口 CTA 主操作：与 #call 落点一致 */
-const HEADER_CTA_HREF = "#call";
+/** 入口 CTA 主操作：直接落到故事提交规则。 */
+const HEADER_CTA_HREF = "#call-join";
 
 const navLinkClass =
   "group relative inline-flex shrink-0 items-center rounded-sm px-1.5 py-1 text-[var(--muted-strong)] transition-colors hover:text-[var(--foreground)] focus-visible:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/45";
@@ -136,17 +136,23 @@ export function SiteHeader() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
     };
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const preventBackgroundScroll = (event: Event) => event.preventDefault();
     document.addEventListener("keydown", onKey);
+    document.addEventListener("wheel", preventBackgroundScroll, {
+      passive: false,
+    });
+    document.addEventListener("touchmove", preventBackgroundScroll, {
+      passive: false,
+    });
 
     const firstLink =
       drawerRef.current?.querySelector<HTMLElement>("nav a[href]");
-    firstLink?.focus();
+    firstLink?.focus({ preventScroll: true });
 
     return () => {
-      document.body.style.overflow = prevOverflow;
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("wheel", preventBackgroundScroll);
+      document.removeEventListener("touchmove", preventBackgroundScroll);
     };
   }, [open, close]);
 
@@ -205,10 +211,10 @@ export function SiteHeader() {
             onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
             data-magnet
             className="group inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-3 py-2 font-[family-name:var(--font-zh)] text-[14px] font-medium text-[var(--foreground)]"
-            aria-label="加入车库"
+            aria-label="提交故事"
           >
             <span className="sg-magnet-target inline-flex items-center gap-1.5">
-              <span>加入</span>
+              <span>提交</span>
               <span
                 aria-hidden
                 className="text-[var(--brand-teal)]"
@@ -291,10 +297,10 @@ export function SiteHeader() {
             onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
             data-magnet
             className="group ml-3 inline-flex shrink-0 items-center gap-2 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-4 py-2 font-[family-name:var(--font-zh)] text-[14px] font-medium text-[var(--foreground)] transition-[background-color,border-color] duration-200 hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_18%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/55"
-            aria-label="加入车库"
+            aria-label="提交故事"
           >
             <span className="sg-magnet-target inline-flex items-center gap-2">
-              <span>加入车库</span>
+              <span>提交故事</span>
               <span
                 aria-hidden
                 className="font-[family-name:var(--font-en)] text-[var(--brand-teal)] transition-transform duration-200 group-hover:translate-x-0.5"
@@ -313,8 +319,9 @@ export function SiteHeader() {
       <div
         id={drawerId}
         ref={drawerRef}
+        data-lenis-prevent
         aria-hidden={!open}
-        className={`fixed inset-x-0 top-[calc(3.25rem+env(safe-area-inset-top))] z-[39] md:hidden ${
+        className={`fixed inset-x-0 top-[calc(3.25rem+env(safe-area-inset-top))] z-[39] touch-none overscroll-none md:hidden ${
           open ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >

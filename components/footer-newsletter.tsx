@@ -26,7 +26,7 @@ export function FooterNewsletter() {
       }
       const subject = encodeURIComponent("Subscribe · Surfing Founders");
       const body = encodeURIComponent(
-        `请将 ${v} 加入订阅列表，新一期上线时通知我。\n\n—— 来自 surfergarage.com / Footer`,
+        `请将 ${v} 加入订阅列表，新一期上线时通知我。\n\n—— 来自 lang-qian.com / Footer`,
       );
       window.location.href = `mailto:${MAIL_HELLO}?subject=${subject}&body=${body}`;
       setStatus("submitted");

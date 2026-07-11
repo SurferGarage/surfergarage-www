@@ -6,8 +6,8 @@ export type SiteNavItem = {
 };
 
 export const SITE_PRIMARY_NAV: readonly SiteNavItem[] = [
-  { href: "#manifesto", labelZh: "宣言" },
-  { href: "#founders", labelZh: "片场" },
-  { href: "#social", labelZh: "触点" },
-  { href: "#call", labelZh: "联络" },
+  { href: "#proof", labelZh: "最新" },
+  { href: "#founders", labelZh: "记录" },
+  { href: "#events", labelZh: "活动" },
+  { href: "#social", labelZh: "连接" },
 ] as const;
