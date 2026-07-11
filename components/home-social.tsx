@@ -36,13 +36,9 @@ export function HomeSocial() {
     >
       <div className={SG_PAGE_SHELL_CLASS}>
         <header>
-          <div className="flex items-center justify-between gap-6 border-b border-[#0b0c10]/15 pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[#565c6b] md:text-[11px]">
-            <span className="text-[var(--brand-primary)]">Distribution / 06</span>
-            <span>Follow the record</span>
-          </div>
           <h2
             id="social-heading"
-            className="mt-14 max-w-[72rem] font-[family-name:var(--font-serif-zh)] text-[2.4rem] font-semibold leading-[1.22] text-[#0b0c10] md:mt-20 md:text-[4.25rem] lg:text-[4.5rem] xl:text-[5rem]"
+            className="max-w-[72rem] font-[family-name:var(--font-serif-zh)] text-[2.4rem] font-semibold leading-[1.22] text-[#0b0c10] md:text-[4.25rem] lg:text-[4.5rem] xl:text-[5rem]"
           >
             <span className="block md:inline">长文在微信，</span>
             <span className="block md:inline">现场在 B 站，</span>

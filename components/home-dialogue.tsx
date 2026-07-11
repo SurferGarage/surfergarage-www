@@ -17,12 +17,9 @@ export function HomeDialogue() {
       <div className={SG_PAGE_SHELL_CLASS}>
         <header className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-12">
           <div className="lg:col-span-8">
-            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--brand-teal)] md:text-[11px]">
-              Now playing / 03
-            </p>
             <h2
               id="dialogue-section-heading"
-              className="mt-5 max-w-[54rem] font-[family-name:var(--font-serif-zh)] text-[2.5rem] font-semibold leading-[1.2] text-[var(--foreground)] md:text-[3.75rem] lg:text-[4rem] xl:text-[4.5rem]"
+              className="max-w-[54rem] font-[family-name:var(--font-serif-zh)] text-[2.5rem] font-semibold leading-[1.2] text-[var(--foreground)] md:text-[3.75rem] lg:text-[4rem] xl:text-[4.5rem]"
             >
               一场对话，进入
               <br />
@@ -47,7 +44,7 @@ export function HomeDialogue() {
           <aside className="flex flex-col justify-between border-t border-[var(--hairline)] pt-8 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
             <div>
               <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--accent-amber)] md:text-[11px]">
-                浪前对话 / Video podcast
+                视频播客 · 浪前对话
               </p>
               <h3 className="mt-5 font-[family-name:var(--font-zh)] text-[1.65rem] font-medium leading-[1.45] text-[var(--foreground)] md:text-[2rem]">
                 不复盘一个结果，先看见判断如何发生。
@@ -59,9 +56,9 @@ export function HomeDialogue() {
 
             <dl className="mt-12 border-t border-[var(--hairline)] font-[family-name:var(--font-mono)] text-[10px] uppercase md:text-[11px] lg:mt-16">
               {[
-                ["Season", "S01"],
-                ["Format", "Long-form video"],
-                ["Archive", "Bilibili"],
+                ["当前季度", "第一季"],
+                ["内容形式", "长视频对谈"],
+                ["观看平台", "哔哩哔哩"],
               ].map(([term, value]) => (
                 <div
                   key={term}

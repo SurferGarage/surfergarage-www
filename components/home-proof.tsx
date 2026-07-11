@@ -17,10 +17,9 @@ export function HomeProof() {
     >
       <div className={`${SG_PAGE_SHELL_CLASS} py-20 md:py-28 lg:py-32`}>
         <header className="flex min-h-[48svh] flex-col justify-between">
-          <div className="flex items-center justify-between gap-6 border-b border-white/25 pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/65 md:text-[11px]">
-            <span className="text-white">Latest records / 02</span>
-            <span>Field notes · July 2026</span>
-          </div>
+          <p className="border-b border-white/25 pb-5 font-[family-name:var(--font-zh)] text-[14px] text-white/80 md:text-[15px]">
+            最新发布
+          </p>
 
           <div className="grid gap-8 pt-20 lg:grid-cols-12 lg:items-end lg:gap-12">
             <h2
@@ -56,8 +55,8 @@ export function HomeProof() {
                 />
               </div>
               <div className="mt-5 flex items-center justify-between gap-6 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/65 md:text-[11px]">
-                <span>Surfing Founder · New</span>
-                <span className="text-white">Read ↗</span>
+                <span>最新人物特稿</span>
+                <span className="text-white">阅读全文 ↗</span>
               </div>
               <h3 className="mt-4 max-w-[48rem] font-[family-name:var(--font-serif-zh)] text-[1.8rem] font-semibold leading-[1.45] text-white transition-opacity group-hover:opacity-80 md:text-[2.45rem]">
                 看过上千份简历后，他发现大厂与初创抢的是一种人
@@ -85,14 +84,14 @@ export function HomeProof() {
                 />
               </div>
               <div className="mt-5 flex items-center justify-between gap-6 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/65 md:text-[11px]">
-                <span>Archive · Visual rebuild</span>
-                <span className="text-white">Read ↗</span>
+                <span>人物特稿 · 视觉重构</span>
+                <span className="text-white">阅读全文 ↗</span>
               </div>
               <h3 className="mt-4 font-[family-name:var(--font-serif-zh)] text-[1.55rem] font-semibold leading-[1.5] text-white transition-opacity group-hover:opacity-80 md:text-[2rem]">
                 认为酷的事，必须自己做
               </h3>
               <p className="mt-4 font-[family-name:var(--font-mono)] text-[10px] uppercase text-white/60 md:text-[11px]">
-                李政翰 · 旧棋新弈 · New visual
+                李政翰 · 旧棋新弈
               </p>
             </a>
           ) : null}

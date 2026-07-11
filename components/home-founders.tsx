@@ -65,14 +65,9 @@ export function HomeFounders() {
     >
       <header>
         <div
-          className={`${SG_PAGE_SHELL_CLASS} flex min-h-[62svh] flex-col justify-between py-20 md:py-28 lg:py-32`}
+          className={`${SG_PAGE_SHELL_CLASS} grid min-h-[62svh] items-center py-20 md:py-28 lg:py-32`}
         >
-          <div className="flex items-center justify-between gap-6 border-b border-[var(--hairline)] pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-            <span className="text-[var(--brand-teal)]">Editorial system / 04</span>
-            <span>Five ways of seeing</span>
-          </div>
-
-          <div className="grid gap-9 pt-20 lg:grid-cols-12 lg:items-end lg:gap-12">
+          <div className="grid gap-9 lg:grid-cols-12 lg:items-end lg:gap-12">
             <h2
               id="founders-heading"
               className="font-[family-name:var(--font-serif-zh)] text-[2.55rem] font-semibold leading-[1.2] text-[var(--foreground)] md:text-[4rem] lg:col-span-8 lg:text-[4.5rem]"

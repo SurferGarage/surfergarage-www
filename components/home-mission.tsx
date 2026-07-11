@@ -28,11 +28,6 @@ export function HomeMission() {
       <div
         className={`${SG_PAGE_SHELL_CLASS} flex min-h-[calc(100svh-4.5rem)] flex-col py-16 md:py-20 lg:py-24`}
       >
-        <header className="flex items-center justify-between gap-6 border-b border-[var(--hairline)] pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-          <span className="text-[var(--accent-amber)]">Position / 01</span>
-          <span>Before consensus</span>
-        </header>
-
         <div className="grid flex-1 items-center gap-14 py-16 md:py-20 lg:grid-cols-12 lg:gap-12 lg:py-24">
           <h2
             id="mission-heading"

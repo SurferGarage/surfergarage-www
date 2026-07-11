@@ -4,26 +4,38 @@ import { SITE_NAME } from "@/lib/site-metadata";
 import { SITE_PRIMARY_NAV } from "@/lib/site-nav";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import { useAnchorNav } from "@/lib/use-anchor-nav";
-import Image from "next/image";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 /** 入口 CTA 主操作：直接落到故事提交规则。 */
 const HEADER_CTA_HREF = "#call-join";
 
 const navLinkClass =
-  "group relative inline-flex shrink-0 items-center rounded-sm px-1.5 py-1 text-[var(--muted-strong)] transition-colors hover:text-[var(--foreground)] focus-visible:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/45";
+  "group relative inline-flex h-16 shrink-0 items-center px-4 text-[var(--muted-strong)] transition-colors hover:text-[var(--foreground)] focus-visible:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand-teal)]/45";
 
 const navLinkActiveClass = "text-[var(--foreground)]";
 
-/** Active dot — 当前 section 锚点指示 */
-function ActiveDot({ active }: { active: boolean }) {
+/** 当前栏目使用一段信号线，避免装饰性圆点。 */
+function ActiveRail({ active }: { active: boolean }) {
   return (
     <span
       aria-hidden
-      className={`pointer-events-none absolute left-1/2 -bottom-1.5 h-1 w-1 -translate-x-1/2 rounded-full bg-[var(--brand-teal)] transition-opacity duration-200 ${
-        active ? "opacity-100" : "opacity-0 group-hover:opacity-40"
+      className={`pointer-events-none absolute inset-x-3 bottom-0 h-0.5 origin-left bg-[var(--brand-teal)] transition-transform duration-200 ${
+        active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-50"
       }`}
     />
+  );
+}
+
+function BrandLockup() {
+  return (
+    <span className="flex min-w-0 flex-col justify-center leading-none">
+      <span className="font-[family-name:var(--font-zh)] text-[18px] font-medium text-[var(--foreground)]">
+        浪前
+      </span>
+      <span className="mt-1 hidden font-[family-name:var(--font-mono)] text-[9px] uppercase text-[var(--muted)] sm:block">
+        Surfer Garage
+      </span>
+    </span>
   );
 }
 
@@ -119,7 +131,13 @@ function HamburgerIcon({ open }: { open: boolean }) {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({
+  articles,
+  episodes,
+}: {
+  articles: number;
+  episodes: number;
+}) {
   const sectionIds = useMemo(
     () => SITE_PRIMARY_NAV.map((n) => n.href.replace(/^#/, "")),
     [],
@@ -156,10 +174,6 @@ export function SiteHeader() {
     };
   }, [open, close]);
 
-  /** 桌面布局 nav 拆分：前 2 个为左、后 2 个为右；logo 居中 */
-  const leftNavItems = SITE_PRIMARY_NAV.slice(0, 2);
-  const rightNavItems = SITE_PRIMARY_NAV.slice(2);
-
   function DesktopNavLink({
     href,
     labelZh,
@@ -176,80 +190,57 @@ export function SiteHeader() {
         className={`${navLinkClass} ${isActive ? navLinkActiveClass : ""}`}
         aria-current={isActive ? "true" : undefined}
       >
-        {labelZh}
-        <ActiveDot active={isActive} />
+        <span>{labelZh}</span>
+        <ActiveRail active={isActive} />
       </a>
     );
   }
 
   return (
     <header className="sg-header-depth sticky top-0 z-30 border-b border-[color-mix(in_oklch,var(--hairline)_85%,transparent)] bg-[color-mix(in_oklch,var(--paper-1)_88%,transparent)] backdrop-blur-md pt-[env(safe-area-inset-top)]">
-      {/* —— Mobile（< md）—— logo 左、hamburger 右 */}
+      {/* Mobile / tablet: brand left, menu right. */}
       <div
-        className={`flex items-center justify-between gap-4 py-3 md:hidden ${SG_PAGE_SHELL_CLASS}`}
+        className={`flex h-16 items-center justify-between gap-4 lg:hidden ${SG_PAGE_SHELL_CLASS}`}
       >
         <a
           href="#manifesto"
           onClick={(e) => handleAnchorClick(e, "#manifesto")}
-          className="flex items-center gap-3 rounded-sm font-[family-name:var(--font-zh)] text-[15px] font-medium text-[var(--foreground)]"
+          className="flex h-full items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand-teal)]/45"
           aria-label={`${SITE_NAME}，返回首页`}
         >
-          <Image
-            src="/brand-sg-logo.png"
-            alt=""
-            width={36}
-            height={36}
-            className="h-9 w-9 shrink-0 object-contain"
-            priority
-          />
-          <span className="hidden sm:inline">浪前</span>
+          <BrandLockup />
         </a>
 
-        <div className="flex items-center gap-2">
-          <a
-            href={HEADER_CTA_HREF}
-            onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
-            data-magnet
-            className="group inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-3 py-2 font-[family-name:var(--font-zh)] text-[14px] font-medium text-[var(--foreground)]"
-            aria-label="提交故事"
-          >
-            <span className="sg-magnet-target inline-flex items-center gap-1.5">
-              <span>提交</span>
-              <span
-                aria-hidden
-                className="text-[var(--brand-teal)]"
-              >
-                ↗
-              </span>
-            </span>
-          </a>
-
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-controls={drawerId}
-            aria-label={open ? "关闭主导航" : "打开主导航"}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-sm border border-[var(--hairline)] bg-[rgba(15,17,22,0.55)]"
-          >
-            <HamburgerIcon open={open} />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls={drawerId}
+          aria-label={open ? "关闭主导航" : "打开主导航"}
+          className="inline-flex h-11 w-11 items-center justify-center border-l border-[var(--hairline)] bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand-teal)]/45"
+        >
+          <HamburgerIcon open={open} />
+        </button>
       </div>
 
-      {/* —— Desktop（≥ md）—— logo 居中、左 2 / 右 2 + CTA；列间距明显拉开 */}
+      {/* Desktop editorial signal rail. */}
       <div
-        className={`hidden items-center py-4 md:grid md:gap-10 lg:gap-14 lg:py-5 xl:gap-20 ${SG_PAGE_SHELL_CLASS}`}
-        style={{
-          gridTemplateColumns: "1fr auto 1fr",
-        }}
+        className={`hidden h-16 grid-cols-12 items-stretch lg:grid ${SG_PAGE_SHELL_CLASS}`}
       >
-        {/* 左 nav — flex-end，整体向中心靠拢 */}
-        <nav
-          className="flex items-center justify-end gap-8 font-[family-name:var(--font-zh)] text-[15px] font-medium lg:gap-10 lg:text-[16px]"
-          aria-label="主导航 · 左"
+        <a
+          href="#manifesto"
+          onClick={(e) => handleAnchorClick(e, "#manifesto")}
+          className="col-span-3 flex h-16 items-center border-r border-[var(--hairline-soft)] pr-6 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand-teal)]/45"
+          aria-label={`${SITE_NAME}，返回首页`}
         >
-          {leftNavItems.map((item) => (
+          <BrandLockup />
+        </a>
+
+        <nav
+          className="col-span-5 flex h-16 items-center justify-center font-[family-name:var(--font-zh)] text-[14px] font-medium xl:gap-2"
+          aria-label="主导航"
+        >
+          {SITE_PRIMARY_NAV.map((item) => (
             <DesktopNavLink
               key={item.href}
               href={item.href}
@@ -258,52 +249,22 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        {/* 中央 logo */}
-        <a
-          href="#manifesto"
-          onClick={(e) => handleAnchorClick(e, "#manifesto")}
-          className="group flex shrink-0 items-center gap-3 rounded-sm px-4 font-[family-name:var(--font-zh)] text-[15px] font-medium text-[var(--foreground)] transition-opacity hover:opacity-90"
-          aria-label={`${SITE_NAME}，返回首页`}
-        >
-          <Image
-            src="/brand-sg-logo.png"
-            alt=""
-            width={36}
-            height={36}
-            className="h-9 w-9 shrink-0 object-contain"
-            priority
-          />
-          <span>浪前</span>
-        </a>
-
-        {/* 右 nav + CTA — flex-start，整体向中心靠拢 */}
-        <div className="flex items-center justify-start gap-7 lg:gap-9">
-          <nav
-            className="flex items-center gap-8 font-[family-name:var(--font-zh)] text-[15px] font-medium lg:gap-10 lg:text-[16px]"
-            aria-label="主导航 · 右"
-          >
-            {rightNavItems.map((item) => (
-              <DesktopNavLink
-                key={item.href}
-                href={item.href}
-                labelZh={item.labelZh}
-              />
-            ))}
-          </nav>
-
-          {/* JOIN CTA — magnet hover */}
+        <div className="col-span-4 flex h-16 items-stretch justify-end border-l border-[var(--hairline-soft)]">
+          <p className="hidden items-center px-5 text-right font-[family-name:var(--font-zh)] text-[11px] text-[var(--muted)] xl:flex">
+            {String(articles).padStart(2, "0")} 篇长文 · {String(episodes).padStart(2, "0")} 期视频
+          </p>
           <a
             href={HEADER_CTA_HREF}
             onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
             data-magnet
-            className="group ml-3 inline-flex shrink-0 items-center gap-2 rounded-sm border border-[color-mix(in_oklch,var(--brand-teal)_45%,transparent)] bg-[color-mix(in_oklch,var(--brand-teal)_10%,transparent)] px-4 py-2 font-[family-name:var(--font-zh)] text-[14px] font-medium text-[var(--foreground)] transition-[background-color,border-color] duration-200 hover:border-[var(--brand-teal)] hover:bg-[color-mix(in_oklch,var(--brand-teal)_18%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/55"
+            className="group inline-flex h-16 shrink-0 items-center gap-3 border-l border-[var(--hairline-soft)] px-5 font-[family-name:var(--font-zh)] text-[14px] font-medium text-[var(--foreground)] transition-colors duration-200 hover:bg-[var(--brand-primary)] focus-visible:bg-[var(--brand-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand-teal)]/55 xl:px-6"
             aria-label="提交故事"
           >
-            <span className="sg-magnet-target inline-flex items-center gap-2">
+            <span className="sg-magnet-target inline-flex items-center gap-3">
               <span>提交故事</span>
               <span
                 aria-hidden
-                className="font-[family-name:var(--font-en)] text-[var(--brand-teal)] transition-transform duration-200 group-hover:translate-x-0.5"
+                className="font-[family-name:var(--font-en)] text-[var(--brand-teal)] transition-[color,transform] duration-200 group-hover:translate-x-0.5 group-hover:text-white"
               >
                 ↗
               </span>
@@ -321,7 +282,7 @@ export function SiteHeader() {
         ref={drawerRef}
         data-lenis-prevent
         aria-hidden={!open}
-        className={`fixed inset-x-0 top-[calc(3.25rem+env(safe-area-inset-top))] z-[39] touch-none overscroll-none md:hidden ${
+        className={`fixed inset-x-0 top-[calc(4rem+env(safe-area-inset-top))] z-[39] touch-none overscroll-none lg:hidden ${
           open ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
@@ -331,9 +292,18 @@ export function SiteHeader() {
           }`}
         >
           <nav
-            className={`${SG_PAGE_SHELL_CLASS} flex flex-col gap-1 py-6`}
+            className={`${SG_PAGE_SHELL_CLASS} flex flex-col py-6`}
             aria-label="移动主导航"
           >
+            <a
+              href={HEADER_CTA_HREF}
+              onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
+              tabIndex={open ? 0 : -1}
+              className="mb-5 flex min-h-12 items-center justify-between bg-[var(--brand-primary)] px-4 font-[family-name:var(--font-zh)] text-[16px] font-medium text-white"
+            >
+              <span>提交故事</span>
+              <span aria-hidden>↗</span>
+            </a>
             {SITE_PRIMARY_NAV.map((item) => {
               const id = item.href.replace(/^#/, "");
               const isActive = activeId === id;
@@ -343,7 +313,7 @@ export function SiteHeader() {
                   href={item.href}
                   onClick={(e) => handleAnchorClick(e, item.href)}
                   tabIndex={open ? 0 : -1}
-                  className={`flex items-center justify-between border-b border-[var(--hairline-soft)] py-4 font-[family-name:var(--font-zh)] text-[19px] font-medium leading-none transition-colors hover:text-[var(--foreground)] ${
+                  className={`flex items-center justify-between border-b border-[var(--hairline-soft)] py-4 font-[family-name:var(--font-zh)] text-[18px] font-medium leading-none transition-colors hover:text-[var(--foreground)] ${
                     isActive
                       ? "text-[var(--foreground)]"
                       : "text-[var(--muted-strong)]"

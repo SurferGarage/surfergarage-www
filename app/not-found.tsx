@@ -4,11 +4,14 @@ import { SiteHeader } from "@/components/site-header";
 import { homeSectionHref } from "@/lib/nav-hash";
 import { SITE_PRIMARY_NAV } from "@/lib/site-nav";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import { getSiteStats } from "@/lib/site-stats";
 
 export default function NotFound() {
+  const stats = getSiteStats();
+
   return (
     <div className="flex min-h-[100svh] flex-col bg-[var(--paper-1)]">
-      <SiteHeader />
+      <SiteHeader articles={stats.articles} episodes={stats.episodes} />
       <main
         className={`relative flex flex-1 flex-col justify-center py-20 md:py-28 ${SG_PAGE_SHELL_CLASS}`}
       >

@@ -48,11 +48,6 @@ export function HomeCall() {
       <div
         className={`${SG_PAGE_SHELL_CLASS} flex min-h-[calc(100svh-4.5rem)] flex-col py-20 md:py-28 lg:py-32`}
       >
-        <header className="flex items-center justify-between gap-6 border-b border-[var(--hairline)] pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-          <span className="text-[var(--accent-amber)]">Submit / 07</span>
-          <span>Open call</span>
-        </header>
-
         <div
           id="call-join"
           className="grid flex-1 scroll-mt-[6rem] items-center gap-14 py-16 md:py-20 lg:grid-cols-12 lg:gap-16 lg:py-24"
@@ -98,7 +93,7 @@ export function HomeCall() {
               />
               <div>
                 <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--brand-teal)] md:text-[11px]">
-                  Scan / Connect
+                  微信联系
                 </p>
                 <h3 className="mt-4 font-[family-name:var(--font-zh)] text-[1.45rem] font-medium leading-[1.45] text-[var(--foreground)] md:text-[1.65rem]">
                   把正在发生的事，直接发给我们。
@@ -142,7 +137,7 @@ export function HomeCall() {
         <div className="grid gap-7 pt-9 md:grid-cols-2 md:gap-10">
           <div>
             <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-              Media / Editorial
+              内容与采访
             </p>
             <a
               href={`mailto:${MAIL_HELLO}`}
@@ -153,7 +148,7 @@ export function HomeCall() {
           </div>
           <div>
             <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-              Event / Ecosystem
+              活动与合作
             </p>
             <a
               href={`mailto:${MAIL_PARTNERS}`}

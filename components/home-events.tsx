@@ -36,10 +36,9 @@ export function HomeEvents() {
         <div
           className={`${SG_PAGE_SHELL_CLASS} flex min-h-[62svh] flex-col justify-between py-20 md:py-28 lg:py-32`}
         >
-          <div className="flex items-center justify-between gap-6 border-b border-[var(--hairline)] pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-            <span className="text-[var(--accent-amber)]">Live field / 05</span>
-            <span>Three upcoming events</span>
-          </div>
+          <p className="border-b border-[var(--hairline)] pb-5 font-[family-name:var(--font-zh)] text-[14px] text-[var(--accent-amber)] md:text-[15px]">
+            近期活动 · {SITE_EVENTS.length} 场
+          </p>
 
           <div className="grid gap-9 pt-20 lg:grid-cols-12 lg:items-end lg:gap-12">
             <h2
@@ -67,7 +66,7 @@ export function HomeEvents() {
             <div className="lg:col-span-5">
               <div className="flex items-center justify-between gap-6 border-b border-[#08111e]/18 pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[#43536a] md:text-[11px]">
                 <span>{builderUp.role}</span>
-                <span>Suzhou · Upcoming</span>
+                <span>苏州 · 即将开始</span>
               </div>
 
               <p className="mt-10 font-[family-name:var(--font-serif)] text-[5rem] leading-none text-[var(--brand-primary)] md:text-[7rem] lg:text-[8rem]">
@@ -108,10 +107,6 @@ export function HomeEvents() {
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-[1.018]"
                 />
-              </div>
-              <div className="mx-auto mt-4 flex max-w-[36rem] items-center justify-between gap-6 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[#536178] md:text-[11px]">
-                <span>Builder community / 01</span>
-                <span className="text-[var(--brand-primary)]">Open ↗</span>
               </div>
             </a>
           </div>
