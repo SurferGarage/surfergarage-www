@@ -4,7 +4,7 @@ const MISSION_PILLARS = [
   {
     no: "01",
     title: "被看见",
-    description: "进入投资人、行业、用户与学校的真实视野。",
+    description: "进入投资人、行业伙伴、用户与学校的真实视野。",
   },
   {
     no: "02",
@@ -14,7 +14,7 @@ const MISSION_PILLARS = [
   {
     no: "03",
     title: "被连接",
-    description: "让下一段关系，从一份可信的内容记录开始。",
+    description: "让下一段关系从一份可信的内容记录开始。",
   },
 ] as const;
 
@@ -45,10 +45,10 @@ export function HomeMission() {
 
           <div className="max-w-[32rem] lg:col-span-4 lg:pl-6">
             <p className="font-[family-name:var(--font-serif-zh)] text-[1.45rem] font-semibold leading-[1.55] text-[var(--foreground)] md:text-[1.75rem]">
-              浪前，是极早期科技创业者的第一篇深度访谈。
+              我们为极早期科技创业者留下第一篇深度访谈。
             </p>
             <p className="mt-6 font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px]">
-              在他们仍然粗糙、快速变化、尚未形成共识时，留下可以被长期引用的真实记录。
+              在产品仍显粗粝、方向快速变化、外界尚未形成共识时，留下可以被长期引用的真实记录。
             </p>
           </div>
         </div>

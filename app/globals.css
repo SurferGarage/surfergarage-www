@@ -300,7 +300,6 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
   scrollbar-gutter: stable;
   background: var(--paper-0);
 }
@@ -734,6 +733,28 @@ html[data-sg-scroll-lock] {
   transform: scaleX(var(--sg-dt));
   transition: transform 120ms linear;
   opacity: 0.85;
+}
+
+@keyframes sg-proof-swap-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sg-proof-swap {
+  animation: sg-proof-swap-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-proof-swap {
+    animation: none;
+  }
 }
 
 .sg-call-orb {

@@ -68,7 +68,7 @@ export function HomeCall() {
               也许你正在 Garage，也许还在学校宿舍里。只要你在认真建造，就值得留下第一份真实记录。
             </p>
             <p className="mt-6 max-w-[39rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.85] text-[var(--muted-strong)] md:text-[16px]">
-              添加小浪微信，附一句你在做什么，以及 demo、链接或一段真实复盘。我们会先理解，再决定用哪一种方式记录。
+              添加小浪微信，并附上一句话说明你在做什么，以及 demo、链接或一段真实复盘。我们会先理解，再决定用哪一种方式记录。
             </p>
 
             <button

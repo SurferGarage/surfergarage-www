@@ -8,11 +8,8 @@ import { HomeSocial } from "@/components/home-social";
 import { HomeHero } from "@/components/home-hero";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getSiteStats } from "@/lib/site-stats";
 
 export default function Home() {
-  const stats = getSiteStats();
-
   return (
     <div className="relative flex min-h-full min-w-0 flex-col overflow-x-clip bg-[var(--paper-0)]">
       <a
@@ -23,7 +20,7 @@ export default function Home() {
         跳到主要内容
       </a>
 
-      <SiteHeader articles={stats.articles} episodes={stats.episodes} />
+      <SiteHeader />
 
       <main className="flex-1">
         <HomeHero />

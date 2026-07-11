@@ -24,7 +24,7 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
     location: "苏州创新创意设计研究院",
     role: "社区承办",
     description:
-      "拒绝套路宣讲，让青年创造者围坐深聊行业真实、项目卡点与奇思构想。",
+      "拒绝套路宣讲，让青年创造者围坐，深聊行业现实、项目卡点与奇思构想。",
     href: "#call-join",
     external: false,
     linkLabel: "获取报名信息",
@@ -40,7 +40,7 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
     location: "日期与城市待公布",
     role: "内容与招募合作",
     description:
-      "面向买域名、搭博客、录教程、做游戏、写脚本、造工具和焊开发板的年轻造物者。",
+      "汇集那些买域名、搭博客、录教程、做游戏、写脚本、造工具和焊开发板的年轻造物者。",
     href: "https://mp.weixin.qq.com/s/Fx5c8MvzajrCMAQMwaKpwg",
     external: true,
     linkLabel: "查看招募",

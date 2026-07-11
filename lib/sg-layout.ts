@@ -6,7 +6,7 @@
  * - **Shell**：页头 / 分节容器 — 略宽于旧 1440，仍留边距
  */
 
-/** Sticky 顶栏高度（与 `scroll-mt` / `scroll-padding-top` 一致） */
+/** Sticky 顶栏高度（供原生 hash 目标的 `scroll-mt` 使用） */
 export const SG_HEADER_SCROLL_MT = "scroll-mt-[4.5rem]";
 
 /** 区块纵向节奏 */

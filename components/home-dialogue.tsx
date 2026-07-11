@@ -47,10 +47,10 @@ export function HomeDialogue() {
                 视频播客 · 浪前对话
               </p>
               <h3 className="mt-5 font-[family-name:var(--font-zh)] text-[1.65rem] font-medium leading-[1.45] text-[var(--foreground)] md:text-[2rem]">
-                不复盘一个结果，先看见判断如何发生。
+                不急着复盘结果，先看判断如何形成。
               </h3>
               <p className="mt-6 font-[family-name:var(--font-zh)] text-[15px] leading-[1.8] text-[var(--muted-strong)] md:text-[16px]">
-                与年轻创始人和产品创造者进行长对谈。问题没有标准答案，现场本身就是内容。
+                与年轻创始人和产品创造者展开长对谈。这里没有标准答案，现场本身就是内容。
               </p>
             </div>
 

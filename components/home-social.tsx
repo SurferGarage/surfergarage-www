@@ -13,8 +13,8 @@ import { LATEST_WECHAT_FEED_ITEM } from "@/lib/wechat-official-feed";
 const CHANNEL_IDS = ["wechat-articles", "bilibili", "xiaohongshu", "github-org"];
 
 const CHANNEL_COPY: Record<string, string> = {
-  "wechat-articles": "人物深访与可以被长期引用的完整叙事。",
-  bilibili: "长视频对谈，保留语气与判断发生的过程。",
+  "wechat-articles": "发布人物深访，以及可被长期引用的完整叙事。",
+  bilibili: "长视频对谈，保留语气、分歧与判断形成的过程。",
   xiaohongshu: "把创业现场切成更短、更及时的观察片段。",
   "github-org": "公开手册、失败复盘、学习路径与网站源码。",
 };

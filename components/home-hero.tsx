@@ -1,4 +1,5 @@
 import { HeroFlowField } from "@/components/hero-flow-field";
+import { SiteAnchorLink } from "@/components/site-anchor-link";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import { getSiteStats } from "@/lib/site-stats";
 
@@ -35,24 +36,24 @@ export function HomeHero() {
                 记录正在冲浪的人。
               </p>
               <p className="sg-home-hero-description mt-4 max-w-[42rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.72] text-[var(--muted-strong)] md:text-[17px]">
-                浪前是一家记录 16–28 岁极早期科技创业者的高信任科技媒体。我们在共识形成之前，留下他们的第一篇深度访谈。
+                浪前是一家关注 16–28 岁极早期科技创业者的高信任科技媒体。我们在共识形成之前，为他们留下第一篇深度访谈。
               </p>
 
               <div className="sg-home-hero-actions mt-7 flex flex-wrap items-center gap-3">
-                <a
+                <SiteAnchorLink
                   href="#proof"
                   className="sg-home-hero-action inline-flex min-h-11 items-center gap-3 bg-[var(--brand-primary)] px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] font-medium text-white transition-colors hover:bg-[#1420ff]"
                 >
                   浏览最新记录
                   <span aria-hidden>↓</span>
-                </a>
-                <a
+                </SiteAnchorLink>
+                <SiteAnchorLink
                   href="#call-join"
                   className="sg-home-hero-action inline-flex min-h-11 items-center gap-3 border border-white/24 bg-black/20 px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] font-medium text-white transition-colors hover:border-white/48 hover:bg-black/34"
                 >
                   提交故事
                   <span aria-hidden>→</span>
-                </a>
+                </SiteAnchorLink>
               </div>
             </div>
           </div>

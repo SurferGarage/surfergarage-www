@@ -4,7 +4,7 @@ import { SITE_NAME } from "@/lib/site-metadata";
 import { SITE_PRIMARY_NAV } from "@/lib/site-nav";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import { useAnchorNav } from "@/lib/use-anchor-nav";
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 
 /** 入口 CTA 主操作：直接落到故事提交规则。 */
 const HEADER_CTA_HREF = "#call-join";
@@ -39,7 +39,7 @@ function BrandLockup() {
   );
 }
 
-/** IntersectionObserver 跟踪当前可见 section，写入 active 锚点 */
+/** 以顶栏下方的阅读线跟踪当前栏目，确保点击定位后立即匹配。 */
 function useActiveSection(sectionIds: readonly string[]) {
   const [active, setActive] = useState<string | null>(null);
 
@@ -50,40 +50,38 @@ function useActiveSection(sectionIds: readonly string[]) {
       .filter((el): el is HTMLElement => el !== null);
     if (!sections.length) return;
 
-    let visibleMap = new Map<string, number>();
+    let frame = 0;
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            visibleMap.set(e.target.id, e.intersectionRatio);
-          } else {
-            visibleMap.delete(e.target.id);
-          }
-        });
-        if (visibleMap.size === 0) return;
-        let bestId: string | null = null;
-        let bestR = -1;
-        visibleMap.forEach((r, id) => {
-          if (r > bestR) {
-            bestR = r;
-            bestId = id;
-          }
-        });
-        if (bestId) setActive((prev) => (prev === bestId ? prev : bestId));
-      },
-      {
-        root: null,
-        rootMargin: "-40% 0px -40% 0px",
-        threshold: [0, 0.15, 0.3, 0.5, 0.75, 1],
-      },
-    );
+    const update = () => {
+      frame = 0;
+      const headerHeight =
+        document.querySelector<HTMLElement>("[data-site-header]")
+          ?.getBoundingClientRect().height ?? 64;
+      const readingLine = headerHeight + Math.min(window.innerHeight * 0.16, 120);
+      let current: string | null = null;
 
-    sections.forEach((s) => io.observe(s));
+      sections.forEach((section) => {
+        if (section.getBoundingClientRect().top <= readingLine) {
+          current = section.id;
+        }
+      });
+
+      setActive((previous) => (previous === current ? previous : current));
+    };
+
+    const scheduleUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
 
     return () => {
-      io.disconnect();
-      visibleMap = new Map();
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
     };
   }, [sectionIds]);
 
@@ -131,13 +129,7 @@ function HamburgerIcon({ open }: { open: boolean }) {
   );
 }
 
-export function SiteHeader({
-  articles,
-  episodes,
-}: {
-  articles: number;
-  episodes: number;
-}) {
+export function SiteHeader() {
   const sectionIds = useMemo(
     () => SITE_PRIMARY_NAV.map((n) => n.href.replace(/^#/, "")),
     [],
@@ -145,7 +137,6 @@ export function SiteHeader({
   const activeId = useActiveSection(sectionIds);
   const [open, setOpen] = useState(false);
   const drawerId = useId();
-  const drawerRef = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   const handleAnchorClick = useAnchorNav(close);
 
@@ -162,10 +153,6 @@ export function SiteHeader({
     document.addEventListener("touchmove", preventBackgroundScroll, {
       passive: false,
     });
-
-    const firstLink =
-      drawerRef.current?.querySelector<HTMLElement>("nav a[href]");
-    firstLink?.focus({ preventScroll: true });
 
     return () => {
       document.removeEventListener("keydown", onKey);
@@ -197,7 +184,10 @@ export function SiteHeader({
   }
 
   return (
-    <header className="sg-header-depth sticky top-0 z-30 border-b border-[color-mix(in_oklch,var(--hairline)_85%,transparent)] bg-[color-mix(in_oklch,var(--paper-1)_88%,transparent)] backdrop-blur-md pt-[env(safe-area-inset-top)]">
+    <header
+      data-site-header
+      className="sg-header-depth sticky top-0 z-30 border-b border-[color-mix(in_oklch,var(--hairline)_85%,transparent)] bg-[color-mix(in_oklch,var(--paper-1)_88%,transparent)] pt-[env(safe-area-inset-top)] backdrop-blur-md"
+    >
       {/* Mobile / tablet: brand left, menu right. */}
       <div
         className={`flex h-16 items-center justify-between gap-4 lg:hidden ${SG_PAGE_SHELL_CLASS}`}
@@ -237,7 +227,7 @@ export function SiteHeader({
         </a>
 
         <nav
-          className="col-span-5 flex h-16 items-center justify-center font-[family-name:var(--font-zh)] text-[14px] font-medium xl:gap-2"
+          className="col-span-6 flex h-16 items-center justify-center font-[family-name:var(--font-zh)] text-[14px] font-medium xl:gap-2"
           aria-label="主导航"
         >
           {SITE_PRIMARY_NAV.map((item) => (
@@ -249,10 +239,7 @@ export function SiteHeader({
           ))}
         </nav>
 
-        <div className="col-span-4 flex h-16 items-stretch justify-end border-l border-[var(--hairline-soft)]">
-          <p className="hidden items-center px-5 text-right font-[family-name:var(--font-zh)] text-[11px] text-[var(--muted)] xl:flex">
-            {String(articles).padStart(2, "0")} 篇长文 · {String(episodes).padStart(2, "0")} 期视频
-          </p>
+        <div className="col-span-3 flex h-16 items-stretch justify-end border-l border-[var(--hairline-soft)]">
           <a
             href={HEADER_CTA_HREF}
             onClick={(e) => handleAnchorClick(e, HEADER_CTA_HREF)}
@@ -279,7 +266,6 @@ export function SiteHeader({
       {/* Mobile drawer */}
       <div
         id={drawerId}
-        ref={drawerRef}
         data-lenis-prevent
         aria-hidden={!open}
         className={`fixed inset-x-0 top-[calc(4rem+env(safe-area-inset-top))] z-[39] touch-none overscroll-none lg:hidden ${

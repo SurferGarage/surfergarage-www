@@ -3,7 +3,6 @@ import { SiteHeader } from "@/components/site-header";
 import { MAIL_HELLO } from "@/lib/site-contact";
 import { buildSiteMetadata } from "@/lib/site-metadata";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
-import { getSiteStats } from "@/lib/site-stats";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,11 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
-  const stats = getSiteStats();
-
   return (
     <div className="relative isolate flex min-h-full min-w-0 flex-col bg-[var(--paper-1)]">
-      <SiteHeader articles={stats.articles} episodes={stats.episodes} />
+      <SiteHeader />
       <main className={`relative z-[3] flex-1 py-16 md:py-24 ${SG_PAGE_SHELL_CLASS}`}>
         <article className="mx-auto max-w-[48rem]">
           <h1 className="editorial-serif text-[clamp(2rem,4vw,2.75rem)] leading-[1.06] text-[var(--foreground)]">

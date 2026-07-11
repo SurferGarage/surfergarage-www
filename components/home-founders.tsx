@@ -17,7 +17,7 @@ export function HomeFounders() {
       titleZh: "记录人",
       type: "人物特稿",
       status: "持续更新",
-      description: "成为极早期科技创业者的第一篇深度访谈。",
+      description: "为极早期科技创业者留下第一篇深度访谈。",
       href: latestArticle?.href,
       accent: "text-[var(--brand-teal)]",
     },
@@ -27,7 +27,7 @@ export function HomeFounders() {
       titleZh: "记录对话",
       type: "视频播客",
       status: "第一季",
-      description: "保留判断、分歧与停顿发生时的完整过程。",
+      description: "保留判断形成、分歧出现与对话停顿的完整过程。",
       href: "https://space.bilibili.com/3546759022250564",
       accent: "text-[#6f78ff]",
     },
@@ -55,7 +55,7 @@ export function HomeFounders() {
       titleZh: "记录方法",
       type: "方法论对谈",
       status: "已上线",
-      description: "与塑造技术、产品和生态的人讨论方法。",
+      description: "与正在塑造技术、产品与生态的人讨论方法。",
       href: methodArticle?.href,
       accent: "text-[var(--accent-amber)]",
     },
@@ -81,7 +81,7 @@ export function HomeFounders() {
             >
               <span className="block">五种记录方式。</span>
               <span className="block">
-                追同一件事：
+                追踪同一件事：
                 <span className="block sm:inline">变化如何发生。</span>
               </span>
             </h2>
