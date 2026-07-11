@@ -1,34 +1,9 @@
-import { HeroSignalField, type HeroSignal } from "@/components/hero-signal-field";
+import { HeroFlowField } from "@/components/hero-flow-field";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import { getSiteStats } from "@/lib/site-stats";
-import { SITE_EVENTS } from "@/lib/site-events";
 
 export function HomeHero() {
   const stats = getSiteStats();
-  const nextEvent = SITE_EVENTS[0];
-  const signals: readonly HeroSignal[] = [
-    {
-      id: "latest-story",
-      href: "#proof",
-      label: "最新人物特稿",
-      title: "泛函",
-      detail: "大厂与初创在抢谁",
-    },
-    {
-      id: "video-podcast",
-      href: "#dialogue",
-      label: "视频播客",
-      title: "浪前对话",
-      detail: `第一季 · ${String(stats.episodes).padStart(2, "0")} 期已上线`,
-    },
-    {
-      id: "upcoming-event",
-      href: "#events",
-      label: "近期活动 · 苏州",
-      title: "BuilderUp",
-      detail: nextEvent?.dateDisplay ?? "2026.07.18",
-    },
-  ];
 
   return (
     <section
@@ -37,6 +12,13 @@ export function HomeHero() {
       aria-labelledby="hero-title"
     >
       <div className="sg-home-hero-frame relative min-h-[calc(100svh-5.5rem)] overflow-hidden lg:h-[calc(100svh-7.5rem)] lg:min-h-[42rem]">
+        <HeroFlowField />
+
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-full bg-[linear-gradient(90deg,rgba(7,8,11,0.97)_0%,rgba(7,8,11,0.91)_34%,rgba(7,8,11,0.54)_52%,rgba(7,8,11,0.04)_78%)] md:w-[78%]"
+        />
+
         <div className={`sg-home-hero-shell relative z-[2] flex min-h-full flex-col pt-8 md:pt-10 lg:h-full lg:pt-4 ${SG_PAGE_SHELL_CLASS}`}>
           <div className="sg-home-hero-body grid flex-1 items-center gap-8 py-8 md:gap-10 md:py-10 lg:grid-cols-12 lg:gap-12 lg:py-8">
             <div className="sg-home-hero-copy max-w-[44rem] lg:col-span-6">
@@ -72,11 +54,6 @@ export function HomeHero() {
                   <span aria-hidden>→</span>
                 </a>
               </div>
-
-            </div>
-
-            <div className="lg:col-span-6">
-              <HeroSignalField signals={signals} />
             </div>
           </div>
 
