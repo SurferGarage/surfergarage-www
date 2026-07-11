@@ -2209,3 +2209,122 @@ html[data-sg-atmosphere-paused] .uwl-stage {
     scroll-behavior: auto !important;
   }
 }
+
+/* 编辑版心开窗：满幅舞台之间的阅读 / 决策章节，用平面与海沟明确换章。 */
+.sg-immersive-plane {
+  --sg-plane-rule: var(--hairline);
+  --sg-plane-rail: rgba(39, 215, 199, 0.28);
+  position: relative;
+  isolation: isolate;
+  border-block: 1px solid var(--sg-plane-rule);
+}
+
+.sg-immersive-plane--light {
+  --sg-plane-rule: rgba(11, 12, 16, 0.18);
+  --sg-plane-rail: rgba(0, 9, 226, 0.38);
+}
+
+.sg-immersive-plane--dark {
+  --sg-plane-rule: rgba(200, 210, 230, 0.2);
+  --sg-plane-rail: rgba(39, 215, 199, 0.3);
+}
+
+.sg-immersive-plane::before,
+.sg-immersive-plane::after {
+  position: absolute;
+  z-index: 4;
+  inset-block: 0;
+  width: 1px;
+  background: var(--sg-plane-rail);
+  content: "";
+  pointer-events: none;
+  transform-origin: 50% 0%;
+}
+
+.sg-immersive-plane::before {
+  inset-inline-start: 0;
+}
+
+.sg-immersive-plane::after {
+  inset-inline-end: 0;
+}
+
+@media (min-width: 48rem) {
+  .sg-immersive-plane {
+    width: calc(100% - 5rem);
+  }
+}
+
+@media (min-width: 64rem) {
+  .sg-immersive-plane {
+    width: calc(100% - 8rem);
+  }
+}
+
+@media (min-width: 80rem) {
+  .sg-immersive-plane {
+    width: calc(100% - 10rem);
+  }
+}
+
+@media (min-width: 96rem) {
+  .sg-immersive-plane {
+    width: calc(100% - 15rem);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .sg-immersive-plane::before,
+  .sg-immersive-plane::after {
+    animation: sg-plane-rail-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 4% cover 34%;
+  }
+}
+
+@keyframes sg-plane-rail-reveal {
+  from {
+    opacity: 0.16;
+    transform: scaleY(0.06);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@media (orientation: landscape) and (min-width: 35.5rem) and (max-height: 32rem) {
+  .sg-immersive-section {
+    padding-block: 1.5rem;
+  }
+
+  .sg-home-social-plane {
+    padding-block: 2.5rem;
+  }
+
+  .sg-home-founders-intro {
+    min-height: 0;
+    padding-block: 3rem;
+  }
+
+  .sg-home-call-plane {
+    min-height: 0;
+    padding-block: 2.5rem;
+  }
+
+  .sg-home-call-join {
+    flex: none;
+    align-items: start;
+    padding-block: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-immersive-plane::before,
+  .sg-immersive-plane::after {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+}

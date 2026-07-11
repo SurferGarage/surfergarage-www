@@ -8,7 +8,11 @@ import {
   MAIL_HELLO,
   MAIL_PARTNERS,
 } from "@/lib/site-contact";
-import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import {
+  SG_IMMERSIVE_INSET_CLASS,
+  SG_IMMERSIVE_PLANE_CLASS,
+  SG_IMMERSIVE_SECTION_CLASS,
+} from "@/lib/sg-layout";
 
 const WECHAT_ID = "x3167056428";
 
@@ -42,15 +46,15 @@ export function HomeCall() {
   return (
     <section
       id="call"
-      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] bg-[var(--paper-1)]"
+      className={`${SG_IMMERSIVE_SECTION_CLASS} scroll-mt-[4.5rem] border-b border-[var(--hairline)]`}
       aria-labelledby="call-heading"
     >
       <div
-        className={`${SG_PAGE_SHELL_CLASS} flex min-h-[calc(100svh-4.5rem)] flex-col py-20 md:py-28 lg:py-32`}
+        className={`${SG_IMMERSIVE_PLANE_CLASS} ${SG_IMMERSIVE_INSET_CLASS} sg-home-call-plane sg-immersive-plane--dark flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden bg-[var(--paper-1)] py-20 md:py-28 lg:py-32`}
       >
         <div
           id="call-join"
-          className="grid flex-1 scroll-mt-[6rem] items-center gap-14 py-16 md:py-20 lg:grid-cols-12 lg:gap-16 lg:py-24"
+          className="sg-home-call-join grid flex-1 scroll-mt-[6rem] items-center gap-14 py-16 md:py-20 lg:grid-cols-12 lg:gap-16 lg:py-24"
         >
           <div className="lg:col-span-7">
             <h2

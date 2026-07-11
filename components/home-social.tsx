@@ -1,5 +1,9 @@
 import { SocialChannelMark } from "@/components/social-channel-mark";
-import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import {
+  SG_IMMERSIVE_INSET_CLASS,
+  SG_IMMERSIVE_PLANE_CLASS,
+  SG_IMMERSIVE_SECTION_CLASS,
+} from "@/lib/sg-layout";
 import {
   SOCIAL_CHANNELS,
   type SocialChannel,
@@ -31,19 +35,21 @@ export function HomeSocial() {
   return (
     <section
       id="social"
-      className="scroll-mt-[4.5rem] border-b border-[#0b0c10]/15 bg-[var(--brand-light-grey)] py-20 text-[#0b0c10] md:py-28 lg:py-32"
+      className={`${SG_IMMERSIVE_SECTION_CLASS} scroll-mt-[4.5rem] border-b border-white/10 text-[#0b0c10]`}
       aria-labelledby="social-heading"
     >
-      <div className={SG_PAGE_SHELL_CLASS}>
+      <div
+        className={`${SG_IMMERSIVE_PLANE_CLASS} ${SG_IMMERSIVE_INSET_CLASS} sg-home-social-plane sg-immersive-plane--light overflow-hidden bg-[var(--brand-light-grey)] py-20 md:py-28 lg:py-32`}
+      >
         <header>
           <h2
             id="social-heading"
-            className="max-w-[72rem] font-[family-name:var(--font-serif-zh)] text-[2.4rem] font-semibold leading-[1.22] text-[#0b0c10] md:text-[4.25rem] lg:text-[4.5rem] xl:text-[5rem]"
+            className="max-w-[72rem] font-[family-name:var(--font-serif-zh)] text-[2.4rem] font-semibold leading-[1.22] text-[#0b0c10] md:text-[3.5rem] lg:text-[4.5rem] xl:text-[5rem]"
           >
-            <span className="block md:inline">长文在微信，</span>
-            <span className="block md:inline">现场在 B 站，</span>
-            <br className="hidden md:block" />
-            <span className="block whitespace-nowrap">开源资料在 GitHub。</span>
+            <span className="block lg:inline">长文在微信，</span>
+            <span className="block lg:inline">现场在 B 站，</span>
+            <br className="hidden lg:block" />
+            <span className="block lg:whitespace-nowrap">开源资料在 GitHub。</span>
           </h2>
           <p className="mt-8 max-w-[40rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[#424754] md:text-[17px]">
             选择你习惯的媒介，持续跟进浪前正在记录的人、产品与方法。

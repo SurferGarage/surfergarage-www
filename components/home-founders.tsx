@@ -1,4 +1,8 @@
-import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import {
+  SG_IMMERSIVE_INSET_CLASS,
+  SG_IMMERSIVE_PLANE_CLASS,
+  SG_IMMERSIVE_SECTION_CLASS,
+} from "@/lib/sg-layout";
 import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
 
 export function HomeFounders() {
@@ -60,12 +64,15 @@ export function HomeFounders() {
   return (
     <section
       id="founders"
-      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] bg-[var(--paper-1)]"
+      className={`${SG_IMMERSIVE_SECTION_CLASS} scroll-mt-[4.5rem] border-b border-[var(--hairline)]`}
       aria-labelledby="founders-heading"
     >
+      <div
+        className={`${SG_IMMERSIVE_PLANE_CLASS} sg-immersive-plane--dark overflow-hidden bg-[var(--paper-1)]`}
+      >
       <header>
         <div
-          className={`${SG_PAGE_SHELL_CLASS} grid min-h-[62svh] items-center py-20 md:py-28 lg:py-32`}
+          className={`${SG_IMMERSIVE_INSET_CLASS} sg-home-founders-intro grid min-h-[62svh] items-center py-20 md:py-28 lg:py-32`}
         >
           <div className="grid gap-9 lg:grid-cols-12 lg:items-end lg:gap-12">
             <h2
@@ -89,7 +96,7 @@ export function HomeFounders() {
         {columns.map((column, index) => {
           const content = (
             <div
-              className={`${SG_PAGE_SHELL_CLASS} grid min-h-60 items-center gap-7 py-10 md:min-h-64 md:grid-cols-[6rem_1.25fr_1.2fr_7rem] md:gap-9 md:py-12 lg:min-h-72 lg:grid-cols-[8rem_1.25fr_1.4fr_8rem] lg:gap-12`}
+              className={`${SG_IMMERSIVE_INSET_CLASS} grid min-h-60 items-center gap-7 py-10 md:min-h-64 md:grid-cols-[6rem_1.25fr_1.2fr_7rem] md:gap-9 md:py-12 lg:min-h-72 lg:grid-cols-[8rem_1.25fr_1.4fr_8rem] lg:gap-12`}
             >
               <span
                 className={`font-[family-name:var(--font-serif)] text-[4rem] leading-none md:text-[5rem] ${column.accent}`}
@@ -144,6 +151,7 @@ export function HomeFounders() {
           );
         })}
       </ol>
+      </div>
     </section>
   );
 }

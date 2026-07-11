@@ -28,6 +28,21 @@ export const SG_INLINE_LINK_CLASS =
 export const SG_PAGE_SHELL_CLASS =
   "mx-auto w-full max-w-[1680px] px-5 md:px-10 lg:px-12 xl:px-16";
 
+/** 阅读 / 决策章节的外层海沟；让相邻满幅舞台在滚动中明确换章 */
+export const SG_IMMERSIVE_SECTION_CLASS =
+  "sg-immersive-section bg-[#07080b] py-8 md:py-12 lg:py-16";
+
+/**
+ * 编辑版心平面：移动端保持满宽，宽屏逐级打开两侧留白。
+ * 实际宽度由 globals.css 控制，避免 Tailwind 任意 calc 值分散。
+ */
+export const SG_IMMERSIVE_PLANE_CLASS =
+  "sg-immersive-plane mx-auto w-full max-w-[1600px]";
+
+/** 编辑版心内部 gutter；与页头 / 舞台 gutter 同一比例体系 */
+export const SG_IMMERSIVE_INSET_CLASS =
+  "px-5 md:px-10 lg:px-12 xl:px-14 2xl:px-16";
+
 /** 模块标题 + 短导语 */
 export const SG_EDITORIAL_CLASS = "max-w-[38rem]";
 
