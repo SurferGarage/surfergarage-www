@@ -11,7 +11,6 @@ export const SITE_DESCRIPTION =
 export const SITE_TAGLINE = SG_BRAND.taglineEn;
 
 const OG_IMAGE = "/opengraph-image";
-const FAVICON = "/brand-sg-logo.png";
 
 export function buildSiteMetadata(): Metadata {
   const siteBase = new URL(`${getSiteUrl()}/`);
@@ -56,10 +55,6 @@ export function buildSiteMetadata(): Metadata {
       title: SITE_TITLE,
       description: SITE_DESCRIPTION,
       images: [OG_IMAGE],
-    },
-    icons: {
-      icon: FAVICON,
-      apple: FAVICON,
     },
     robots: {
       index: true,

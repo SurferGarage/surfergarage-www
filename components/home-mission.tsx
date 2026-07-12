@@ -45,7 +45,7 @@ export function HomeMission() {
 
           <div className="max-w-[32rem] lg:col-span-4 lg:pl-6">
             <p className="font-[family-name:var(--font-serif-zh)] text-[1.45rem] font-semibold leading-[1.55] text-[var(--foreground)] md:text-[1.75rem]">
-              我们为极早期科技创业者留下第一篇深度访谈。
+              我们从第一篇深度访谈开始，记录极早期科技创业者。
             </p>
             <p className="mt-6 font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px]">
               在产品仍显粗粝、方向快速变化、外界尚未形成共识时，留下可以被长期引用的真实记录。

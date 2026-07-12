@@ -22,7 +22,7 @@ export default function PrivacyPage() {
             隐私政策
           </h1>
           <p className="mt-3 font-[family-name:var(--font-zh)] text-[15px] text-[var(--muted)] md:text-[16px]">
-            最后更新：2026 年 5 月
+            最后更新：2026 年 7 月
           </p>
 
           <div className="mt-12 flex flex-col gap-10 font-[family-name:var(--font-zh)] text-[16px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px]">

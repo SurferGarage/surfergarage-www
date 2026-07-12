@@ -8,7 +8,6 @@ import {
   SOCIAL_CHANNELS,
   type SocialChannel,
 } from "@/lib/social-channels";
-import { LATEST_WECHAT_FEED_ITEM } from "@/lib/wechat-official-feed";
 
 const CHANNEL_IDS = ["wechat-articles", "bilibili", "xiaohongshu", "github-org"];
 
@@ -21,12 +20,7 @@ const CHANNEL_COPY: Record<string, string> = {
 
 function getChannels(): SocialChannel[] {
   return CHANNEL_IDS.map((id) => SOCIAL_CHANNELS.find((channel) => channel.id === id))
-    .filter((channel): channel is SocialChannel => Boolean(channel))
-    .map((channel) =>
-      channel.id === "wechat-articles"
-        ? { ...channel, href: LATEST_WECHAT_FEED_ITEM.href }
-        : channel,
-    );
+    .filter((channel): channel is SocialChannel => Boolean(channel));
 }
 
 export function HomeSocial() {

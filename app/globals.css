@@ -1881,10 +1881,6 @@ html[data-sg-atmosphere-paused] .uwl-stage {
     font-size: 0.875rem;
   }
 
-  .sg-home-hero-stats > div {
-    padding-block: 0.65rem;
-  }
-
 }
 
 @media (orientation: landscape) and (min-width: 35.5rem) and (max-height: 32rem) {
@@ -1945,17 +1941,6 @@ html[data-sg-atmosphere-paused] .uwl-stage {
     padding: 0.5rem 0.7rem;
     font-size: 0.8125rem;
     white-space: nowrap;
-  }
-
-  .sg-home-hero-stats > div {
-    padding-block: 0.45rem;
-  }
-
-}
-
-@media (orientation: landscape) and (min-width: 35.5rem) and (max-height: 22rem) {
-  .sg-home-hero-stats {
-    display: none;
   }
 
 }

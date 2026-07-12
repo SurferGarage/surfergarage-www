@@ -2,6 +2,8 @@
  * 出站渠道清单。`href` 非 http(s) 时在 UI 中渲染为信息卡（见 `home-social`）。
  * 触点区按 **文章 / 视频与播客 / 开源** 分块展示；Discord 不在此区（入口见「联络」）。
  */
+import { LATEST_WECHAT_FEED_ITEM } from "@/lib/wechat-official-feed";
+
 export type SocialChannelKind =
   | "article"
   | "video"
@@ -42,11 +44,10 @@ const wechatArticle: SocialChannel = {
   mark: "wechat",
   labelEn: "WeChat",
   labelZh: "微信公众号",
-  href: "#founders",
+  href: LATEST_WECHAT_FEED_ITEM.href,
   descriptionZh: "",
   followerLabel: undefined,
-  latest:
-    "22岁千万营收之后，她选择按下人生重启键 · 对话Kiana「济谦AI」",
+  latest: `${LATEST_WECHAT_FEED_ITEM.stageTitleZh} · ${LATEST_WECHAT_FEED_ITEM.stageMetaZh}`,
 };
 
 const videoChannels: SocialChannel[] = [

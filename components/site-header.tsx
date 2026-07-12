@@ -3,7 +3,10 @@
 import { SITE_NAME } from "@/lib/site-metadata";
 import { SITE_PRIMARY_NAV } from "@/lib/site-nav";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
-import { useAnchorNav } from "@/lib/use-anchor-nav";
+import {
+  useAnchorNav,
+  useHashNavigationAlignment,
+} from "@/lib/use-anchor-nav";
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
 
 /** 入口 CTA 主操作：直接落到故事提交规则。 */
@@ -130,6 +133,7 @@ function HamburgerIcon({ open }: { open: boolean }) {
 }
 
 export function SiteHeader() {
+  useHashNavigationAlignment();
   const sectionIds = useMemo(
     () => SITE_PRIMARY_NAV.map((n) => n.href.replace(/^#/, "")),
     [],

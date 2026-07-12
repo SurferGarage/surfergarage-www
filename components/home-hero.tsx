@@ -1,11 +1,8 @@
 import { HeroFlowField } from "@/components/hero-flow-field";
 import { SiteAnchorLink } from "@/components/site-anchor-link";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
-import { getSiteStats } from "@/lib/site-stats";
 
 export function HomeHero() {
-  const stats = getSiteStats();
-
   return (
     <section
       id="manifesto"
@@ -36,7 +33,7 @@ export function HomeHero() {
                 记录正在冲浪的人。
               </p>
               <p className="sg-home-hero-description mt-4 max-w-[42rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.72] text-[var(--muted-strong)] md:text-[17px]">
-                浪前是一家关注 16–28 岁极早期科技创业者的高信任科技媒体。我们在共识形成之前，为他们留下第一篇深度访谈。
+                浪前是一家关注 16–28 岁极早期科技创业者的深度科技媒体。我们在共识形成之前，记录他们的产品、判断与转折。
               </p>
 
               <div className="sg-home-hero-actions mt-7 flex flex-wrap items-center gap-3">
@@ -57,23 +54,6 @@ export function HomeHero() {
               </div>
             </div>
           </div>
-
-          <dl className="sg-home-hero-stats grid grid-cols-3 border-t border-white/14 font-[family-name:var(--font-mono)] md:grid-cols-[0.7fr_0.7fr_0.7fr_1.4fr]">
-            {[
-              [String(stats.articles).padStart(2, "0"), "人物长文"],
-              [String(stats.episodes).padStart(2, "0"), "视频节目"],
-              ["第一季", "当前季"],
-              ["共识形成之前", "记录时机"],
-            ].map(([value, label], index) => (
-              <div
-                key={label}
-                className={`py-4 md:py-5 ${index > 0 ? "border-l border-white/12 pl-4 md:pl-6" : ""} ${index === 3 ? "hidden md:block" : ""}`}
-              >
-                <dt className="text-[9px] text-[var(--muted)] md:text-[10px]">{label}</dt>
-                <dd className="mt-1 text-[12px] text-white md:text-[14px]">{value}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </div>
     </section>

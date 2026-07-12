@@ -17,7 +17,7 @@ export function HomeFounders() {
       titleZh: "记录人",
       type: "人物特稿",
       status: "持续更新",
-      description: "为极早期科技创业者留下第一篇深度访谈。",
+      description: "从第一篇深度访谈开始，记录创业者最初的产品、判断与转折。",
       href: latestArticle?.href,
       accent: "text-[var(--brand-teal)]",
     },

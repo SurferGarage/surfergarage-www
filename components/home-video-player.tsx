@@ -31,7 +31,7 @@ export function HomeVideoPlayer({
         aid={activeEpisode.aid}
         cid={activeEpisode.cid}
         title={activeEpisode.titleZh}
-        mode="eager"
+        mode="lazy"
         className="w-full"
       />
 
