@@ -72,7 +72,7 @@ export function HomeFounders() {
       >
       <header>
         <div
-          className={`${SG_IMMERSIVE_INSET_CLASS} sg-home-founders-intro grid min-h-[62svh] items-center py-20 md:py-28 lg:py-32`}
+          className={`${SG_IMMERSIVE_INSET_CLASS} sg-home-founders-intro grid min-h-[58svh] items-center py-20 md:py-28 lg:py-32`}
         >
           <div className="grid gap-9 lg:grid-cols-12 lg:items-end lg:gap-12">
             <h2
@@ -80,10 +80,8 @@ export function HomeFounders() {
               className="font-[family-name:var(--font-serif-zh)] text-[2.55rem] font-semibold leading-[1.2] text-[var(--foreground)] md:text-[4rem] lg:col-span-8 lg:text-[4.5rem]"
             >
               <span className="block">五种记录方式。</span>
-              <span className="block">
-                追踪同一件事：
-                <span className="block sm:inline">变化如何发生。</span>
-              </span>
+              <span className="block">追踪同一件事：</span>
+              <span className="block">变化如何发生。</span>
             </h2>
             <p className="max-w-[34rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px] lg:col-span-4">
               从一个人开始，延伸到对话、事件、产品与方法。栏目不是分类标签，而是五种进入真实现场的角度。

@@ -374,6 +374,7 @@ export function FounderVideoStudio() {
                   cid={activeEpisode.cid}
                   title={playerTitle}
                   mode="eager"
+                  posterSrc={activeEpisode.coverPic}
                   aspectClassName="aspect-video"
                 />
               ) : (

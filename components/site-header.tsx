@@ -35,7 +35,7 @@ function BrandLockup() {
       <span className="font-[family-name:var(--font-zh)] text-[18px] font-medium text-[var(--foreground)]">
         浪前
       </span>
-      <span className="mt-1 hidden font-[family-name:var(--font-mono)] text-[9px] uppercase text-[var(--muted)] sm:block">
+      <span className="mt-1 hidden font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] sm:block">
         Surfer Garage
       </span>
     </span>

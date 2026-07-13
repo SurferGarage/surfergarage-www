@@ -71,7 +71,7 @@ const videoChannels: SocialChannel[] = [
     href: "https://space.bilibili.com/3546759022250564",
     descriptionZh: "",
     followerLabel: undefined,
-    latest: "第二期 · AI 时代，请保持你珍贵的活人感！| 对话 Seede.AI 杨沐锦",
+    latest: "第二期 · AI 时代，请保持你珍贵的活人感！｜对话 Seede.AI 杨沐锦",
     coverSrc:
       "https://i2.hdslb.com/bfs/archive/b6d85f1249911607824f2eaf84b3948aaf8c705e.jpg",
   },

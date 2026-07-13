@@ -33,7 +33,7 @@ export function HomeMission() {
             id="mission-heading"
             className="font-[family-name:var(--font-serif-zh)] text-[2.65rem] font-semibold leading-[1.16] text-[var(--foreground)] sm:text-[3.25rem] md:text-[4.5rem] lg:col-span-8 lg:text-[5.25rem]"
           >
-            <span className="block text-[var(--muted-soft)]">
+            <span className="block text-[color-mix(in_oklch,var(--muted)_82%,var(--paper-1))]">
               <span className="block">我们不记录</span>
               <span className="block">已经上岸的人。</span>
             </span>

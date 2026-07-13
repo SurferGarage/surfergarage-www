@@ -6,6 +6,7 @@ import {
   normalizeBvid,
 } from "@/lib/bilibili-player";
 import { pauseBilibiliEmbed } from "@/lib/bilibili-embed";
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 export type BilibiliEmbedPlayerProps = {
@@ -24,6 +25,8 @@ export type BilibiliEmbedPlayerProps = {
   aspectClassName?: string;
   /** 传给内层画幅容器，用于大屏 min-height 等 */
   frameClassName?: string;
+  /** 播放器加载完成前显示的封面，优先使用本地图片 */
+  posterSrc?: string;
 };
 
 function resolvePlayerSrc(
@@ -56,6 +59,7 @@ export function BilibiliEmbedPlayer({
   className = "",
   aspectClassName = "aspect-video",
   frameClassName = "",
+  posterSrc,
 }: BilibiliEmbedPlayerProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -68,9 +72,11 @@ export function BilibiliEmbedPlayer({
 
   const [inView, setInView] = useState(mode === "eager");
   const [fetchedSrc, setFetchedSrc] = useState<string | null>(null);
+  const [readySrc, setReadySrc] = useState<string | null>(null);
 
   const playerSrc = knownSrc ?? fetchedSrc;
   const mountIframe = Boolean(playerSrc && (mode === "eager" || inView));
+  const iframeReady = readySrc === playerSrc;
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -152,17 +158,21 @@ export function BilibiliEmbedPlayer({
             iframeRef={iframeRef}
             playerSrc={playerSrc}
             title={title}
+            posterSrc={posterSrc}
+            ready={iframeReady}
+            onReady={() => setReadySrc(playerSrc)}
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-            <p className="font-[family-name:var(--font-zh)] text-[15px] leading-relaxed text-[var(--muted-strong)]">
-              {!canPlay
-                ? "视频 ID 无效"
+          <PlayerBackdrop
+            posterSrc={posterSrc}
+            status={
+              !canPlay
+                ? "视频暂不可用"
                 : mode === "lazy" && !inView
-                  ? "滚入后加载"
-                  : "加载中…"}
-            </p>
-          </div>
+                  ? "进入画面后加载"
+                  : "正在连接播放器"
+            }
+          />
         )}
       </div>
     </div>
@@ -173,21 +183,23 @@ function BilibiliPlayerFrame({
   iframeRef,
   playerSrc,
   title,
+  posterSrc,
+  ready,
+  onReady,
 }: {
   iframeRef: RefObject<HTMLIFrameElement | null>;
   playerSrc: string;
   title: string;
+  posterSrc?: string;
+  ready: boolean;
+  onReady: () => void;
 }) {
   return (
     <>
-      <div
-        className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#0a0a12]"
-        aria-hidden
-      >
-        <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)]">
-          Bilibili player
-        </p>
-      </div>
+      <PlayerBackdrop
+        posterSrc={posterSrc}
+        className={`z-[2] transition-opacity duration-500 ${ready ? "opacity-0" : "opacity-100"}`}
+      />
       <iframe
         key={playerSrc}
         ref={iframeRef}
@@ -198,7 +210,48 @@ function BilibiliPlayerFrame({
         scrolling="no"
         frameBorder={0}
         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+        onLoad={onReady}
       />
     </>
+  );
+}
+
+function PlayerBackdrop({
+  posterSrc,
+  status,
+  className = "",
+}: {
+  posterSrc?: string;
+  status?: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`pointer-events-none absolute inset-0 overflow-hidden bg-[#0a0a12] ${className}`}
+      aria-hidden
+    >
+      {posterSrc ? (
+        <Image
+          src={posterSrc}
+          alt=""
+          fill
+          sizes="(max-width: 1024px) 100vw, 66vw"
+          className="object-cover"
+          priority={posterSrc.startsWith("/")}
+          unoptimized={!posterSrc.startsWith("/")}
+        />
+      ) : null}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,6,13,0.08)_0%,rgba(5,6,13,0.24)_58%,rgba(5,6,13,0.78)_100%)]" />
+      {posterSrc ? (
+        <span className="absolute left-1/2 top-1/2 inline-flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/55 bg-black/32 text-[18px] text-white shadow-[0_14px_42px_rgba(0,0,0,0.34)] backdrop-blur-sm md:h-16 md:w-16 md:text-[20px]">
+          <span className="translate-x-px">&#9654;</span>
+        </span>
+      ) : null}
+      {status ? (
+        <p className="absolute inset-x-5 bottom-4 text-center font-[family-name:var(--font-zh)] text-[13px] text-white/78 md:bottom-5 md:text-[14px]">
+          {status}
+        </p>
+      ) : null}
+    </div>
   );
 }

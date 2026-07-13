@@ -49,7 +49,7 @@ export function HomeEvents() {
     >
       <header className="bg-[var(--paper-0)]">
         <div
-          className={`${SG_PAGE_SHELL_CLASS} flex min-h-[62svh] flex-col justify-between py-20 md:py-28 lg:py-32`}
+          className={`${SG_PAGE_SHELL_CLASS} flex min-h-[58svh] flex-col justify-between py-20 md:py-28 lg:py-32`}
         >
           <p className="border-b border-[var(--hairline)] pb-5 font-[family-name:var(--font-zh)] text-[14px] text-[var(--accent-amber)] md:text-[15px]">
             近期活动 · {SITE_EVENTS.length} 场

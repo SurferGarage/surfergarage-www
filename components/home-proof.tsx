@@ -70,7 +70,7 @@ export function HomeProof() {
       aria-labelledby="proof-heading"
     >
       <div className={`${SG_PAGE_SHELL_CLASS} py-20 md:py-28 lg:py-32`}>
-        <header className="relative flex min-h-[48svh] flex-col justify-between">
+        <header className="relative flex min-h-[42svh] flex-col justify-between">
           <div className="flex items-center justify-between gap-6 border-b border-white/25 pb-4">
             <p className="font-[family-name:var(--font-zh)] text-[14px] text-white/82 md:text-[15px]">
               人物特稿

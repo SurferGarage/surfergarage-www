@@ -32,6 +32,7 @@ export function HomeVideoPlayer({
         cid={activeEpisode.cid}
         title={activeEpisode.titleZh}
         mode="lazy"
+        posterSrc={activeEpisode.coverPic}
         className="w-full"
       />
 
