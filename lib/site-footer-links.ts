@@ -14,11 +14,11 @@ export type FooterLink = {
 
 export const FOOTER_CONTENT_LINKS: readonly FooterLink[] = [
   {
-    label: "微信专栏",
-    href: homeSectionHref("#founders"),
+    label: "人物特稿",
+    href: homeSectionHref("#proof"),
   },
   {
-    label: "B 站播客",
+    label: "视频播客",
     href: BILIBILI_SPACE_URL,
     external: true,
   },

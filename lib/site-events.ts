@@ -24,7 +24,7 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
     location: "苏州创新创意设计研究院",
     role: "社区承办",
     description:
-      "拒绝套路宣讲，让青年创造者围坐，深聊行业现实、项目卡点与奇思构想。",
+      "让青年创造者围坐交流，直面行业现实、项目卡点与尚未成形的想法。",
     href: "#call-join",
     external: false,
     linkLabel: "获取报名信息",
@@ -40,7 +40,7 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
     location: "日期与城市待公布",
     role: "内容与招募合作",
     description:
-      "汇集那些买域名、搭博客、录教程、做游戏、写脚本、造工具和焊开发板的年轻造物者。",
+      "寻找那些买域名、搭博客、录教程、做游戏、写脚本、造工具和焊开发板的年轻造物者。",
     href: "https://mp.weixin.qq.com/s/Fx5c8MvzajrCMAQMwaKpwg",
     external: true,
     linkLabel: "查看招募",
@@ -56,7 +56,7 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
     location: "深圳 · 大中华喜来登酒店",
     role: "联合传播",
     description:
-      "一场面向 Z 世代的 AI 与具身智能实验，把技术能力重新放回真实场景中检验。",
+      "面向 Z 世代的 AI 与具身智能实验，把技术重新放回真实场景中检验。",
     href: "https://mp.weixin.qq.com/s/2y7aWdGjT-wwrCm77Tcocw",
     external: true,
     linkLabel: "查看预告",

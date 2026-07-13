@@ -9,5 +9,5 @@ export const SG_BRAND = {
   lightGrey: "#e8eaed",
   coolGrey: "#8b93a8",
   paper0: "#0b0c10",
-  taglineEn: "Surfing Wave, Build the Great.",
+  taglineEn: "Ride the wave. Build what matters.",
 } as const;

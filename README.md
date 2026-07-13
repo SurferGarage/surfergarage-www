@@ -2,7 +2,7 @@
 
 Official site for **浪前 SurferGarage** — [lang-qian.com](https://www.lang-qian.com)
 
-高信任科技媒体与 builder 社区。开源教材见 GitHub 组织：[SurferGarage](https://github.com/SurferGarage)
+面向 16–28 岁极早期科技创业者的深度媒体，在共识形成之前记录真实的产品进展、判断与转折。开源手册见 GitHub 组织：[SurferGarage](https://github.com/SurferGarage)
 
 ## 开源生态
 

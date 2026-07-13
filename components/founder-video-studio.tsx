@@ -62,7 +62,7 @@ function GuestRoster({
     >
       {guests.map((g) => {
         const isActive = g.id === activeId;
-        const live = !g.comingSoon && g.episodes.length > 0;
+        const live = g.episodes.length > 0;
         return (
           <li key={g.id} className="w-full">
             <button
@@ -73,7 +73,7 @@ function GuestRoster({
               type="button"
               role="option"
               aria-selected={isActive}
-              disabled={!live && !isActive}
+              disabled={!live}
               onClick={() => live && onSelect(g.id)}
               className={`sg-video-roster-option group relative flex w-full items-center justify-center rounded-sm px-4 py-3 text-center transition-[color,background-color,opacity] duration-300 md:py-3.5 ${
                 !live && !isActive ? "cursor-not-allowed opacity-45" : ""
@@ -88,7 +88,7 @@ function GuestRoster({
                       : "text-[clamp(0.95rem,1.5vw,1.15rem)] font-light tracking-[0.06em] text-[var(--muted-soft)]"
                 }`}
               >
-                {g.comingSoon ? "待公布" : g.nameZh}
+                {g.nameZh}
               </span>
             </button>
           </li>
@@ -143,7 +143,7 @@ export function FounderVideoStudio() {
   const shouldMountPlayer = panelVisible;
   const season = SURFING_FOUNDERS_SEASON_01;
   const liveGuests = useMemo(
-    () => season.guests.filter((g) => !g.comingSoon && g.episodes.length > 0),
+    () => season.guests.filter((g) => g.episodes.length > 0),
     [season.guests],
   );
 
@@ -166,7 +166,7 @@ export function FounderVideoStudio() {
   const selectGuest = useCallback(
     (id: string) => {
       const next = season.guests.find((g) => g.id === id);
-      if (!next || next.comingSoon || !next.episodes.length) return;
+      if (!next || !next.episodes.length) return;
       setGuestId(id);
       const ep = getDefaultEpisode(next);
       if (ep) setEpisodeId(ep.id);
@@ -260,7 +260,7 @@ export function FounderVideoStudio() {
         className={`${STUDIO_COL} bg-[var(--paper-1)] lg:border-r lg:border-[var(--hairline)]`}
       >
         <header className={STUDIO_BAND_TOP}>
-          <p className={bandEyebrow}>出版集</p>
+          <p className={bandEyebrow}>当前集</p>
           <p className="editorial-mono-tabular text-[13px] text-[var(--brand-teal)] md:text-[14px]">
             {coverEpisode?.volLabel ?? "—"}
           </p>
@@ -308,7 +308,7 @@ export function FounderVideoStudio() {
         className={`${STUDIO_COL} bg-[var(--paper-1)] lg:border-r lg:border-[var(--hairline)]`}
       >
         <header className={STUDIO_BAND_TOP}>
-          <p className={bandEyebrow}>工作台嘉宾</p>
+          <p className={bandEyebrow}>对谈嘉宾</p>
           <p className="editorial-mono-tabular text-[13px] text-[var(--foreground)] md:text-[14px]">
             {String(liveGuests.length).padStart(2, "0")} / {String(season.guests.length).padStart(2, "0")}
           </p>
@@ -349,7 +349,7 @@ export function FounderVideoStudio() {
 
         <footer className={STUDIO_BAND_BOTTOM}>
           <p className="font-[family-name:var(--font-zh)] text-[12px] text-[var(--muted)] md:text-[13px]">
-            {season.seasonLabel} · 嘉宾浏览名单
+            {season.seasonLabel} · 已上线嘉宾
           </p>
         </footer>
       </div>

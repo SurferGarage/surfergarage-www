@@ -64,7 +64,7 @@ export function HomeEvents() {
               <span className="block text-[var(--accent-amber)]">我们进入现场。</span>
             </h2>
             <p className="max-w-[34rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px] lg:col-span-4">
-              媒体的信任不能只在屏幕上建立。我们把采访中形成的连接带回城市、社区与真实协作现场。
+              媒体的信任不能只在屏幕上建立。我们把采访中建立的连接，带回城市、社区和共同创造的现场。
             </p>
           </div>
         </div>

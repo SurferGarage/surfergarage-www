@@ -31,24 +31,8 @@ export default function PrivacyPage() {
                 我们收集什么
               </h2>
               <p className="mt-3">
-                本站为静态展示站点。除你主动通过邮件、Discord
-                或微信联系我们外，我们不运营账号体系，也不默认收集个人身份信息。
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-[family-name:var(--font-zh)] text-[17px] font-medium text-[var(--foreground)] md:text-[18px]">
-                订阅
-              </h2>
-              <p className="mt-3">
-                页脚订阅通过你的邮件客户端向{" "}
-                <a
-                  href={`mailto:${MAIL_HELLO}`}
-                  className="text-[var(--brand-teal)] underline-offset-4 hover:underline"
-                >
-                  {MAIL_HELLO}
-                </a>{" "}
-                发送请求。我们不会在此页面存储你的邮箱；是否订阅由你在邮件客户端中确认发送。
+                本站不提供账号体系，也不主动收集个人身份信息。只有当你通过邮件、Discord
+                或微信联系我们时，我们才会收到你主动提供的信息。
               </p>
             </section>
 
@@ -57,7 +41,7 @@ export default function PrivacyPage() {
                 分析与 Cookie
               </h2>
               <p className="mt-3">
-                当前版本未接入第三方统计脚本。若未来启用分析工具，将在此页更新说明，并在必要时提供退出方式。
+                当前版本未接入第三方统计脚本。若未来启用分析工具，我们会在此页更新说明，并在必要时提供退出方式。
               </p>
             </section>
 

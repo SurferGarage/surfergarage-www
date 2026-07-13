@@ -5,9 +5,9 @@ import { getSiteUrl } from "@/lib/site-url";
 
 export const SITE_NAME = "浪前 Surfer Garage";
 export const SITE_TITLE =
-  "浪前 Surfer Garage | 极早期科技创业者的高信任媒体";
+  "浪前 Surfer Garage | 记录极早期科技创业现场";
 export const SITE_DESCRIPTION =
-  "浪前 Surfer Garage 关注 16–28 岁极早期科技创业者，记录他们尚未成为共识的真实现场，让下一代 Surfing Founders 更早被看见、被理解、被连接。";
+  "浪前关注 16–28 岁极早期科技创业者，在共识形成之前，记录他们真实的产品进展、判断与转折。";
 export const SITE_TAGLINE = SG_BRAND.taglineEn;
 
 const OG_IMAGE = "/opengraph-image";

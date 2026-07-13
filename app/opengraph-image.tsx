@@ -47,7 +47,7 @@ export default function OpenGraphImage() {
               maxWidth: 900,
             }}
           >
-            记录 Surfing Founders.
+            记录创业正在发生的时刻。
           </p>
           <p
             style={{
@@ -58,7 +58,7 @@ export default function OpenGraphImage() {
               lineHeight: 1.35,
             }}
           >
-            16–28 岁极早期科技创业者的高信任媒体与社区基础设施
+            面向 16–28 岁极早期科技创业者的深度媒体
           </p>
         </div>
         <div
@@ -74,7 +74,7 @@ export default function OpenGraphImage() {
               fontSize: 22,
               color: "#8b93a8",
               margin: 0,
-              letterSpacing: "0.08em",
+              letterSpacing: 0,
             }}
           >
             {SITE_TAGLINE}
@@ -83,7 +83,7 @@ export default function OpenGraphImage() {
             style={{
               fontSize: 120,
               fontWeight: 700,
-              letterSpacing: "-0.06em",
+              letterSpacing: 0,
               color: "rgba(243,244,246,0.08)",
               margin: 0,
               lineHeight: 1,

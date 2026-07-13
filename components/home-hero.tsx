@@ -33,7 +33,7 @@ export function HomeHero() {
                 记录正在冲浪的人。
               </p>
               <p className="sg-home-hero-description mt-4 max-w-[42rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.72] text-[var(--muted-strong)] md:text-[17px]">
-                浪前是一家关注 16–28 岁极早期科技创业者的深度科技媒体。我们在共识形成之前，记录他们的产品、判断与转折。
+                浪前是一家面向 16–28 岁极早期科技创业者的深度媒体。我们在共识形成之前，记录真实的产品进展、判断与转折。
               </p>
 
               <div className="sg-home-hero-actions mt-7 flex flex-wrap items-center gap-3">
@@ -41,7 +41,7 @@ export function HomeHero() {
                   href="#proof"
                   className="sg-home-hero-action inline-flex min-h-11 items-center gap-3 bg-[var(--brand-primary)] px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] font-medium text-white transition-colors hover:bg-[#1420ff]"
                 >
-                  浏览最新记录
+                  阅读最新特稿
                   <span aria-hidden>↓</span>
                 </SiteAnchorLink>
                 <SiteAnchorLink

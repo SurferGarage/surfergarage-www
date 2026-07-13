@@ -12,10 +12,17 @@ import {
 const CHANNEL_IDS = ["wechat-articles", "bilibili", "xiaohongshu", "github-org"];
 
 const CHANNEL_COPY: Record<string, string> = {
-  "wechat-articles": "发布人物深访，以及可被长期引用的完整叙事。",
-  bilibili: "长视频对谈，保留语气、分歧与判断形成的过程。",
-  xiaohongshu: "把创业现场切成更短、更及时的观察片段。",
-  "github-org": "公开手册、失败复盘、学习路径与网站源码。",
+  "wechat-articles": "阅读完整人物深访与可长期引用的创业叙事。",
+  bilibili: "观看长视频对谈，保留语气、分歧与判断形成的过程。",
+  xiaohongshu: "获取更短、更及时的创业现场片段。",
+  "github-org": "查看公开手册、失败复盘、学习路径与网站源码。",
+};
+
+const CHANNEL_FORMAT: Record<string, string> = {
+  "wechat-articles": "人物长文",
+  bilibili: "长视频",
+  xiaohongshu: "现场短片",
+  "github-org": "开放资料",
 };
 
 function getChannels(): SocialChannel[] {
@@ -46,7 +53,7 @@ export function HomeSocial() {
             <span className="block lg:whitespace-nowrap">开源资料在 GitHub。</span>
           </h2>
           <p className="mt-8 max-w-[40rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[#424754] md:text-[17px]">
-            选择你习惯的媒介，持续跟进浪前正在记录的人、产品与方法。
+            选择你习惯的入口，持续跟进人物、产品与方法的最新进展。
           </p>
         </header>
 
@@ -66,7 +73,7 @@ export function HomeSocial() {
               >
                 <div className="flex items-start justify-between gap-5">
                   <span className="font-[family-name:var(--font-mono)] text-[10px] text-[#6a7080] md:text-[11px]">
-                    {String(index + 1).padStart(2, "0")}
+                    {CHANNEL_FORMAT[channel.id]}
                   </span>
                   <SocialChannelMark id={channel.mark} />
                 </div>
@@ -87,7 +94,7 @@ export function HomeSocial() {
                     </span>
                   </div>
                   <p className="mt-5 max-w-[30rem] font-[family-name:var(--font-zh)] text-[14px] leading-[1.75] text-[#4c5260] md:text-[15px]">
-                    {CHANNEL_COPY[channel.id] || channel.descriptionZh}
+                    {CHANNEL_COPY[channel.id]}
                   </p>
                 </div>
               </a>

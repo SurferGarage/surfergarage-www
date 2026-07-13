@@ -1,6 +1,6 @@
 /**
  * 浪前视频播客 · 季数据（单一事实源）。
- * 每季约 6 位嘉宾，每位 4 期中短视频；B 站 `bvid` 用于 `BilibiliEmbedPlayer`。
+ * 第一季目前上线两位嘉宾，每位 4 期中短视频；B 站 `bvid` 用于 `BilibiliEmbedPlayer`。
  * 封面图落盘 `public/video-covers/{episode.id}.jpg`（与 `coverPic` 同步维护）。
  */
 
@@ -38,8 +38,6 @@ export type SurfingFoundersGuest = {
   /** 选中时右侧默认集说明（通常指向最新一期） */
   nowCaptionZh: string;
   episodes: readonly SurfingFoundersEpisode[];
-  /** 未上线席位：无 episodes */
-  comingSoon?: boolean;
 };
 
 export type SurfingFoundersSeason = {
@@ -158,7 +156,7 @@ const MUJI_EPISODES: readonly SurfingFoundersEpisode[] = [
   },
 ] as const;
 
-/** 第一季：已上线嘉宾 + 待公布席位（保持 6 人网格感，与 YC 名单长度接近） */
+/** 第一季：当前已上线的两位嘉宾。新增嘉宾后直接追加真实数据。 */
 export const SURFING_FOUNDERS_SEASON_01: SurfingFoundersSeason = {
   id: "season-01",
   seasonLabel: "第一季",
@@ -183,42 +181,6 @@ export const SURFING_FOUNDERS_SEASON_01: SurfingFoundersSeason = {
       nowCaptionZh:
         "最新一期谈 AI 时代的「活人感」：当工具越来越像人，创作者最该守住的是什么。",
       episodes: MUJI_EPISODES,
-    },
-    {
-      id: "guest-slot-03",
-      nameZh: "嘉宾 03",
-      nameEn: "Founder 03",
-      duringCaptionZh: "第一季席位 · 录制排期中。",
-      nowCaptionZh: "上线后将在此呈现四期短视频目录。",
-      episodes: [],
-      comingSoon: true,
-    },
-    {
-      id: "guest-slot-04",
-      nameZh: "嘉宾 04",
-      nameEn: "Founder 04",
-      duringCaptionZh: "第一季席位 · 录制排期中。",
-      nowCaptionZh: "上线后将在此呈现四期短视频目录。",
-      episodes: [],
-      comingSoon: true,
-    },
-    {
-      id: "guest-slot-05",
-      nameZh: "嘉宾 05",
-      nameEn: "Founder 05",
-      duringCaptionZh: "第一季席位 · 录制排期中。",
-      nowCaptionZh: "上线后将在此呈现四期短视频目录。",
-      episodes: [],
-      comingSoon: true,
-    },
-    {
-      id: "guest-slot-06",
-      nameZh: "嘉宾 06",
-      nameEn: "Founder 06",
-      duringCaptionZh: "第一季席位 · 录制排期中。",
-      nowCaptionZh: "上线后将在此呈现四期短视频目录。",
-      episodes: [],
-      comingSoon: true,
     },
   ],
 };

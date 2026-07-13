@@ -1,23 +1,5 @@
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 
-const MISSION_PILLARS = [
-  {
-    no: "01",
-    title: "被看见",
-    description: "进入投资人、行业伙伴、用户与学校的真实视野。",
-  },
-  {
-    no: "02",
-    title: "被理解",
-    description: "不把一个正在变化的人，压缩成成功学标签。",
-  },
-  {
-    no: "03",
-    title: "被连接",
-    description: "让下一段关系从一份可信的内容记录开始。",
-  },
-] as const;
-
 export function HomeMission() {
   return (
     <section
@@ -34,47 +16,24 @@ export function HomeMission() {
             className="font-[family-name:var(--font-serif-zh)] text-[2.65rem] font-semibold leading-[1.16] text-[var(--foreground)] sm:text-[3.25rem] md:text-[4.5rem] lg:col-span-8 lg:text-[5.25rem]"
           >
             <span className="block text-[color-mix(in_oklch,var(--muted)_82%,var(--paper-1))]">
-              <span className="block">我们不记录</span>
-              <span className="block">已经上岸的人。</span>
+              <span className="block">不等故事</span>
+              <span className="block">尘埃落定。</span>
             </span>
-            <span className="mt-5 block">我们记录</span>
+            <span className="mt-5 block">在创业进行时，</span>
             <span className="block text-[var(--brand-teal)]">
-              正在冲浪的人。
+              开始记录。
             </span>
           </h2>
 
           <div className="max-w-[32rem] lg:col-span-4 lg:pl-6">
             <p className="font-[family-name:var(--font-serif-zh)] text-[1.45rem] font-semibold leading-[1.55] text-[var(--foreground)] md:text-[1.75rem]">
-              我们从第一篇深度访谈开始，记录极早期科技创业者。
+              浪前从人物深访开始，持续记录极早期科技创业者。
             </p>
             <p className="mt-6 font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px]">
-              在产品仍显粗粝、方向快速变化、外界尚未形成共识时，留下可以被长期引用的真实记录。
+              当产品还粗粝、方向仍在变化、外界尚未形成共识，真实记录才最有价值。
             </p>
           </div>
         </div>
-
-        <ol className="grid border-t border-[var(--hairline)] md:grid-cols-3">
-          {MISSION_PILLARS.map((pillar, index) => (
-            <li
-              key={pillar.no}
-              className={`py-6 md:min-h-40 md:px-7 md:py-7 ${
-                index > 0
-                  ? "border-t border-[var(--hairline-soft)] md:border-l md:border-t-0"
-                  : ""
-              }`}
-            >
-              <p className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--brand-teal)] md:text-[11px]">
-                {pillar.no}
-              </p>
-              <h3 className="mt-4 font-[family-name:var(--font-zh)] text-[1.35rem] font-medium text-[var(--foreground)] md:text-[1.55rem]">
-                {pillar.title}
-              </h3>
-              <p className="mt-3 max-w-[22rem] font-[family-name:var(--font-zh)] text-[14px] leading-[1.7] text-[var(--muted)] md:text-[15px]">
-                {pillar.description}
-              </p>
-            </li>
-          ))}
-        </ol>
       </div>
     </section>
   );

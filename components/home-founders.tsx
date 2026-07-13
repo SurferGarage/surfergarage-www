@@ -14,48 +14,30 @@ export function HomeFounders() {
     {
       no: "01",
       title: "Surfing Founder",
-      titleZh: "记录人",
+      titleZh: "创业者",
       type: "人物特稿",
       status: "持续更新",
-      description: "从第一篇深度访谈开始，记录创业者最初的产品、判断与转折。",
+      description: "记录产品尚未定型时，创业者最初的判断、选择与转折。",
       href: latestArticle?.href,
       accent: "text-[var(--brand-teal)]",
     },
     {
       no: "02",
       title: "浪前对话",
-      titleZh: "记录对话",
+      titleZh: "长对谈",
       type: "视频播客",
-      status: "第一季",
-      description: "保留判断形成、分歧出现与对话停顿的完整过程。",
+      status: "第一季 · 8 期",
+      description: "保留判断形成、分歧出现，以及对话停顿的完整过程。",
       href: "https://space.bilibili.com/3546759022250564",
       accent: "text-[#6f78ff]",
     },
     {
       no: "03",
-      title: "风暴之中",
-      titleZh: "记录事件",
-      type: "事件特稿",
-      status: "筹备中",
-      description: "进入发布、融资、失败与关键转折的现场。",
-      accent: "text-[var(--accent-amber)]",
-    },
-    {
-      no: "04",
-      title: "冲浪板",
-      titleZh: "记录产品",
-      type: "产品观察",
-      status: "筹备中",
-      description: "从真实使用出发，理解产品与早期市场信号。",
-      accent: "text-[var(--brand-teal)]",
-    },
-    {
-      no: "05",
       title: "造浪之人",
-      titleZh: "记录方法",
-      type: "方法论对谈",
+      titleZh: "关键判断",
+      type: "方法论访谈",
       status: "已上线",
-      description: "与正在塑造技术、产品与生态的人讨论方法。",
+      description: "与塑造技术、产品和生态的人，讨论他们如何做出关键判断。",
       href: methodArticle?.href,
       accent: "text-[var(--accent-amber)]",
     },
@@ -79,12 +61,12 @@ export function HomeFounders() {
               id="founders-heading"
               className="font-[family-name:var(--font-serif-zh)] text-[2.55rem] font-semibold leading-[1.2] text-[var(--foreground)] md:text-[4rem] lg:col-span-8 lg:text-[4.5rem]"
             >
-              <span className="block">五种记录方式。</span>
+              <span className="block">三条内容线。</span>
               <span className="block">追踪同一件事：</span>
               <span className="block">变化如何发生。</span>
             </h2>
             <p className="max-w-[34rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px] lg:col-span-4">
-              从一个人开始，延伸到对话、事件、产品与方法。栏目不是分类标签，而是五种进入真实现场的角度。
+              从人物深访、视频对谈到方法论访谈，我们持续追踪产品、判断与关系如何变化。
             </p>
           </div>
         </div>

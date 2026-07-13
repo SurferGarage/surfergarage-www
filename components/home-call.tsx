@@ -18,8 +18,8 @@ const WECHAT_ID = "x3167056428";
 
 const STORY_SIGNALS = [
   "16–28 岁，正在做科技产品",
-  "已经有真实 demo、用户或关键复盘",
-  "愿意公开讲速度、风险与代价",
+  "已有 demo、真实用户或一次关键复盘",
+  "愿意坦诚讲清判断、风险与代价",
 ] as const;
 
 export function HomeCall() {
@@ -65,10 +65,10 @@ export function HomeCall() {
               <span className="block">造浪吗？</span>
             </h2>
             <p className="mt-8 max-w-[42rem] font-[family-name:var(--font-serif-zh)] text-[1.45rem] font-semibold leading-[1.65] text-[var(--foreground)] md:text-[1.8rem]">
-              也许你正在 Garage，也许还在学校宿舍里。只要你在认真建造，就值得留下第一份真实记录。
+              无论你在车库、实验室还是学校宿舍，只要你在认真做产品，就值得留下第一份真实记录。
             </p>
             <p className="mt-6 max-w-[39rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.85] text-[var(--muted-strong)] md:text-[16px]">
-              添加小浪微信，并附上一句话说明你在做什么，以及 demo、链接或一段真实复盘。我们会先理解，再决定用哪一种方式记录。
+              添加小浪微信，告诉我们你在做什么，并附上 demo、产品链接或一段真实复盘。我们会先了解项目，再讨论合适的记录方式。
             </p>
 
             <button
@@ -103,7 +103,7 @@ export function HomeCall() {
                   把正在发生的事，直接发给我们。
                 </h3>
                 <p className="mt-4 font-[family-name:var(--font-zh)] text-[14px] leading-[1.75] text-[var(--muted-strong)] md:text-[15px]">
-                  节目更新、线下活动与驻地讨论也会通过小浪微信同步。
+                  新内容和线下活动也会通过小浪微信同步。
                 </p>
                 <a
                   href={DISCORD_INVITE_URL}
