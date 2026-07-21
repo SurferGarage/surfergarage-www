@@ -81,7 +81,7 @@ export function HomeEvents() {
             <div className="lg:col-span-5">
               <div className="flex items-center justify-between gap-6 border-b border-[#08111e]/18 pb-5 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[#43536a] md:text-[11px]">
                 <span>{builderUp.role}</span>
-                <span>苏州 · 即将开始</span>
+                <span>苏州 · 已举办</span>
               </div>
 
               <p className="mt-10 font-[family-name:var(--font-serif)] text-[5rem] leading-none text-[var(--brand-primary)] md:text-[7rem] lg:text-[8rem]">

@@ -27,7 +27,7 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
       "让青年创造者围坐交流，直面行业现实、项目卡点与尚未成形的想法。",
     href: "#call-join",
     external: false,
-    linkLabel: "获取报名信息",
+    linkLabel: "了解后续活动",
     imageSrc: "/events/builderup-suzhou-2026.png",
     imageAlt: "BuilderUp 苏州站活动海报，苏州现代建筑仰拍",
   },

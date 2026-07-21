@@ -4,7 +4,7 @@ export function HomeMission() {
   return (
     <section
       id="mission"
-      className="border-b border-[var(--hairline)] bg-[var(--paper-1)]"
+      className="scroll-mt-[4.5rem] border-b border-[var(--hairline)] bg-[var(--paper-1)]"
       aria-labelledby="mission-heading"
     >
       <div
