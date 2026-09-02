@@ -153,6 +153,16 @@ const RAW_FEED: WechatOfficialFeedItem[] = [
     imageSrc: "/editorial/fanhan-cover.png",
     imageAlt: "泛函在字节跳动活动现场分享",
   },
+  {
+    id: "wx-15",
+    titleZh:
+      "从黑客松到真创业，18岁的他想用AI关怀老人 | 刘思哲「守忆科技」Surfing Founders",
+    stageTitleZh: "从黑客松到真创业，18岁的他想用AI关怀老人",
+    stageMetaZh: "刘思哲 · 守忆科技",
+    href: "https://mp.weixin.qq.com/s/WyQ3C3CA8mqI7J7X8JyMiQ",
+    imageSrc: "/wechat-feed/15.png",
+    imageAlt: "刘思哲与守忆科技人物访谈文章封面",
+  },
 ];
 
 export const WECHAT_OFFICIAL_FEED: WechatOfficialFeedItem[] = RAW_FEED.map(
