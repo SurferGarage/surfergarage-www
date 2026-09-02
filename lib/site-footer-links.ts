@@ -14,6 +14,10 @@ export type FooterLink = {
 
 export const FOOTER_CONTENT_LINKS: readonly FooterLink[] = [
   {
+    label: "加入浪前",
+    href: "/join",
+  },
+  {
     label: "人物特稿",
     href: homeSectionHref("#proof"),
   },
