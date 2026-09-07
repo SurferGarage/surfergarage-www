@@ -3,11 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  DISCORD_INVITE_URL,
-  MAIL_HELLO,
-  MAIL_PARTNERS,
-} from "@/lib/site-contact";
+import { DISCORD_INVITE_URL } from "@/lib/site-contact";
 import {
   SG_IMMERSIVE_INSET_CLASS,
   SG_IMMERSIVE_PLANE_CLASS,
@@ -137,31 +133,6 @@ export function HomeCall() {
             </li>
           ))}
         </ol>
-
-        <div className="grid gap-7 pt-9 md:grid-cols-2 md:gap-10">
-          <div>
-            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-              内容与采访
-            </p>
-            <a
-              href={`mailto:${MAIL_HELLO}`}
-              className="mt-3 block break-all font-[family-name:var(--font-en)] text-[17px] text-[var(--foreground)] transition-colors hover:text-[var(--brand-teal)] md:text-[19px]"
-            >
-              {MAIL_HELLO}
-            </a>
-          </div>
-          <div>
-            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-              活动与合作
-            </p>
-            <a
-              href={`mailto:${MAIL_PARTNERS}`}
-              className="mt-3 block break-all font-[family-name:var(--font-en)] text-[17px] text-[var(--foreground)] transition-colors hover:text-[var(--brand-teal)] md:text-[19px]"
-            >
-              {MAIL_PARTNERS}
-            </a>
-          </div>
-        </div>
       </div>
     </section>
   );

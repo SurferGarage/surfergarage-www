@@ -106,7 +106,10 @@ export function RecruitForm({ source, sourceCode, refCode }: RecruitFormProps) {
 
       {status.kind === "success" ? (
         <div className="font-[family-name:var(--font-zh)] text-[16px] text-[var(--foreground)]">
-          <p className="text-[var(--brand-teal)]">已收到投递，我们会尽快联系你。</p>
+          <p className="text-[var(--brand-teal)]">谢谢你的投递。</p>
+          <p className="mt-3 text-[15px] leading-[1.8] text-[var(--muted-strong)]">
+            我们已经收到你的材料，会认真看完，并尽快通过微信与你联系。
+          </p>
           <button
             type="button"
             onClick={() => {

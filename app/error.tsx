@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { MAIL_HELLO } from "@/lib/site-contact";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 
 export default function GlobalError({
@@ -27,7 +28,7 @@ export default function GlobalError({
           页面加载出错
         </h1>
         <p className="font-[family-name:var(--font-zh)] text-[16px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px]">
-          请尝试刷新。若问题仍在，发邮件至 hello@surfergarage.com
+          请尝试刷新。若问题仍在，发邮件至 {MAIL_HELLO}
           {error.digest ? `，并附上错误码 ${error.digest}` : ""}。
         </p>
         <div className="flex flex-wrap items-center gap-4">

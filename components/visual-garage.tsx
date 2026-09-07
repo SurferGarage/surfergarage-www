@@ -2,6 +2,8 @@
 
 import { useId } from "react";
 
+import { MAIL_HELLO } from "@/lib/site-contact";
+
 type VisualSlot = {
   id: string;
   labelZh: string;
@@ -99,10 +101,10 @@ export function VisualGarage() {
         <p className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)] md:text-[15px]">
           媒体合作 ·{" "}
           <a
-            href="mailto:partners@surfergarage.com?subject=SurferGarage%20Brand%20Kit"
+            href={`mailto:${MAIL_HELLO}?subject=SurferGarage%20Brand%20Kit`}
             className="text-[var(--brand-teal)] underline-offset-4 hover:underline"
           >
-            partners@surfergarage.com
+            {MAIL_HELLO}
           </a>
         </p>
       </div>

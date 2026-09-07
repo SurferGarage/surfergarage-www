@@ -2,5 +2,5 @@
 
 export const DISCORD_INVITE_URL = "https://discord.gg/kk2UNphRNA";
 
-export const MAIL_HELLO = "hello@surfergarage.com";
-export const MAIL_PARTNERS = "partners@surfergarage.com";
+/** 对外公开邮箱（内容、合作、安全报告统一入口；品牌域名邮箱尚未开通）。 */
+export const MAIL_HELLO = "edisonxu0909@gmail.com";
