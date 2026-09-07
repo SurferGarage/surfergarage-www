@@ -1,4 +1,4 @@
-/** 招聘渠道归因单一事实源（`?src=` + 内推码 `?ref=`）。 */
+/** 招聘渠道归因：裸 `/join` = 小红书；官网入口必须带 `?src=site`。 */
 
 export type RecruitSourceKey =
   | "site"
@@ -25,17 +25,15 @@ export const RECRUIT_SOURCES: readonly RecruitSourceDef[] = [
 ] as const;
 
 export const DEFAULT_RECRUIT_SOURCE: RecruitSource = {
-  key: "site",
-  label: "官网",
-  code: "SITE",
+  key: "xiaohongshu",
+  label: "小红书",
+  code: "XHS",
 };
+
+export const SITE_JOIN_HREF = "/join?src=site";
 
 export type ResolvedRecruitSource = RecruitSource & { refCode: string | null };
 
-/**
- * 从落地 URL 参数解析来源：优先 `src`，其次内推码前缀（如 `XHS-XXXX`）。
- * 均缺失时按官网处理。
- */
 export function resolveRecruitSource(
   rawSrc?: string | null,
   refCode?: string | null,
@@ -43,8 +41,8 @@ export function resolveRecruitSource(
   const src = (rawSrc ?? "").trim().toLowerCase();
   const ref = (refCode ?? "").trim();
 
-  const matched = RECRUIT_SOURCES.find((s) =>
-    s.aliases.includes(src),
+  const matched = RECRUIT_SOURCES.find(
+    (s) => s.aliases.includes(src) || s.code.toLowerCase() === src || s.key === src,
   );
   if (matched) {
     return { key: matched.key, label: matched.label, code: matched.code, refCode: ref || null };
@@ -56,8 +54,7 @@ export function resolveRecruitSource(
     if (byPrefix) {
       return { key: byPrefix.key, label: byPrefix.label, code: byPrefix.code, refCode: ref };
     }
-    return { ...DEFAULT_RECRUIT_SOURCE, refCode: ref };
   }
 
-  return { ...DEFAULT_RECRUIT_SOURCE, refCode: null };
+  return { ...DEFAULT_RECRUIT_SOURCE, refCode: ref || null };
 }

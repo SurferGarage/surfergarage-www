@@ -115,6 +115,12 @@ export function SiteFooter() {
             © {year} 浪前 Surfer Garage
           </p>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a
+              href="/join?src=site"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--brand-primary)] px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] font-medium text-white transition-colors hover:bg-[#1420ff]"
+            >
+              加入浪前 <span aria-hidden>→</span>
+            </a>
             <a href="/privacy" className={footerLink}>
               隐私政策
             </a>

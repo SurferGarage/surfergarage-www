@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 
-import { DISCORD_INVITE_URL, MAIL_HELLO } from "@/lib/site-contact";
+import { DISCORD_INVITE_URL } from "@/lib/site-contact";
 
 const WECHAT_ID = "x3167056428";
+const MAX_RESUME_BYTES = 20 * 1024 * 1024;
 
 const ROLE_OPTIONS = [
   "Surfing Founder 编辑实习生",
@@ -38,16 +39,48 @@ export function RecruitForm({ source, sourceCode, refCode }: RecruitFormProps) {
   const [role, setRole] = useState<string>(ROLE_OPTIONS[0]);
   const [intro, setIntro] = useState("");
   const [link, setLink] = useState("");
+  const [extra, setExtra] = useState("");
+  const [resume, setResume] = useState<File | null>(null);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+
+  function handleResumeChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) {
+      setResume(null);
+      return;
+    }
+    if (file.size > MAX_RESUME_BYTES) {
+      setResume(null);
+      setStatus({ kind: "error", message: "附件不能超过 20MB" });
+      e.target.value = "";
+      return;
+    }
+    setResume(file);
+    setStatus({ kind: "idle" });
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus({ kind: "submitting" });
     try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("wechat", wechat);
+      formData.append("phone", phone);
+      formData.append("email", email);
+      formData.append("role", role);
+      formData.append("intro", intro);
+      formData.append("link", link);
+      formData.append("extra", extra);
+      formData.append("landing", window.location.pathname + window.location.search);
+      if (source) formData.append("source", source);
+      if (sourceCode) formData.append("sourceCode", sourceCode);
+      if (refCode) formData.append("refCode", refCode);
+      if (resume) formData.append("file", resume);
+
       const res = await fetch("/api/recruit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, wechat, phone, email, role, intro, link, source, sourceCode, refCode }),
+        body: formData,
       });
       const data = (await res.json()) as { ok: boolean; code?: string; message?: string };
       if (data.ok) {
@@ -64,7 +97,7 @@ export function RecruitForm({ source, sourceCode, refCode }: RecruitFormProps) {
 
   return (
     <div className="rounded-none border border-[var(--hairline)] bg-[var(--paper-1)] p-6 md:p-8">
-      {source && source !== "官网" ? (
+      {source && source !== "官网" && source !== "小红书" ? (
         <p className="mb-6 text-[13px] text-[var(--muted)]">
           来源已记录 · {source}
           {refCode ? " / " + refCode : ""}
@@ -83,6 +116,8 @@ export function RecruitForm({ source, sourceCode, refCode }: RecruitFormProps) {
               setEmail("");
               setIntro("");
               setLink("");
+              setExtra("");
+              setResume(null);
               setStatus({ kind: "idle" });
             }}
             className="mt-4 text-[14px] text-[var(--muted-strong)] underline-offset-4 hover:text-[var(--brand-teal)] hover:underline"
@@ -94,9 +129,6 @@ export function RecruitForm({ source, sourceCode, refCode }: RecruitFormProps) {
         <div className="font-[family-name:var(--font-zh)] text-[16px] leading-[1.9] text-[var(--muted-strong)]">
           <p>在线表单暂未接入，请直接通过以下方式投递简历：</p>
           <div className="mt-4 flex flex-col gap-2">
-            <a href={`mailto:${MAIL_HELLO}`} className="text-[var(--brand-teal)] underline-offset-4 hover:underline">
-              邮箱 {MAIL_HELLO}
-            </a>
             <button
               type="button"
               onClick={async () => {
@@ -157,6 +189,28 @@ export function RecruitForm({ source, sourceCode, refCode }: RecruitFormProps) {
           <label className="flex flex-col gap-2 md:col-span-2">
             <span className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)]">简历 / 作品链接</span>
             <input value={link} onChange={(e) => setLink(e.target.value)} className={fieldClass} placeholder="网盘、Notion、个人主页或作品链接" />
+          </label>
+          <label className="flex flex-col gap-2 md:col-span-2">
+            <span className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)]">附件上传</span>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.md,.txt,.zip,.rar,.7z,.jpg,.jpeg,.png,.webp,.gif"
+              onChange={handleResumeChange}
+              className={fieldClass}
+            />
+            <span className="font-[family-name:var(--font-zh)] text-[13px] text-[var(--muted)]">
+              {resume ? `已选择：${resume.name}` : "选填，简历 / 作品集 / 截图等，单文件不超过 20MB"}
+            </span>
+          </label>
+          <label className="flex flex-col gap-2 md:col-span-2">
+            <span className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--muted-strong)]">补充说明</span>
+            <textarea
+              rows={3}
+              value={extra}
+              onChange={(e) => setExtra(e.target.value)}
+              className={`${fieldClass} resize-y`}
+              placeholder="选填，任何想补充的内容：可到岗时间、作品说明、推荐人等"
+            />
           </label>
 
           {status.kind === "error" ? (

@@ -1,9 +1,5 @@
 import { BILIBILI_SPACE_URL } from "@/lib/surfing-founders-video-season";
-import {
-  DISCORD_INVITE_URL,
-  MAIL_HELLO,
-  MAIL_PARTNERS,
-} from "@/lib/site-contact";
+import { DISCORD_INVITE_URL } from "@/lib/site-contact";
 import { homeSectionHref } from "@/lib/nav-hash";
 
 export type FooterLink = {
@@ -15,7 +11,7 @@ export type FooterLink = {
 export const FOOTER_CONTENT_LINKS: readonly FooterLink[] = [
   {
     label: "加入浪前",
-    href: "/join",
+    href: "/join?src=site",
   },
   {
     label: "人物特稿",
@@ -48,13 +44,5 @@ export const FOOTER_CONTACT_LINKS: readonly FooterLink[] = [
     label: "Discord 社群",
     href: DISCORD_INVITE_URL,
     external: true,
-  },
-  {
-    label: MAIL_HELLO,
-    href: `mailto:${MAIL_HELLO}`,
-  },
-  {
-    label: MAIL_PARTNERS,
-    href: `mailto:${MAIL_PARTNERS}`,
   },
 ] as const;

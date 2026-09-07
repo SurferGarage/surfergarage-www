@@ -2,7 +2,6 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 
 import { RecruitForm } from "@/components/recruit-form";
-import { MAIL_HELLO } from "@/lib/site-contact";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { buildSiteMetadata } from "@/lib/site-metadata";
@@ -109,10 +108,7 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
           </div>
 
           <p className="mt-8 max-w-[44rem] text-[14px] text-[var(--muted)]">
-            核心正职按需面议，欢迎直接投递说明你能解决的问题。联系邮箱{" "}
-            <a href={"mailto:" + MAIL_HELLO} className="text-[var(--brand-teal)] underline-offset-4 hover:underline">
-              {MAIL_HELLO}
-            </a>
+            核心正职按需面议，欢迎直接投递说明你能解决的问题。
           </p>
         </section>
 
