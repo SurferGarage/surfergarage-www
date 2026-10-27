@@ -21,7 +21,7 @@ export function HomeSocial() {
         <ul className="sg-ed-social-grid">
           {channels.map((channel) => (
             <li key={channel.id}>
-              <a href={channel.href} target="_blank" rel="noopener noreferrer" className="sg-ed-social-link">
+              <a href={channel.href} target="_blank" rel="noopener noreferrer" className="sg-ed-social-link" data-platform={channel.mark}>
                 <div className="sg-ed-social-top"><SocialChannelMark id={channel.mark} /><span aria-hidden>↗</span></div>
                 <h3>{channel.labelZh}</h3>
                 <p>{CHANNEL_COPY[channel.id]}</p>
