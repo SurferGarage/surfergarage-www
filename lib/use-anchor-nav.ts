@@ -2,6 +2,7 @@
 
 import { useLenis } from "@/components/lenis-context";
 import type Lenis from "lenis";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, type MouseEvent } from "react";
 
 function getHashTarget(href: string): HTMLElement | null {
@@ -21,6 +22,7 @@ function getHashTarget(href: string): HTMLElement | null {
 export function scrollToHashTarget(
   href: string,
   lenis: Lenis | null,
+  options: { smooth?: boolean; focus?: boolean } = {},
 ): boolean {
   if (typeof window === "undefined") return false;
   const target = getHashTarget(href);
@@ -36,19 +38,31 @@ export function scrollToHashTarget(
       window.scrollY -
       Math.ceil(headerHeight + 1),
   );
+  const smooth =
+    options.smooth &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (lenis) {
     lenis.scrollTo(destination, {
-      immediate: true,
-      lock: true,
+      immediate: !smooth,
+      duration: smooth ? 0.8 : undefined,
       force: true,
     });
   } else {
     const root = document.documentElement;
     const previousScrollBehavior = root.style.scrollBehavior;
-    root.style.scrollBehavior = "auto";
-    window.scrollTo({ top: destination });
+    if (!smooth) root.style.scrollBehavior = "auto";
+    window.scrollTo({ top: destination, behavior: smooth ? "smooth" : "auto" });
     root.style.scrollBehavior = previousScrollBehavior;
+  }
+
+  if (options.focus) {
+    const focusTarget =
+      target.querySelector<HTMLElement>("h1, h2, h3") ?? target;
+    const hadTabIndex = focusTarget.hasAttribute("tabindex");
+    if (!hadTabIndex) focusTarget.setAttribute("tabindex", "-1");
+    focusTarget.focus({ preventScroll: true });
+    if (!hadTabIndex) focusTarget.removeAttribute("tabindex");
   }
 
   window.requestAnimationFrame(() => {
@@ -60,6 +74,7 @@ export function scrollToHashTarget(
 /** Restore cold-load and browser-history hashes after React hydration. */
 export function useHashNavigationAlignment() {
   const lenis = useLenis();
+  const pathname = usePathname();
 
   useEffect(() => {
     let firstFrame = 0;
@@ -74,38 +89,45 @@ export function useHashNavigationAlignment() {
       secondFrame = window.requestAnimationFrame(alignCurrentHash);
     });
     window.addEventListener("hashchange", alignCurrentHash);
+    window.addEventListener("popstate", alignCurrentHash);
 
     return () => {
       window.cancelAnimationFrame(firstFrame);
       window.cancelAnimationFrame(secondFrame);
       window.removeEventListener("hashchange", alignCurrentHash);
+      window.removeEventListener("popstate", alignCurrentHash);
     };
-  }, [lenis]);
+  }, [lenis, pathname]);
 }
 
-/** 站内 hash 锚点：即时跳转，并精确扣除 sticky 顶栏高度。 */
+/** 只接管普通同页点击；跨页与新窗口行为交由链接本身处理。 */
 export function useAnchorNav(onAfterNav?: () => void) {
   const lenis = useLenis();
 
   return useCallback(
     (e: MouseEvent<HTMLAnchorElement>, href: string) => {
-      if (!href.startsWith("#")) return;
-      const target = getHashTarget(href);
-      if (!target) {
-        if (typeof window !== "undefined" && window.location.pathname !== "/") {
-          e.preventDefault();
-          window.location.assign(`/${href}`);
-        }
-        return;
-      }
-      e.preventDefault();
-      scrollToHashTarget(href, lenis);
+      if (
+        e.defaultPrevented ||
+        e.button !== 0 ||
+        e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ||
+        (e.currentTarget.target && e.currentTarget.target !== "_self") ||
+        e.currentTarget.hasAttribute("download")
+      ) return;
 
-      if (typeof window !== "undefined") {
-        window.history.replaceState(null, "", href);
-      }
-
+      const destination = new URL(href, window.location.href);
+      if (destination.origin !== window.location.origin) return;
       onAfterNav?.();
+      if (
+        destination.pathname !== window.location.pathname ||
+        !getHashTarget(destination.hash)
+      ) return;
+
+      e.preventDefault();
+      const nextHref = `${destination.pathname}${destination.search}${destination.hash}`;
+      if (nextHref !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+        window.history.pushState(window.history.state, "", nextHref);
+      }
+      scrollToHashTarget(destination.hash, lenis, { smooth: true, focus: true });
     },
     [lenis, onAfterNav],
   );

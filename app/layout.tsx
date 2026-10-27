@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./editorial.css";
 import { buildSiteMetadata, buildSiteViewport } from "@/lib/site-metadata";
 import { getOrganizationJsonLd, getWebSiteJsonLd } from "@/lib/site-json-ld";
 
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className="h-full antialiased"
     >

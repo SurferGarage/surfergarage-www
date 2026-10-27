@@ -1,6 +1,6 @@
-import { BILIBILI_SPACE_URL } from "@/lib/surfing-founders-video-season";
-import { DISCORD_INVITE_URL } from "@/lib/site-contact";
-import { homeSectionHref } from "@/lib/nav-hash";
+import { DISCORD_INVITE_URL, MAIL_HELLO } from "@/lib/site-contact";
+import { SITE_JOIN_HREF } from "@/lib/recruit-source";
+import { SITE_STORY_HREF } from "@/lib/site-nav";
 
 export type FooterLink = {
   label: string;
@@ -9,19 +9,6 @@ export type FooterLink = {
 };
 
 export const FOOTER_CONTENT_LINKS: readonly FooterLink[] = [
-  {
-    label: "加入浪前",
-    href: "/join?src=site",
-  },
-  {
-    label: "人物特稿",
-    href: homeSectionHref("#proof"),
-  },
-  {
-    label: "视频播客",
-    href: BILIBILI_SPACE_URL,
-    external: true,
-  },
   {
     label: "Startup Playbook",
     href: "https://github.com/SurferGarage/Startup-playbook",
@@ -40,6 +27,18 @@ export const FOOTER_CONTENT_LINKS: readonly FooterLink[] = [
 ] as const;
 
 export const FOOTER_CONTACT_LINKS: readonly FooterLink[] = [
+  {
+    label: "小浪 · 分享你的故事",
+    href: SITE_STORY_HREF,
+  },
+  {
+    label: "加入浪前",
+    href: SITE_JOIN_HREF,
+  },
+  {
+    label: "内容与合作邮箱",
+    href: `mailto:${MAIL_HELLO}`,
+  },
   {
     label: "Discord 社群",
     href: DISCORD_INVITE_URL,

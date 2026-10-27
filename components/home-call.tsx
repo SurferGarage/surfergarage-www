@@ -2,32 +2,16 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import { DISCORD_INVITE_URL } from "@/lib/site-contact";
-import {
-  SG_IMMERSIVE_INSET_CLASS,
-  SG_IMMERSIVE_PLANE_CLASS,
-  SG_IMMERSIVE_SECTION_CLASS,
-} from "@/lib/sg-layout";
+import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 
 const WECHAT_ID = "x3167056428";
-
-const STORY_SIGNALS = [
-  "16–28 岁，正在做科技产品",
-  "已有 demo、真实用户或一次关键复盘",
-  "愿意坦诚讲清判断、风险与代价",
-] as const;
+const STORY_SIGNALS = ["16–28 岁，正在做科技产品", "已有 demo、真实用户或一次关键复盘", "愿意坦诚讲清判断、风险与代价"];
 
 export function HomeCall() {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-    };
-  }, []);
-
+  useEffect(() => () => { if (timerRef.current) window.clearTimeout(timerRef.current); }, []);
   const copyWeChat = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(WECHAT_ID);
@@ -40,105 +24,35 @@ export function HomeCall() {
   }, []);
 
   return (
-    <section
-      id="call"
-      className={`${SG_IMMERSIVE_SECTION_CLASS} scroll-mt-[4.5rem] border-b border-[var(--hairline)]`}
-      aria-labelledby="call-heading"
-    >
-      <div
-        className={`${SG_IMMERSIVE_PLANE_CLASS} ${SG_IMMERSIVE_INSET_CLASS} sg-home-call-plane sg-immersive-plane--dark flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden bg-[var(--paper-1)] py-20 md:py-28 lg:py-32`}
-      >
-        <div
-          id="call-join"
-          className="sg-home-call-join grid flex-1 scroll-mt-[6rem] items-center gap-14 py-16 md:py-20 lg:grid-cols-12 lg:gap-16 lg:py-24"
-        >
-          <div className="lg:col-span-7">
-            <h2
-              id="call-heading"
-              className="font-[family-name:var(--font-serif-zh)] text-[3rem] font-semibold leading-[1.15] text-[var(--foreground)] md:text-[4.5rem] lg:text-[4.75rem] xl:text-[5.25rem]"
-            >
-              <span className="block">你也正在</span>
-              <span className="block">造浪吗？</span>
-            </h2>
-            <p className="mt-8 max-w-[42rem] font-[family-name:var(--font-serif-zh)] text-[1.45rem] font-semibold leading-[1.65] text-[var(--foreground)] md:text-[1.8rem]">
-              无论你在车库、实验室还是学校宿舍，只要你在认真做产品，就值得留下第一份真实记录。
-            </p>
-            <p className="mt-6 max-w-[39rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.85] text-[var(--muted-strong)] md:text-[16px]">
-              添加小浪微信，告诉我们你在做什么，并附上 demo、产品链接或一段真实复盘。我们会先了解项目，再讨论合适的记录方式。
-            </p>
-
-            <button
-              type="button"
-              onClick={copyWeChat}
-              className="mt-9 inline-flex min-h-12 items-center gap-6 bg-[var(--brand-primary)] px-5 py-3 text-left text-white transition-colors hover:bg-[#1420ff]"
-              aria-label={`复制微信号 ${WECHAT_ID}`}
-            >
-              <span className="font-[family-name:var(--font-zh)] text-[15px] font-medium">
-                {copied ? "微信号已复制" : "复制微信号"}
-              </span>
-              <span className="font-[family-name:var(--font-mono)] text-[13px] text-white/75">
-                {WECHAT_ID}
-              </span>
-            </button>
-          </div>
-
-          <aside className="border-t border-[var(--hairline)] pt-9 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
-            <div className="grid items-start gap-8 sm:grid-cols-[10rem_1fr] lg:grid-cols-1 xl:grid-cols-[10rem_1fr]">
-              <Image
-                src="/wechat-assistant-qr.png"
-                alt="小浪微信二维码"
-                width={160}
-                height={200}
-                className="h-auto w-40 bg-white p-1"
-              />
-              <div>
-                <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--brand-teal)] md:text-[11px]">
-                  微信联系
-                </p>
-                <h3 className="mt-4 font-[family-name:var(--font-zh)] text-[1.45rem] font-medium leading-[1.45] text-[var(--foreground)] md:text-[1.65rem]">
-                  把正在发生的事，直接发给我们。
-                </h3>
-                <p className="mt-4 font-[family-name:var(--font-zh)] text-[14px] leading-[1.75] text-[var(--muted-strong)] md:text-[15px]">
-                  新内容和线下活动也会通过小浪微信同步。
-                </p>
-                <a
-                  href={DISCORD_INVITE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex font-[family-name:var(--font-zh)] text-[14px] text-[var(--brand-teal)] transition-colors hover:text-[var(--foreground)]"
-                >
-                  Discord 社群 ↗
-                </a>
-              </div>
-            </div>
-          </aside>
+    <section id="call" className="sg-ed-section sg-ed-call" aria-labelledby="call-heading">
+      <div id="call-join" className={`${SG_PAGE_SHELL_CLASS} sg-ed-call-grid scroll-mt-24`}>
+        <div>
+          <p className="sg-ed-kicker">你的故事 / NEXT STORY</p>
+          <h2 id="call-heading" className="sg-ed-heading">你也正在造浪吗？</h2>
+          <p className="sg-ed-call-description">无论在车库、实验室还是学校宿舍，<br className="hidden md:block" />认真做产品的人，值得留下一份真实记录。</p>
+          <ul className="sg-ed-story-signals">
+            {STORY_SIGNALS.map((signal) => <li key={signal}><span aria-hidden>↗</span>{signal}</li>)}
+          </ul>
         </div>
-
-        <ol className="grid border-y border-[var(--hairline)] md:grid-cols-3">
-          {STORY_SIGNALS.map((signal, index) => (
-            <li
-              key={signal}
-              className={`flex min-h-28 items-start gap-5 py-6 md:min-h-36 md:px-7 md:py-7 ${
-                index > 0
-                  ? "border-t border-[var(--hairline-soft)] md:border-l md:border-t-0"
-                  : ""
-              }`}
-            >
-              <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--accent-amber)] md:text-[11px]">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <p className="max-w-[18rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.7] text-[var(--foreground)] md:text-[16px]">
-                {signal}
-              </p>
-            </li>
-          ))}
-        </ol>
+        <aside className="sg-ed-contact-panel" aria-label="添加小浪微信提交故事">
+          <Image src="/wechat-assistant-qr.png" alt="小浪微信二维码" width={160} height={200} className="sg-ed-contact-qr" />
+          <div className="sg-ed-contact-copy">
+            <p className="sg-ed-kicker">微信联系 · 小浪</p>
+            <h3>先聊聊你在做什么。</h3>
+            <p>发来 demo、产品链接或一段真实复盘。我们先了解项目，再讨论合适的记录方式。</p>
+            <button type="button" onClick={copyWeChat} className="sg-ed-copy-button" aria-label={`复制微信号 ${WECHAT_ID}`}>
+              <span>{WECHAT_ID}</span><span>{copied ? "已复制 ✓" : "复制微信号"}</span>
+            </button>
+            <span className="sr-only" role="status">{copied ? "微信号已复制" : ""}</span>
+            <a href={DISCORD_INVITE_URL} target="_blank" rel="noopener noreferrer" className="sg-ed-contact-discord">也可以加入 Discord 社群 <span aria-hidden>↗</span></a>
+          </div>
+        </aside>
       </div>
     </section>
   );
 }
 
-/** 兼容旧链接；匹配规则已并入 #call-join。 */
+/** 保留旧入口。 */
 export function HomeFit() {
   return <span id="fit" className="sr-only" aria-hidden />;
 }

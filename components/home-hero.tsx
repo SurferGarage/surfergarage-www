@@ -1,60 +1,53 @@
+import Image from "next/image";
 import { HeroFlowField } from "@/components/hero-flow-field";
 import { SiteAnchorLink } from "@/components/site-anchor-link";
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
+import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
 
 export function HomeHero() {
+  const latest = WECHAT_OFFICIAL_FEED.at(-1)!;
+
   return (
-    <section
-      id="manifesto"
-      className="relative scroll-mt-[4.5rem] overflow-hidden border-b border-[var(--hairline)] bg-[#08090d]"
-      aria-labelledby="hero-title"
-    >
-      <div className="sg-home-hero-frame relative min-h-[calc(100svh-5.5rem)] overflow-hidden lg:h-[calc(100svh-7.5rem)] lg:min-h-[42rem]">
-        <HeroFlowField />
-
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-full bg-[linear-gradient(90deg,rgba(7,8,11,0.97)_0%,rgba(7,8,11,0.91)_34%,rgba(7,8,11,0.54)_52%,rgba(7,8,11,0.04)_78%)] md:w-[78%]"
-        />
-
-        <div className={`sg-home-hero-shell relative z-[2] flex min-h-full flex-col pt-8 md:pt-10 lg:h-full lg:pt-4 ${SG_PAGE_SHELL_CLASS}`}>
-          <div className="sg-home-hero-body grid flex-1 items-center gap-8 py-8 md:gap-10 md:py-10 lg:grid-cols-12 lg:gap-12 lg:py-8">
-            <div className="sg-home-hero-copy max-w-[44rem] lg:col-span-6">
-              <h1 id="hero-title" className="sg-home-hero-heading text-white">
-                <span className="sg-home-hero-heading-zh block font-[family-name:var(--font-serif-zh)] text-[2.85rem] font-semibold leading-none md:text-[4.5rem] lg:text-[4.25rem] xl:text-[5rem]">
-                  浪前
-                </span>
-                <span className="sg-home-hero-heading-en mt-1 block whitespace-nowrap font-[family-name:var(--font-serif)] text-[3.15rem] leading-[0.94] md:text-[5rem] lg:text-[4.5rem] xl:text-[5.5rem]">
-                  Surfer Garage
-                </span>
-              </h1>
-
-              <p className="sg-home-hero-tagline mt-6 font-[family-name:var(--font-serif-zh)] text-[1.45rem] leading-snug text-white md:text-[1.8rem]">
-                记录正在冲浪的人。
-              </p>
-              <p className="sg-home-hero-description mt-4 max-w-[42rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.72] text-[var(--muted-strong)] md:text-[17px]">
-                浪前是一家面向 16–28 岁极早期科技创业者的深度媒体。我们在共识形成之前，记录真实的产品进展、判断与转折。
-              </p>
-
-              <div className="sg-home-hero-actions mt-7 flex flex-wrap items-center gap-3">
-                <SiteAnchorLink
-                  href="#proof"
-                  className="sg-home-hero-action inline-flex min-h-11 items-center gap-3 bg-[var(--brand-primary)] px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] font-medium text-white transition-colors hover:bg-[#1420ff]"
-                >
-                  阅读最新特稿
-                  <span aria-hidden>↓</span>
-                </SiteAnchorLink>
-                <SiteAnchorLink
-                  href="#call-join"
-                  className="sg-home-hero-action inline-flex min-h-11 items-center gap-3 border border-white/24 bg-black/20 px-5 py-3 font-[family-name:var(--font-zh)] text-[15px] font-medium text-white transition-colors hover:border-white/48 hover:bg-black/34"
-                >
-                  提交故事
-                  <span aria-hidden>→</span>
-                </SiteAnchorLink>
-              </div>
+    <section id="manifesto" className="sg-ed-hero" aria-labelledby="hero-title">
+      <HeroFlowField />
+      <div aria-hidden className="sg-ed-hero-shade" />
+      <div className={`${SG_PAGE_SHELL_CLASS} sg-ed-hero-shell`}>
+        <p className="sg-ed-kicker sg-ed-hero-kicker">
+          <span className="sg-ed-live-dot" aria-hidden />
+          SURFER GARAGE <span className="sg-ed-kicker-divider">/</span> 独立科技人物媒体
+        </p>
+        <div className="sg-ed-hero-body">
+          <div className="sg-ed-hero-copy">
+            <h1 id="hero-title" className="sg-ed-hero-title">
+              <span>记录正在</span>
+              <span>冲浪的人<span className="text-[var(--brand-teal)]">。</span></span>
+            </h1>
+            <p className="sg-ed-hero-description">
+              面向 16–28 岁极早期科技创业者。
+              <br />
+              在共识形成之前，记录真实的产品、判断与转折。
+            </p>
+            <div className="sg-ed-hero-actions">
+              <SiteAnchorLink href="#proof" className="sg-ed-button sg-ed-button--primary">
+                阅读人物特稿 <span aria-hidden>↓</span>
+              </SiteAnchorLink>
+              <SiteAnchorLink href="#call-join" className="sg-ed-button sg-ed-button--quiet">
+                提交你的故事 <span aria-hidden>↗</span>
+              </SiteAnchorLink>
             </div>
           </div>
+          <p className="sg-ed-hero-note" aria-hidden>
+            Ride the wave.<br /><em>Build what matters.</em>
+          </p>
         </div>
+        <a className="sg-ed-latest" href={latest.href} target="_blank" rel="noopener noreferrer">
+          <span className="sg-ed-latest-label">最新特稿 <span className="sg-ed-latest-date">{latest.publishedAt?.replaceAll("-", ".")}</span></span>
+          <span className="sg-ed-latest-thumb">
+            <Image src={latest.imageSrc} alt="" fill sizes="80px" className="object-cover" />
+          </span>
+          <span className="sg-ed-latest-title">{latest.stageTitleZh}</span>
+          <span className="sg-ed-latest-arrow" aria-hidden>↗</span>
+        </a>
       </div>
     </section>
   );

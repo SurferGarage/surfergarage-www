@@ -13,6 +13,7 @@ export type WechatOfficialFeedItem = {
   href: string;
   imageSrc: string;
   imageAlt: string;
+  publishedAt?: string;
 };
 
 const RAW_FEED: WechatOfficialFeedItem[] = [
@@ -165,6 +166,7 @@ const RAW_FEED: WechatOfficialFeedItem[] = [
   },
   {
     id: "wx-16",
+    publishedAt: "2026-10-23",
     titleZh:
       "秦岭脚下长大的极客，造了一副通往荒野的外骨骼 | 毛榉「无待动力」Surfing Founders",
     stageTitleZh: "秦岭脚下长大的极客，造了一副通往荒野的外骨骼",
@@ -175,6 +177,7 @@ const RAW_FEED: WechatOfficialFeedItem[] = [
   },
   {
     id: "wx-17",
+    publishedAt: "2026-10-26",
     titleZh:
       "独家 | Extra获百万级融资：一个从黑客松社区里长出的产品 | 刘雨杰 Surfing Founder",
     stageTitleZh: "Extra 获百万级融资：一个从黑客松社区里长出的产品",

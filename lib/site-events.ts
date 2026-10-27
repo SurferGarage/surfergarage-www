@@ -4,6 +4,7 @@ export type SiteEvent = {
   titleEn: string;
   dateDisplay: string;
   dateShort: string;
+  statusLabel: "往期活动" | "合作公告";
   location: string;
   role: string;
   description: string;
@@ -21,13 +22,14 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
     titleEn: "BuilderUp Suzhou",
     dateDisplay: "2026.07.18 · 14:00–18:00",
     dateShort: "07.18",
+    statusLabel: "往期活动",
     location: "苏州创新创意设计研究院",
     role: "社区承办",
     description:
       "让青年创造者围坐交流，直面行业现实、项目卡点与尚未成形的想法。",
     href: "#call-join",
     external: false,
-    linkLabel: "了解后续活动",
+    linkLabel: "联系小浪",
     imageSrc: "/events/builderup-suzhou-2026.png",
     imageAlt: "BuilderUp 苏州站活动海报，苏州现代建筑仰拍",
   },
@@ -35,15 +37,16 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
     id: "adventurex-2026",
     title: "为创造，再一次信仰之跃",
     titleEn: "AdventureX 2026",
-    dateDisplay: "2026 · 持续招募中",
-    dateShort: "OPEN",
-    location: "日期与城市待公布",
+    dateDisplay: "2026 · 具体安排见原公告",
+    dateShort: "2026",
+    statusLabel: "合作公告",
+    location: "见原公告",
     role: "内容与招募合作",
     description:
-      "寻找那些买域名、搭博客、录教程、做游戏、写脚本、造工具和焊开发板的年轻造物者。",
+      "公告面向买域名、搭博客、录教程、做游戏、写脚本、造工具和焊开发板的年轻造物者。",
     href: "https://mp.weixin.qq.com/s/Fx5c8MvzajrCMAQMwaKpwg",
     external: true,
-    linkLabel: "查看招募",
+    linkLabel: "查看合作公告",
     imageSrc: "/events/adventurex-2026.png",
     imageAlt: "AdventureX 2026 年轻造物者招募视觉",
   },
@@ -53,13 +56,14 @@ export const SITE_EVENTS: readonly SiteEvent[] = [
     titleEn: "Rebuild-Z × GEIA · S2",
     dateDisplay: "2026.09.08–09.11",
     dateShort: "09.08",
+    statusLabel: "往期活动",
     location: "深圳 · 大中华喜来登酒店",
     role: "联合传播",
     description:
       "面向 Z 世代的 AI 与具身智能实验，把技术重新放回真实场景中检验。",
     href: "https://mp.weixin.qq.com/s/2y7aWdGjT-wwrCm77Tcocw",
     external: true,
-    linkLabel: "查看预告",
+    linkLabel: "查看活动原文",
     imageSrc: "/events/rebuild-z-s2-2026.png",
     imageAlt: "Rebuild-Z 与 GEIA AI 黑客松 S2 活动海报",
   },

@@ -55,147 +55,137 @@ export function HomeDialogue() {
     };
   }, [directoryOpen]);
 
-  const selectGuest = (id: string) => {
-    setSelectedGuestId(id);
+  const closeDirectory = () => {
     setDirectoryOpen(false);
     directoryTriggerRef.current?.focus();
+  };
+
+  const selectGuest = (id: string) => {
+    setSelectedGuestId(id);
+    closeDirectory();
   };
 
   return (
     <section
       id="dialogue"
-      className="border-b border-[var(--hairline)] bg-[#07080b] py-20 md:py-28 lg:py-32"
+      className="sg-ed-section scroll-mt-[4.5rem] border-b border-[var(--hairline)] bg-[#07080b]"
       aria-labelledby="dialogue-section-heading"
     >
       <div className={SG_PAGE_SHELL_CLASS}>
-        <header className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-12">
-          <div className="lg:col-span-8">
-            <h2
-              id="dialogue-section-heading"
-              className="max-w-[54rem] font-[family-name:var(--font-serif-zh)] text-[2.5rem] font-semibold leading-[1.2] text-[var(--foreground)] md:text-[3.75rem] lg:text-[4rem] xl:text-[4.5rem]"
-            >
-              一场对话，进入
-              <br />
-              创业进行时。
+        <header className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+          <div>
+            <p className="sg-ed-kicker">VIDEO PODCAST</p>
+            <h2 id="dialogue-section-heading" className="sg-ed-heading mt-3">
+              浪前对话
             </h2>
           </div>
-          <div className="relative lg:col-span-4">
-            <div className="flex items-center justify-between gap-5 border-b border-[var(--hairline)] pb-4">
-              <p className="font-[family-name:var(--font-zh)] text-[14px] text-[var(--accent-amber)] md:text-[15px]">
-                视频播客
-              </p>
-              <button
-                ref={directoryTriggerRef}
-                type="button"
-                aria-expanded={directoryOpen}
-                aria-controls={directoryId}
-                onClick={() => setDirectoryOpen((open) => !open)}
-                className="group inline-flex min-h-11 items-center gap-4 border-l border-[var(--hairline)] pl-5 font-[family-name:var(--font-zh)] text-[14px] font-medium text-[var(--foreground)] transition-colors hover:text-[var(--brand-teal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/60 md:text-[15px]"
-              >
-                <span>视频目录</span>
-                <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)] md:text-[11px]">
-                  {String(VIDEO_DIRECTORY.length).padStart(2, "0")}
-                </span>
-                <span
-                  aria-hidden
-                  className="w-4 text-center font-[family-name:var(--font-en)] text-[18px] font-normal transition-transform duration-200 group-hover:translate-x-0.5"
-                >
-                  {directoryOpen ? "−" : "+"}
-                </span>
-              </button>
-            </div>
-
-            {directoryOpen ? (
-              <aside
-                id={directoryId}
-                ref={directoryRef}
-                data-lenis-prevent
-                className="fixed inset-x-5 top-[5rem] z-40 max-h-[calc(100svh-5.5rem)] overflow-y-auto overscroll-contain border border-white/20 bg-[#08090d] text-white shadow-[0_30px_80px_rgba(0,0,0,0.42)] md:left-auto md:right-10 md:w-[min(38rem,84vw)] lg:absolute lg:inset-x-0 lg:left-auto lg:right-0 lg:top-[4.5rem] lg:z-20 lg:max-h-[min(72svh,40rem)]"
-                aria-label="视频目录，最新对话在前"
-              >
-                <div className="sticky top-0 z-10 flex items-end justify-between gap-6 border-b border-white/16 bg-[#08090d]/95 px-5 py-5 backdrop-blur-md md:px-7">
-                  <p className="font-[family-name:var(--font-serif-zh)] text-[1.55rem] font-semibold">
-                    视频目录
-                  </p>
-                  <p className="font-[family-name:var(--font-zh)] text-[12px] text-white/58">
-                    {VIDEO_DIRECTORY.length} 位嘉宾 · {episodeCount} 期
-                  </p>
-                </div>
-                <ol>
-                  {VIDEO_DIRECTORY.map((guest) => {
-                    const isSelected = guest.id === selectedGuest?.id;
-                    const latestEpisode = guest.episodes.at(-1)!;
-                    return (
-                      <li
-                        key={guest.id}
-                        className="grid grid-cols-[1fr_3.25rem] border-b border-white/12 last:border-b-0"
-                      >
-                        <button
-                          type="button"
-                          onClick={() => selectGuest(guest.id)}
-                          aria-pressed={isSelected}
-                          className={`grid min-h-[6.75rem] grid-cols-[4.5rem_1fr] items-center gap-3 px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/70 md:grid-cols-[7rem_1fr] md:gap-4 md:px-7 ${
-                            isSelected
-                              ? "bg-white text-[#08090d]"
-                              : "text-white hover:bg-white/8"
-                          }`}
-                        >
-                          <span className="relative block aspect-video overflow-hidden bg-white/8">
-                            <Image
-                              src={latestEpisode.coverPic}
-                              alt={`${guest.nameZh}视频封面`}
-                              fill
-                              sizes="(max-width: 768px) 72px, 112px"
-                              className="object-cover"
-                            />
-                          </span>
-                          <span className="min-w-0">
-                            <span
-                              className={`block font-[family-name:var(--font-mono)] text-[10px] md:text-[11px] ${
-                                isSelected ? "text-[#141cff]" : "text-white/48"
-                              }`}
-                            >
-                              {SURFING_FOUNDERS_SEASON_01.seasonLabel} · {guest.episodes.length} 期
-                            </span>
-                            <span className="mt-2 block font-[family-name:var(--font-zh)] text-[16px] font-medium leading-[1.4] md:text-[17px]">
-                              {guest.nameZh}
-                            </span>
-                            <span
-                              className={`mt-1 block truncate font-[family-name:var(--font-en)] text-[12px] ${
-                                isSelected ? "text-[#08090d]/58" : "text-white/52"
-                              }`}
-                            >
-                              {guest.nameEn}
-                            </span>
-                          </span>
-                        </button>
-                        <a
-                          href={bilibiliWatchUrl(latestEpisode.bvid)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`直接在 B 站观看：${guest.nameZh}`}
-                          className={`inline-flex items-center justify-center border-l transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/70 ${
-                            isSelected
-                              ? "border-[#08090d]/12 bg-white text-[#141cff] hover:bg-[#e9eaff]"
-                              : "border-white/12 text-white/62 hover:bg-white/8 hover:text-white"
-                          }`}
-                        >
-                          <span aria-hidden>↗</span>
-                        </a>
-                      </li>
-                    );
-                  })}
-                </ol>
-              </aside>
-            ) : null}
-
-            <p className="mt-6 max-w-[34rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px]">
-              我们把摄像机放进真实现场，保留语气、犹豫和尚未被验证的判断。
-            </p>
-          </div>
+          <p className="max-w-[30rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.75] text-[var(--muted-strong)] md:text-[16px]">
+            与年轻创始人长谈产品、选择与创业现场。
+          </p>
         </header>
 
-        <div className="mt-14 grid gap-12 border-t border-[var(--hairline)] pt-10 md:mt-20 md:pt-14 lg:grid-cols-12 lg:gap-14">
+        <div className="mt-8 border-y border-[var(--hairline)]">
+          <button
+            ref={directoryTriggerRef}
+            type="button"
+            aria-expanded={directoryOpen}
+            aria-controls={directoryId}
+            onClick={() => setDirectoryOpen((open) => !open)}
+            className="flex min-h-14 w-full flex-wrap items-center justify-between gap-x-5 gap-y-1 py-3 text-left font-[family-name:var(--font-zh)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/60"
+          >
+            <span className="text-[15px] font-medium text-[var(--foreground)]">
+              当前：{selectedGuest?.nameZh}
+              <span className="ml-3 text-[13px] font-normal text-[var(--muted)]">
+                {SURFING_FOUNDERS_SEASON_01.seasonLabel} · {episodeCount} 期
+              </span>
+            </span>
+            <span className="inline-flex items-center gap-3 text-[14px] text-[var(--brand-teal)]">
+              {directoryOpen ? "收起目录" : `切换嘉宾（${VIDEO_DIRECTORY.length}）`}
+              <span aria-hidden>{directoryOpen ? "−" : "+"}</span>
+            </span>
+          </button>
+
+          {directoryOpen ? (
+            <aside
+              id={directoryId}
+              ref={directoryRef}
+              className="border-t border-[var(--hairline)] pb-4 pt-3"
+              aria-label="视频目录，最新对话在前"
+            >
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <p className="text-[13px] text-[var(--muted)]">
+                  选择嘉宾，再选择分集
+                </p>
+                <button
+                  type="button"
+                  onClick={closeDirectory}
+                  className="inline-flex min-h-11 items-center gap-2 px-2 text-[14px] text-[var(--foreground)] hover:text-[var(--brand-teal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]/60"
+                >
+                  关闭 <span aria-hidden>×</span>
+                </button>
+              </div>
+              <ol className="grid gap-3 md:grid-cols-2">
+                {VIDEO_DIRECTORY.map((guest) => {
+                  const isSelected = guest.id === selectedGuest?.id;
+                  const latestEpisode = guest.episodes.at(-1)!;
+                  return (
+                    <li
+                      key={guest.id}
+                      className="grid grid-cols-[1fr_3rem] border border-[var(--hairline)]"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => selectGuest(guest.id)}
+                        aria-pressed={isSelected}
+                        className={`grid min-h-24 grid-cols-[5rem_1fr] items-center gap-3 p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand-teal)] md:grid-cols-[6rem_1fr] ${
+                          isSelected
+                            ? "bg-white text-[#08090d]"
+                            : "text-white hover:bg-white/8"
+                        }`}
+                      >
+                        <span className="relative block aspect-video overflow-hidden bg-white/8">
+                          <Image
+                            src={latestEpisode.coverPic}
+                            alt=""
+                            fill
+                            sizes="(max-width: 768px) 80px, 96px"
+                            className="object-cover"
+                          />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[16px] font-medium">
+                            {guest.nameZh}
+                            {isSelected ? (
+                              <span className="ml-2 text-[12px] font-normal text-[#141cff]">
+                                当前
+                              </span>
+                            ) : null}
+                          </span>
+                          <span
+                            className={`mt-1 block text-[12px] ${isSelected ? "text-[#08090d]/65" : "text-white/60"}`}
+                          >
+                            {guest.nameEn} · {guest.episodes.length} 期
+                          </span>
+                        </span>
+                      </button>
+                      <a
+                        href={bilibiliWatchUrl(latestEpisode.bvid)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`直接在 B 站观看：${guest.nameZh}`}
+                        className="inline-flex items-center justify-center border-l border-[var(--hairline)] text-[var(--brand-teal)] transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand-teal)]"
+                      >
+                        <span aria-hidden>↗</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ol>
+            </aside>
+          ) : null}
+        </div>
+
+        <div className="mt-7 grid gap-7 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-8">
             {selectedGuest ? (
               <HomeVideoPlayer
@@ -205,20 +195,20 @@ export function HomeDialogue() {
               />
             ) : null}
           </div>
-
-          <aside className="border-t border-[var(--hairline)] pt-8 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
-            <div>
-              <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--accent-amber)] md:text-[11px]">
-                视频播客 · 浪前对话
-              </p>
-              <h3 className="mt-5 font-[family-name:var(--font-zh)] text-[1.65rem] font-medium leading-[1.45] text-[var(--foreground)] md:text-[2rem]">
-                不急着复盘结果，先看判断如何形成。
+          {selectedGuest ? (
+            <aside className="border-t border-[var(--hairline)] pt-6 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-1">
+              <p className="sg-ed-kicker">本期嘉宾</p>
+              <h3 className="mt-3 font-[family-name:var(--font-zh)] text-[1.5rem] font-medium text-[var(--foreground)]">
+                {selectedGuest.nameZh}
+                <span className="ml-3 text-[14px] font-normal text-[var(--muted)]">
+                  {selectedGuest.nameEn}
+                </span>
               </h3>
-              <p className="mt-6 font-[family-name:var(--font-zh)] text-[15px] leading-[1.8] text-[var(--muted-strong)] md:text-[16px]">
-                与年轻创始人和产品创造者展开长对谈，不预设标准答案，保留判断与分歧形成的过程。
+              <p className="mt-4 font-[family-name:var(--font-zh)] text-[15px] leading-[1.8] text-[var(--muted-strong)]">
+                {selectedGuest.duringCaptionZh}
               </p>
-            </div>
-          </aside>
+            </aside>
+          ) : null}
         </div>
       </div>
     </section>

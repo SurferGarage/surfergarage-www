@@ -74,39 +74,43 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
 
       <main className={"relative z-[3] flex-1 " + SG_PAGE_SHELL_CLASS}>
         {/* HERO */}
-        <section className="py-24 md:py-32 lg:py-40">
-          <h1 className="font-[family-name:var(--font-serif-zh)] text-[clamp(2.6rem,6.2vw,5.5rem)] font-semibold leading-[1.08] tracking-[-0.01em] text-[var(--foreground)]">
+        <section className="max-w-[66rem] pb-14 pt-20 md:pb-20 md:pt-28 lg:pt-32">
+          <p className="mb-5 text-[13px] font-medium tracking-[0.08em] text-[var(--brand-teal)]">加入浪前 · 一起造浪</p>
+          <h1 className="font-[family-name:var(--font-serif-zh)] text-[clamp(2.6rem,6.2vw,5rem)] font-semibold leading-[1.18] tracking-[-0.01em] text-[var(--foreground)]">
             在时代浪前，
             <br />
             与我们一起<span className="text-[var(--brand-teal)]">造浪</span>
           </h1>
-          <p className="mt-9 max-w-[44rem] text-[16px] leading-[1.85] text-[var(--muted-strong)] md:text-[18px]">
+          <p className="mt-7 max-w-[44rem] text-[16px] leading-[1.85] text-[var(--muted-strong)] md:text-[18px]">
             我们通过深度人物访谈、视频播客和线下活动，发现、理解和连接 16–28 岁科技创业者。与我们一起，记录最具创新与冒险精神的一代，让更多年轻人看见传统路径之外的可能性。
           </p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
+            <a href="#apply" className="inline-flex min-h-12 items-center justify-center gap-5 bg-[var(--brand-primary)] px-6 py-3 text-[15px] font-medium text-white transition-opacity hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-teal)]">
+              投递简历 <span aria-hidden="true">↓</span>
+            </a>
+            <a
+              href={RECRUIT_ARTICLE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-2 text-[14px] text-[var(--muted-strong)] underline underline-offset-4 hover:text-[var(--brand-teal)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-teal)]"
+            >
+              阅读公众号招募全文 <span aria-hidden="true">↗</span>
+            </a>
+          </div>
         </section>
 
-        <a
-          href={RECRUIT_ARTICLE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mb-12 inline-flex min-h-11 items-center gap-3 text-[15px] text-[var(--brand-teal)] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]"
-        >
-          阅读招募全文：我们在时代浪潮之前，招募船员
-          <span aria-hidden>↗</span>
-        </a>
-
         {/* ROLES */}
-        <section className="border-t border-[var(--hairline)] py-20 md:py-28">
-          <h2 className={SG_SECTION_TITLE_CLASS}>空缺席位</h2>
+        <section aria-labelledby="roles-title" className="border-t border-[var(--hairline)] py-12 md:py-16">
+          <h2 id="roles-title" className={SG_SECTION_TITLE_CLASS}>空缺席位</h2>
 
-          <div className="mt-10">
+          <div className="mt-6">
             {ROLES.map((role) => (
               <article
                 key={role.title}
-                className="grid gap-4 border-b border-[var(--hairline)] py-10 transition-colors hover:bg-[var(--paper-1)] md:grid-cols-12 md:gap-10 md:px-2"
+                className="grid gap-4 border-b border-[var(--hairline)] py-7 md:grid-cols-12 md:gap-10 md:py-8"
               >
                 <div className="md:col-span-8">
-                  <h3 className="text-[22px] font-medium text-[var(--foreground)] md:text-[26px]">{role.title}</h3>
+                  <h3 className="text-[20px] font-medium leading-[1.4] text-[var(--foreground)] md:text-[24px]">{role.title}</h3>
                   <p className="mt-3 max-w-[46rem] text-[15px] leading-[1.8] text-[var(--muted-strong)]">{role.desc}</p>
                 </div>
                 <div className="md:col-span-4 md:pt-1 md:text-right">
@@ -117,7 +121,7 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
             ))}
           </div>
 
-          <p className="mt-8 max-w-[44rem] text-[15px] leading-[1.8] text-[var(--muted-strong)]">
+          <p className="mt-6 max-w-[44rem] text-[15px] leading-[1.8] text-[var(--muted-strong)]">
             实习岗位面向国内外在读本科生 / 研究生开放。每周至少投入 4 天，至少实习 3 个月，能够连续投入半年者优先。
           </p>
           <p className="mt-3 max-w-[44rem] text-[14px] leading-[1.8] text-[var(--muted)]">
@@ -126,9 +130,9 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
         </section>
 
         {/* PRINCIPLES */}
-        <section className="border-t border-[var(--hairline)] py-20 md:py-28">
+        <section className="border-t border-[var(--hairline)] py-12 md:py-16">
           <h2 className={SG_SECTION_TITLE_CLASS}>我们在找怎样的人</h2>
-          <div className="mt-12 grid gap-x-16 gap-y-12 md:grid-cols-2">
+          <div className="mt-8 grid gap-x-16 gap-y-8 md:grid-cols-2">
             {PRINCIPLES.map(([title, body]) => (
               <div key={title}>
                 <h3 className="text-[19px] font-medium text-[var(--foreground)]">{title}</h3>
@@ -139,10 +143,10 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
         </section>
 
         {/* APPLY */}
-        <section id="apply" className="border-t border-[var(--hairline)] py-20 md:py-28">
+        <section id="apply" aria-labelledby="apply-title" className="scroll-mt-24 border-t border-[var(--hairline)] py-12 md:py-16">
           <div className="grid gap-12 lg:grid-cols-12">
             <div className="lg:col-span-4">
-              <h2 className={SG_SECTION_TITLE_CLASS}>投递简历</h2>
+              <h2 id="apply-title" className={SG_SECTION_TITLE_CLASS}>投递简历</h2>
               <p className="mt-6 max-w-[24rem] text-[15px] leading-[1.8] text-[var(--muted-strong)]">
                 留下联系方式与一段自我介绍。我们不看模板，看你解决了什么问题、怎么想、能带来什么。
               </p>

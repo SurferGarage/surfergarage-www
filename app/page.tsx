@@ -24,9 +24,9 @@ export default function Home() {
 
       <main className="flex-1">
         <HomeHero />
-        <HomeMission />
         <HomeProof />
         <HomeDialogue />
+        <HomeMission />
         <HomeFounders />
         <HomeEvents />
         <HomeSocial />

@@ -1,136 +1,27 @@
-import {
-  SG_IMMERSIVE_INSET_CLASS,
-  SG_IMMERSIVE_PLANE_CLASS,
-  SG_IMMERSIVE_SECTION_CLASS,
-} from "@/lib/sg-layout";
+import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
 import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
+import { BILIBILI_SPACE_URL } from "@/lib/surfing-founders-video-season";
 
 export function HomeFounders() {
-  const latestArticle = WECHAT_OFFICIAL_FEED.at(-1);
-  const methodArticle = WECHAT_OFFICIAL_FEED.find(
-    (article) => article.id === "wx-09",
-  );
   const columns = [
-    {
-      no: "01",
-      title: "Surfing Founder",
-      titleZh: "创业者",
-      type: "人物特稿",
-      status: "持续更新",
-      description: "记录产品尚未定型时，创业者最初的判断、选择与转折。",
-      href: latestArticle?.href,
-      accent: "text-[var(--brand-teal)]",
-    },
-    {
-      no: "02",
-      title: "浪前对话",
-      titleZh: "长对谈",
-      type: "视频播客",
-      status: "第一季 · 8 期",
-      description: "保留判断形成、分歧出现，以及对话停顿的完整过程。",
-      href: "https://space.bilibili.com/3546759022250564",
-      accent: "text-[#6f78ff]",
-    },
-    {
-      no: "03",
-      title: "造浪之人",
-      titleZh: "关键判断",
-      type: "方法论访谈",
-      status: "已上线",
-      description: "与塑造技术、产品和生态的人，讨论他们如何做出关键判断。",
-      href: methodArticle?.href,
-      accent: "text-[var(--accent-amber)]",
-    },
-  ] as const;
-
+    { no: "01", title: "Surfing Founder", type: "人物特稿", description: "从产品与经历出发，理解创业者的判断、选择与转折。", href: WECHAT_OFFICIAL_FEED.at(-1)!.href },
+    { no: "02", title: "浪前对话", type: "视频播客", description: "用长对谈，保留语气、分歧，以及判断形成的过程。", href: BILIBILI_SPACE_URL },
+    { no: "03", title: "造浪之人", type: "方法论访谈", description: "与塑造技术、产品和生态的人，讨论关键判断。", href: WECHAT_OFFICIAL_FEED.find((article) => article.id === "wx-09")!.href },
+  ];
   return (
-    <section
-      id="founders"
-      className={`${SG_IMMERSIVE_SECTION_CLASS} scroll-mt-[4.5rem] border-b border-[var(--hairline)]`}
-      aria-labelledby="founders-heading"
-    >
-      <div
-        className={`${SG_IMMERSIVE_PLANE_CLASS} sg-immersive-plane--dark overflow-hidden bg-[var(--paper-1)]`}
-      >
-      <header>
-        <div
-          className={`${SG_IMMERSIVE_INSET_CLASS} sg-home-founders-intro grid min-h-[58svh] items-center py-20 md:py-28 lg:py-32`}
-        >
-          <div className="grid gap-9 lg:grid-cols-12 lg:items-end lg:gap-12">
-            <h2
-              id="founders-heading"
-              className="font-[family-name:var(--font-serif-zh)] text-[2.55rem] font-semibold leading-[1.2] text-[var(--foreground)] md:text-[4rem] lg:col-span-8 lg:text-[4.5rem]"
-            >
-              <span className="block">三条内容线。</span>
-              <span className="block">追踪同一件事：</span>
-              <span className="block">变化如何发生。</span>
-            </h2>
-            <p className="max-w-[34rem] font-[family-name:var(--font-zh)] text-[16px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px] lg:col-span-4">
-              从人物深访、视频对谈到方法论访谈，我们持续追踪产品、判断与关系如何变化。
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <ol className="border-t border-[var(--hairline)]">
-        {columns.map((column, index) => {
-          const content = (
-            <div
-              className={`${SG_IMMERSIVE_INSET_CLASS} grid min-h-60 items-center gap-7 py-10 md:min-h-64 md:grid-cols-[6rem_1.25fr_1.2fr_7rem] md:gap-9 md:py-12 lg:min-h-72 lg:grid-cols-[8rem_1.25fr_1.4fr_8rem] lg:gap-12`}
-            >
-              <span
-                className={`font-[family-name:var(--font-serif)] text-[4rem] leading-none md:text-[5rem] ${column.accent}`}
-              >
-                {column.no}
-              </span>
-
-              <div>
-                <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:text-[11px]">
-                  {column.type} · {column.titleZh}
-                </p>
-                <h3 className="mt-3 font-[family-name:var(--font-serif-zh)] text-[2rem] font-semibold leading-[1.2] text-[var(--foreground)] transition-colors group-hover:text-white md:text-[2.5rem]">
-                  {column.title}
-                </h3>
-              </div>
-
-              <p className="max-w-[34rem] font-[family-name:var(--font-zh)] text-[15px] leading-[1.8] text-[var(--muted-strong)] md:text-[17px]">
-                {column.description}
-              </p>
-
-              <div className="flex items-center justify-between gap-4 font-[family-name:var(--font-mono)] text-[10px] uppercase text-[var(--muted)] md:block md:text-right md:text-[11px]">
-                <span>{column.status}</span>
-                {"href" in column && column.href ? (
-                  <span className={`md:mt-5 md:block ${column.accent}`} aria-hidden>
-                    ↗
-                  </span>
-                ) : null}
-              </div>
-            </div>
-          );
-
-          return (
-            <li
-              key={column.no}
-              className={`border-b border-[var(--hairline)] transition-colors hover:bg-white/[0.025] ${
-                index % 2 === 1 ? "bg-[#0c0e13]" : "bg-[var(--paper-0)]"
-              }`}
-            >
-              {"href" in column && column.href ? (
-                <a
-                  href={column.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block"
-                >
-                  {content}
-                </a>
-              ) : (
-                content
-              )}
+    <section id="founders" className="sg-ed-formats" aria-label="浪前的三个内容栏目">
+      <div className={SG_PAGE_SHELL_CLASS}>
+        <ol className="sg-ed-formats-grid">
+          {columns.map((column) => (
+            <li key={column.no}>
+              <a href={column.href} target="_blank" rel="noopener noreferrer" className="sg-ed-format">
+                <span className="sg-ed-format-top"><span>{column.no} / {column.type}</span><span aria-hidden>↗</span></span>
+                <h3>{column.title}</h3>
+                <p>{column.description}</p>
+              </a>
             </li>
-          );
-        })}
-      </ol>
+          ))}
+        </ol>
       </div>
     </section>
   );

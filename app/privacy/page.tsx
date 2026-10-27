@@ -18,11 +18,11 @@ export default function PrivacyPage() {
       <SiteHeader />
       <main className={`relative z-[3] flex-1 py-16 md:py-24 ${SG_PAGE_SHELL_CLASS}`}>
         <article className="mx-auto max-w-[48rem]">
-          <h1 className="editorial-serif text-[clamp(2rem,4vw,2.75rem)] leading-[1.06] text-[var(--foreground)]">
+          <h1 className="editorial-serif text-[clamp(2rem,4vw,2.75rem)] leading-[1.3] text-[var(--foreground)]">
             隐私政策
           </h1>
           <p className="mt-3 font-[family-name:var(--font-zh)] text-[15px] text-[var(--muted)] md:text-[16px]">
-            最后更新：2026 年 7 月
+            最后更新：2026 年 10 月
           </p>
 
           <div className="mt-12 flex flex-col gap-10 font-[family-name:var(--font-zh)] text-[16px] leading-[1.75] text-[var(--muted-strong)] md:text-[17px]">
@@ -31,8 +31,10 @@ export default function PrivacyPage() {
                 我们收集什么
               </h2>
               <p className="mt-3">
-                本站不提供账号体系，也不主动收集个人身份信息。只有当你通过邮件、Discord
-                或微信联系我们时，我们才会收到你主动提供的信息。
+                本站不提供账号体系。当你主动填写招聘表单时，我们会收到你提交的姓名、微信号、意向岗位和自我介绍；如果你选择补充，也会收到手机号、邮箱、简历或作品链接、附件及其他说明。这些信息用于招聘联系与岗位匹配。
+              </p>
+              <p className="mt-3">
+                招聘投递同时记录页面来源、渠道或推荐归因信息、落地页地址及投递时间。当你通过邮件、Discord 或微信联系我们时，我们也会收到你主动提供的信息。
               </p>
             </section>
 

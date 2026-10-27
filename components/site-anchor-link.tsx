@@ -1,13 +1,14 @@
 "use client";
 
 import { useAnchorNav } from "@/lib/use-anchor-nav";
+import Link from "next/link";
 import type { ComponentProps } from "react";
 
 type Props = ComponentProps<"a"> & {
   href: string;
 };
 
-/** 页内锚点链接 — 统一 immediate scroll（Footer / Social 等复用） */
+/** 同页锚点统一偏移滚动，跨页链接保留首页路径与 Next 路由。 */
 export function SiteAnchorLink({
   href,
   onClick,
@@ -15,14 +16,28 @@ export function SiteAnchorLink({
   ...rest
 }: Props) {
   const navigate = useAnchorNav();
+  const handleClick: NonNullable<Props["onClick"]> = (event) => {
+    onClick?.(event);
+    if (!event.defaultPrevented) navigate(event, href);
+  };
+
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return (
+      <Link
+        href={href}
+        scroll={!href.includes("#")}
+        onClick={handleClick}
+        {...rest}
+      >
+        {children}
+      </Link>
+    );
+  }
 
   return (
     <a
       href={href}
-      onClick={(e) => {
-        if (href.startsWith("#")) navigate(e, href);
-        onClick?.(e);
-      }}
+      onClick={handleClick}
       {...rest}
     >
       {children}
