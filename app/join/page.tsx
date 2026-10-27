@@ -6,49 +6,49 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { buildSiteMetadata } from "@/lib/site-metadata";
 import { SG_PAGE_SHELL_CLASS, SG_SECTION_TITLE_CLASS } from "@/lib/sg-layout";
-import { resolveRecruitSource } from "@/lib/recruit-source";
+import { RECRUIT_ARTICLE_URL, resolveRecruitSource } from "@/lib/recruit-source";
 import { SgAmbientGrid } from "@/components/sg-ambient-grid";
 
 export const metadata: Metadata = {
   ...buildSiteMetadata(),
   title: "加入浪前 · 一起造浪 浪前 Surfer Garage",
   description:
-    "浪前招聘入口：Surfing Founder 编辑、业务商务、线下渠道与 Agency Intern。加入平均年龄 20 的 05 后创业团队，从 0 到 1 上手真实业务。",
+    "浪前招募编辑、市场营销、全媒体运营与创业者生态实习生。与我们一起，记录最具创新与冒险精神的一代，在时代浪前看见传统路径之外的可能性。",
   alternates: { canonical: "/join" },
 };
 
 const ROLES = [
   {
-    title: "Surfing Founder 编辑实习生",
-    tag: "内容 · 采访",
-    desc: "有商业媒体经验，能在一个月内独立产出 SF 访谈文章；深度理解科技与创业文化，会采访、会写、有亲和力。",
-    perk: "100–150 / 日 · 行业头部水平",
+    title: "编辑实习生",
+    tag: "上海 · 内容与采访",
+    desc: "负责 Surfing Founders 栏目的深度人物访谈。期待你对人、科技、创业和故事有真实的好奇心。",
+    perk: "100–150 元/天",
   },
   {
-    title: "业务商务实习生",
-    tag: "商业化",
-    desc: "有媒体商务经验，理解商务与谈判全流程；有快速合作资源者加分，与团队一起搭建 SF 商业化管线。",
-    perk: "100–150 / 日 · 行业头部水平",
+    title: "市场营销实习生",
+    tag: "上海 / 苏州 · 活动与合作",
+    desc: "负责浪前生态活动、合作与营销策划。期待你有独特创新的想法，把 Idea 从纸面推到真实场景，让更多用户看到、理解并参与。",
+    perk: "100–150 元/天",
   },
   {
-    title: "线下渠道 & 活动运营 Intern",
-    tag: "增长 · 线下",
-    desc: "负责西浦百团/演讲等线下渠道与雇主营销；稳定投入、学习快、做事细致，把已有 SOP 的管线跑起来。",
-    perk: "实习证明 + 团建 + 转正机会",
+    title: "全媒体运营实习生",
+    tag: "上海 / 苏州 · 社媒与增长",
+    desc: "负责公众号、小红书等平台的社媒运营与增长策略验证。期待你理解什么值得传播、为什么传播，并通过一次次实验找到有效的增长方法。",
+    perk: "100–120 元/天",
   },
   {
-    title: "Agency Intern（探索实习生）",
-    tag: "新方向探索",
-    desc: "好奇心强、执行力强、能结构化复盘；用低成本探索不确定性机会，remote 可选。",
-    perk: "实习证明 + 转正机会",
+    title: "创业者生态实习生",
+    tag: "上海 / 远程 · 发现与连接",
+    desc: "负责创业者 Sourcing、建联、关系维护，以及在场关键科技与创业活动。期待你主动发现值得认识的创业者，走进真实现场，建立长期关系。",
+    perk: "100–120 元/天",
   },
 ] as const;
 
 const PRINCIPLES = [
-  ["招人是为了解决问题", "先想清楚要解决什么问题；业务初期如果带人反而是负担，就不急着招。"],
-  ["AI-Native 先行", "招人之前先问：这件事 Agent 能不能稳定交付？先跑通业务，再上 AI。"],
-  ["30% 探索", "一个创新组织至少有 30% 时间与投入花在探索新价值与创新上。"],
-  ["线下优先", "长期线下 > 一周线下 1–2 天 + remote，远远大于长期 remote。"],
+  ["Winner · 把事情做成", "始终寻找如何把事情做成，对结果负责，在自己的位置上帮助团队赢。"],
+  ["Builder · 真正做出来", "从粗糙的想法、模糊的方向开始，在行动中完善和校准。编辑的文章、市场的活动，都是你亲手构建的产品。"],
+  ["Genius · 打磨独特能力", "找到自己的兴趣、审美和独特能力，把它们打磨成能够创造价值的本领。我们看见的天赋，远比一份标准履历丰富。"],
+  ["Good Guy · 共同创造价值", "真正倾听，愿意理解尚不成熟的想法，珍惜伙伴的利益。面对团队、嘉宾与用户，先问我们可以共同创造什么。"],
 ] as const;
 
 type JoinPageProps = {
@@ -76,14 +76,24 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
         {/* HERO */}
         <section className="py-24 md:py-32 lg:py-40">
           <h1 className="font-[family-name:var(--font-serif-zh)] text-[clamp(2.6rem,6.2vw,5.5rem)] font-semibold leading-[1.08] tracking-[-0.01em] text-[var(--foreground)]">
-            把事做成的人，
+            在时代浪前，
             <br />
-            到这里<span className="text-[var(--brand-teal)]">汇聚</span>
+            与我们一起<span className="text-[var(--brand-teal)]">造浪</span>
           </h1>
           <p className="mt-9 max-w-[44rem] text-[16px] leading-[1.85] text-[var(--muted-strong)] md:text-[18px]">
-            我们是一支平均年龄 20 的极早期创业团队，记录 16–28 岁科技创业者的真实现场。招聘不是填空位，是找能一起解决问题、把管线跑通的人。
+            我们通过深度人物访谈、视频播客和线下活动，发现、理解和连接 16–28 岁科技创业者。与我们一起，记录最具创新与冒险精神的一代，让更多年轻人看见传统路径之外的可能性。
           </p>
         </section>
+
+        <a
+          href={RECRUIT_ARTICLE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-12 inline-flex min-h-11 items-center gap-3 text-[15px] text-[var(--brand-teal)] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-teal)]"
+        >
+          阅读招募全文：我们在时代浪潮之前，招募船员
+          <span aria-hidden>↗</span>
+        </a>
 
         {/* ROLES */}
         <section className="border-t border-[var(--hairline)] py-20 md:py-28">
@@ -107,14 +117,17 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
             ))}
           </div>
 
-          <p className="mt-8 max-w-[44rem] text-[14px] text-[var(--muted)]">
+          <p className="mt-8 max-w-[44rem] text-[15px] leading-[1.8] text-[var(--muted-strong)]">
+            实习岗位面向国内外在读本科生 / 研究生开放。每周至少投入 4 天，至少实习 3 个月，能够连续投入半年者优先。
+          </p>
+          <p className="mt-3 max-w-[44rem] text-[14px] leading-[1.8] text-[var(--muted)]">
             核心正职按需面议，欢迎直接投递说明你能解决的问题。
           </p>
         </section>
 
         {/* PRINCIPLES */}
         <section className="border-t border-[var(--hairline)] py-20 md:py-28">
-          <h2 className={SG_SECTION_TITLE_CLASS}>我们的原则</h2>
+          <h2 className={SG_SECTION_TITLE_CLASS}>我们在找怎样的人</h2>
           <div className="mt-12 grid gap-x-16 gap-y-12 md:grid-cols-2">
             {PRINCIPLES.map(([title, body]) => (
               <div key={title}>

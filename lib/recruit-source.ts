@@ -32,6 +32,10 @@ export const DEFAULT_RECRUIT_SOURCE: RecruitSource = {
 
 export const SITE_JOIN_HREF = "/join?src=site";
 
+/** 公众号正式招募全文，与官网投递入口配合使用。 */
+export const RECRUIT_ARTICLE_URL =
+  "https://mp.weixin.qq.com/s/KdJxhXewrLonKWAjbfMbTg";
+
 export type ResolvedRecruitSource = RecruitSource & { refCode: string | null };
 
 export function resolveRecruitSource(

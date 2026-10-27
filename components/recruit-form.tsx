@@ -8,10 +8,10 @@ const WECHAT_ID = "x3167056428";
 const MAX_RESUME_BYTES = 20 * 1024 * 1024;
 
 const ROLE_OPTIONS = [
-  "Surfing Founder 编辑实习生",
-  "业务商务实习生",
-  "线下渠道 & 活动运营 Intern",
-  "Agency Intern",
+  "编辑实习生",
+  "市场营销实习生",
+  "全媒体运营实习生",
+  "创业者生态实习生",
   "核心正职（面议）",
 ] as const;
 

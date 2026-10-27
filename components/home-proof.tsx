@@ -4,10 +4,13 @@ import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { SG_PAGE_SHELL_CLASS } from "@/lib/sg-layout";
-import { WECHAT_OFFICIAL_FEED } from "@/lib/wechat-official-feed";
+import {
+  DEFAULT_WECHAT_FEED_ID,
+  WECHAT_OFFICIAL_FEED,
+} from "@/lib/wechat-official-feed";
 
 const ARTICLE_DIRECTORY = [...WECHAT_OFFICIAL_FEED].reverse();
-const DEFAULT_ARTICLE_ID = "wx-13";
+const DEFAULT_ARTICLE_ID = DEFAULT_WECHAT_FEED_ID;
 
 function getOrdinal(id: string) {
   const index = WECHAT_OFFICIAL_FEED.findIndex((article) => article.id === id);

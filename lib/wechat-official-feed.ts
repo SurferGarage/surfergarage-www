@@ -163,6 +163,26 @@ const RAW_FEED: WechatOfficialFeedItem[] = [
     imageSrc: "/wechat-feed/15.png",
     imageAlt: "刘思哲与守忆科技人物访谈文章封面",
   },
+  {
+    id: "wx-16",
+    titleZh:
+      "秦岭脚下长大的极客，造了一副通往荒野的外骨骼 | 毛榉「无待动力」Surfing Founders",
+    stageTitleZh: "秦岭脚下长大的极客，造了一副通往荒野的外骨骼",
+    stageMetaZh: "毛榉 · 无待动力",
+    href: "https://mp.weixin.qq.com/s/ofUQgCfM-X3M24cxEAr2UQ",
+    imageSrc: "/editorial/mao-ju-wudai-cover.png",
+    imageAlt: "毛榉在荒野中的人物访谈封面",
+  },
+  {
+    id: "wx-17",
+    titleZh:
+      "独家 | Extra获百万级融资：一个从黑客松社区里长出的产品 | 刘雨杰 Surfing Founder",
+    stageTitleZh: "Extra 获百万级融资：一个从黑客松社区里长出的产品",
+    stageMetaZh: "刘雨杰 · Extra",
+    href: "https://mp.weixin.qq.com/s/2C1-pUL_XVu3VUrL7BF6aw",
+    imageSrc: "/editorial/liu-yujie-extra-cover.png",
+    imageAlt: "刘雨杰手持麦克风分享的 Extra 人物访谈封面",
+  },
 ];
 
 export const WECHAT_OFFICIAL_FEED: WechatOfficialFeedItem[] = RAW_FEED.map(
